@@ -184,7 +184,7 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _encoding, _char
 
 	function drawLegend() {
 	
-		var padding = 5;
+		var padding = gridWidth/6;
 		var yBands = (gridWidth - padding * 2)/(classes.length + 1);
 		var keySize = yBands * 0.6;
 	
@@ -197,7 +197,7 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _encoding, _char
 	
 		//legend title
 		textSize(16);
-		textAlign(CENTER, CENTER);
+		textAlign(CENTER, BOTTOM);
 		fill(128, 128, 128);
 		noStroke();
 		text(category.name, xLegend + gridWidth/2, yLegend + padding + yBands/2);
@@ -207,9 +207,9 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _encoding, _char
 		for (var i = 0; i < classes.length; i++) {
 			fill(pointEncode.colors[i]);
 			textAlign(LEFT, CENTER);
-			text(classes[i], xLegend + 5 * padding + keySize, yLegend + padding + yBands * (i + 1) + yBands/2);
+			text(classes[i], xLegend + padding + keySize, yLegend + padding + yBands * (i + 1) + yBands/2);
 			rectMode(CENTER);
-			rect(xLegend + 3 * padding, yLegend + padding + yBands * (i + 1) + yBands/2, keySize, keySize);
+			rect(xLegend + padding, yLegend + padding + yBands * (i + 1) + yBands/2, keySize, keySize);
 		}
 	
 	}
@@ -341,7 +341,7 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _encoding, _char
 		yAxisLabelY = (plotY1 + plotY2)/2;
 	
 		xLegend = plotX2 - gridWidth;
-		yLegend = plotY1 + 3 * gridWidth;
+		yLegend = plotY1 + Math.min(useAttr.length - 2, 3) * gridWidth;
 	
 		//call noLoop unless doing animation
 		if (!isAnimate) {
