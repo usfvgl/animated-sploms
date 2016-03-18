@@ -54,7 +54,7 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _encoding, _char
 	var pointEncode = {
 		strokeWeight: 0.3,
 		size: 4.5,
-		colors: ["#729ece", "#ff9e4a", "#67bf5c", "#ed665d"]
+		colors: ["#729ece", "#ff9e4a", "#67bf5c", "#ed665d", "#ad8bc9"]
 	};
 	var shapeEncode = {
 		stroke: pointEncode.colors[0],
@@ -116,6 +116,11 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _encoding, _char
 		textAlign(CENTER, BOTTOM);
 		fill(0);
 		noStroke();
+		
+		//update chartTitle with title from query string if exists
+		if (typeof params.chartTitle !== "undefined") {
+			_chartTitle = params.chartTitle;
+		}
 		text(_chartTitle, xTitle, yTitle);
 
 	}
@@ -323,6 +328,14 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _encoding, _char
 		createCanvas(gridWidth * (useAttr.length - 1) + 2 * majorPad, gridWidth * (useAttr.length - 1) + 2.5 * majorPad);
 		background(255);
 		rowCount = source.getRowCount();
+		
+		// update parameters from query string if exists
+		if (typeof params.isAnimate !== "undefined") {
+			isAnimate = params.isAnimate;
+		}
+		if (typeof params.animateNum !== "undefined") {
+			animateNum = +(params.animateNum);
+		}
 	
 		//get min and max
 		for (var i = 0; i < rowCount; i++) {
