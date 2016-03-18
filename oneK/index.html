@@ -25,13 +25,32 @@
 		values: ["Fair", "Good", "Very Good", "Premium", "Ideal"]
 	};
 	var animate = {
-		isAnimate: true,
+		isAnimate: false,
 		animateNum: 1
 	};
 	var encoding = "color_point";
 	var chartTitle = "Diamonds Scatterplot Matrix";
+	var rects = [
+		{
+			x: 5,
+			y: 1,
+			xmin: 55,
+			ymin: 1,
+			xmax: 63,
+			ymax: 2.5
+		},
+		{
+			x: 10,
+			y: 7,
+			xmin: 4,
+			ymin: 1000,
+			xmax: 5,
+			ymax: 10000
+		},
+		
+	];
 	
-	var chart = multi_scatter(dataSource, attr, category, animate, encoding,chartTitle);
+	var chart = multi_scatter(dataSource, attr, category, animate, encoding,chartTitle, rects);
 	
 	function preload() {
 		chart.preload();

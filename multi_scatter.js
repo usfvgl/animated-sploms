@@ -1,4 +1,4 @@
-function multi_scatter(_dataSource, _attr, _category, _animate, _encoding, _chartTitle) {
+function multi_scatter(_dataSource, _attr, _category, _animate, _encoding, _chartTitle, _rects) {
 
 	var main = {};
 	
@@ -78,6 +78,19 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _encoding, _char
 			}
 		]
 	};
+	
+	// Set up focus rectangles. _rects needs to be an array of objects with six properties:
+	//	{
+	//		x: column index of x-axis attribute
+	//		y: column index of y-axis attribute
+	// 		xmin: start value of box along x-axis
+	// 		ymin: start value of box along y-axis
+	// 		xmax: start value of box along x-axis
+	// 		ymax: start value of box along y-axis
+	//	}
+	var rectangles = _rects;
+	var rectColor = "#000000";
+	var rectStrokeWeight = 1.25;
 	
 	// Helper function section
 	
@@ -180,6 +193,24 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _encoding, _char
 		
 		}
 	
+	}
+	
+	function drawRects() {
+		noFill();
+		stroke(rectColor);
+		strokeWeight(rectStrokeWeight);
+		rectMode(CORNER);
+		
+		rectangles.forEach(function(r) {
+			var row = useAttr.indexOf(r.y);
+			var col = useAttr.length - 1 - useAttr.indexOf(r.x);
+			var x1 = map(r.xmin, minData[r.x], maxData[r.x], gridX[col] + labelPad, gridX[col] + gridWidth - labelPad);
+			var y1 = map(r.ymin, minData[r.y], maxData[r.y], gridY[row] + gridWidth - labelPad, gridY[row] + labelPad);
+			var x2 = map(r.xmax, minData[r.x], maxData[r.x], gridX[col] + labelPad, gridX[col] + gridWidth - labelPad);
+			var y2 = map(r.ymax, minData[r.y], maxData[r.y], gridY[row] + gridWidth - labelPad, gridY[row] + labelPad);
+			rect(x1, y2, x2 - x1, y1 - y2);
+		});
+
 	}
 
 	function drawLegend() {
@@ -360,6 +391,7 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _encoding, _char
 	
 	main.draw = function() {
 		plotData(_encoding, isAnimate);
+		drawRects();
 	}
 
 	return main;
