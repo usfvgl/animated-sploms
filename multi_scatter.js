@@ -39,7 +39,7 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _encoding, _char
 
 	// formatting plot area
 	var majorPad = 55;
-	var gridWidth;
+	var gridWidth = 125;
 	var tickLen = 3;
 	var tickLabelDist = tickLen * 1.5;
 	var subtitleDist = tickLen * 7;
@@ -52,7 +52,7 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _encoding, _char
 	var pointEncode = {
 		strokeWeight: 0.3,
 		size: 4.5,
-		colors: ["rgba(76, 114, 176, 1)", "rgba(85, 168, 104, 1)", "rgba(196, 78, 82, 1)", "rgba(129, 114, 178, 1)", "rgba(204, 185, 116, 1)"]
+		colors: ["#729ece", "#ff9e4a", "#67bf5c", "#ed665d"]
 	};
 	var shapeEncode = {
 		stroke: pointEncode.colors[0],
@@ -89,7 +89,7 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _encoding, _char
 	// 		ymax: start value of box along y-axis
 	//	}
 	var rectangles = _rects;
-	var rectColor = "#000000";
+	var rectColor = "rgba(89, 89, 89, 1)";	
 	var rectStrokeWeight = 1.25;
 	
 	// Helper function section
@@ -313,7 +313,7 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _encoding, _char
 	}
 	
 	main.setup = function() {
-		createCanvas(855, 900);
+		createCanvas(gridWidth * (useAttr.length - 1) + 2 * majorPad, gridWidth * (useAttr.length - 1) + 2.5 * majorPad);
 		background(255);
 		rowCount = source.getRowCount();
 	
@@ -354,7 +354,7 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _encoding, _char
 	    plotY1 = height - (width - 2 * majorPad) - majorPad;
 	    plotY2 = height - majorPad;
 
-		gridWidth = (width - 2 * majorPad)/(useAttr.length - 1);
+		//gridWidth = (width - 2 * majorPad)/(useAttr.length - 1);
 		labelPad = gridWidth * 0.1;	
 		gridX = [];
 		gridY = [];
@@ -364,7 +364,7 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _encoding, _char
 		}
 	
 		xTitle = width/2;
-		yTitle = plotY1 - majorPad;
+		yTitle = 2*majorPad/3;
 	
 		xAxisLabelX = (plotX1 + plotX2)/2;
 		yAxisLabelX = plotX1/2;
