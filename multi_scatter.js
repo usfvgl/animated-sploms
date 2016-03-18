@@ -314,10 +314,38 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _encoding, _char
 		return origMax;
 	}
 	
+	// Get rectangle attributes from query string if exists. Query string is a series of comma-separated integers in the following order:
+	// x,y,xmin,ymin,xmax,ymax
+	// for multiple rectangles, enter the attributes for the next rectangle after ymax, of the previous rectangle
+	function getRectsParams() {
+		
+		if (typeof params.rect === "undefined") {
+			return;
+		}
+		
+		var paramArray = params.rects.split(',');
+		
+		if (paramArray.length % 6 !== 0) {
+			return;
+		}
+		
+		rectangles = [];
+		for (var i = 0; i < (paramArray.length/6); i++) {
+			rectangles.push({
+				x: paramArray[i * 6],
+				y: paramArray[i * 6 + 1],
+				xmin: paramArray[i * 6 + 2],
+				ymin: paramArray[i * 6 + 3],
+				xmax: paramArray[i * 6 + 4],
+				ymax: paramArray[i * 6 + 5]
+			});
+		}
+		
+	}
+	
 	// p5 functions
 	main.preload = function() {
 		params = getURLParams();
-		console.log(params);
 		if (typeof params.source !== "undefined") {
 			dataSource = params.source;
 		}
@@ -336,6 +364,7 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _encoding, _char
 		if (typeof params.animateNum !== "undefined") {
 			animateNum = +(params.animateNum);
 		}
+		getRectsParams();
 	
 		//get min and max
 		for (var i = 0; i < rowCount; i++) {
