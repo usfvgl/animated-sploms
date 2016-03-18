@@ -319,7 +319,7 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _encoding, _char
 	// for multiple rectangles, enter the attributes for the next rectangle after ymax, of the previous rectangle
 	function getRectsParams() {
 		
-		if (typeof params.rect === "undefined") {
+		if (typeof params.rects === "undefined") {
 			return;
 		}
 		
@@ -332,12 +332,12 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _encoding, _char
 		rectangles = [];
 		for (var i = 0; i < (paramArray.length/6); i++) {
 			rectangles.push({
-				x: paramArray[i * 6],
-				y: paramArray[i * 6 + 1],
-				xmin: paramArray[i * 6 + 2],
-				ymin: paramArray[i * 6 + 3],
-				xmax: paramArray[i * 6 + 4],
-				ymax: paramArray[i * 6 + 5]
+				x: +paramArray[i * 6],
+				y: +paramArray[i * 6 + 1],
+				xmin: +paramArray[i * 6 + 2],
+				ymin: +paramArray[i * 6 + 3],
+				xmax: +paramArray[i * 6 + 4],
+				ymax: +paramArray[i * 6 + 5]
 			});
 		}
 		
