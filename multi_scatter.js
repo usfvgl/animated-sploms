@@ -348,7 +348,7 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _encoding, _char
 			noLoop();		
 		} else {
 			frameRate(60);
-			plotData(_encoding, false);
+			//plotData(_encoding, false);
 		}
 	
 		drawGrid();
@@ -359,9 +359,6 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _encoding, _char
 	}
 	
 	main.draw = function() {
-		if (isAnimate) {
-			console.log(frameRate());
-		}
 		plotData(_encoding, isAnimate);
 	}
 
