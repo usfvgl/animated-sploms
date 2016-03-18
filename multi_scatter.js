@@ -331,7 +331,7 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _encoding, _char
 		
 		// update parameters from query string if exists
 		if (typeof params.isAnimate !== "undefined") {
-			isAnimate = params.isAnimate;
+			isAnimate = (params.isAnimate.toLowerCase() === "true");
 		}
 		if (typeof params.animateNum !== "undefined") {
 			animateNum = +(params.animateNum);
