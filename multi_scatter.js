@@ -1,5 +1,7 @@
 function multi_scatter(_dataSource, _attr, _category, _animate, _encoding, _chartTitle, _rects) {
 
+	var params;
+	
 	var main = {};
 	
 	// Variables section
@@ -309,6 +311,11 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _encoding, _char
 	
 	// p5 functions
 	main.preload = function() {
+		params = getURLParams();
+		console.log(params);
+		if (typeof params.source !== "undefined") {
+			dataSource = params.source;
+		}
 		source = loadTable(dataSource, "csv", "header");
 	}
 	
