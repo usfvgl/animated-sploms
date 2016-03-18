@@ -116,11 +116,6 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _encoding, _char
 		textAlign(CENTER, BOTTOM);
 		fill(0);
 		noStroke();
-		
-		//update chartTitle with title from query string if exists
-		if (typeof params.chartTitle !== "undefined") {
-			_chartTitle = params.chartTitle;
-		}
 		text(_chartTitle, xTitle, yTitle);
 
 	}
@@ -361,10 +356,26 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _encoding, _char
 		if (typeof params.isAnimate !== "undefined") {
 			isAnimate = (params.isAnimate.toLowerCase() === "true");
 		}
+		
 		if (typeof params.animateNum !== "undefined") {
 			animateNum = +(params.animateNum);
 		}
+		
 		getRectsParams();
+		
+		if (typeof params.chartTitle !== "undefined") {
+			_chartTitle = decodeURIComponent(params.chartTitle);
+		}
+		
+		if (typeof params.attr !== "undefined") {
+			attr = params.attr.split(',');
+			attr = attr.map(function(d) {return +decodeURIComponent(d); });
+		}
+		
+		if (typeof params.useAttr !== "undefined") {
+			useAttr = params.useAttr.split(',');
+			useAttr = useAttr.map(function(d) {return +d; });
+		}	
 	
 		//get min and max
 		for (var i = 0; i < rowCount; i++) {
