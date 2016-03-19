@@ -377,6 +377,16 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _encoding, _char
 			useAttr = useAttr.map(function(d) {return +d; });
 		}	
 	
+		if (typeof params.category !== "undefined") {
+			var split = params.category.split(',');
+			category.name = split[0];
+			category.index = +split[1];
+		}
+		
+		if (typeof params.classes !== "undefined") {
+			classes = params.classes.split(',');
+		}
+	
 		//get min and max
 		for (var i = 0; i < rowCount; i++) {
 		
