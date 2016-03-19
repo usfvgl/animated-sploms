@@ -1,4 +1,4 @@
-function multi_scatter(_dataSource, _attr, _category, _animate, _encoding, _chartTitle, _rects) {
+function multi_scatter(_dataSource, _attr, _category, _animate, _encoding, _chartTitle) {
 
 	var params;
 	
@@ -81,7 +81,8 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _encoding, _char
 		]
 	};
 	
-	// Set up focus rectangles. _rects needs to be an array of objects with six properties:
+	// Set up focus rectangles. rectangles will be populated in setup loop using query string
+	// Will be converted into object with following properties:
 	//	{
 	//		x: column index of x-axis attribute
 	//		y: column index of y-axis attribute
@@ -90,7 +91,7 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _encoding, _char
 	// 		xmax: start value of box along x-axis
 	// 		ymax: start value of box along y-axis
 	//	}
-	var rectangles = _rects;
+	var rectangles;
 	var rectColor = "rgba(89, 89, 89, 1)";	
 	var rectStrokeWeight = 1.25;
 	

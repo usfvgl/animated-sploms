@@ -30,27 +30,8 @@
 	};
 	var encoding = "color_point";
 	var chartTitle = "Synthetic Scatterplot Matrix";
-	var rects = [
-		{
-			x: 4,
-			y: 1,
-			xmin: 1,
-			ymin: 3,
-			xmax: 6,
-			ymax: 5
-		},
-		{
-			x: 3,
-			y: 2,
-			xmin: 4,
-			ymin: 4,
-			xmax: 7,
-			ymax: 7
-		},
-		
-	];
 	
-	var chart = multi_scatter(dataSource, attr, category, animate, encoding,chartTitle, rects);
+	var chart = multi_scatter(dataSource, attr, category, animate, encoding,chartTitle);
 	
 	function preload() {
 		chart.preload();
