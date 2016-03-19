@@ -348,9 +348,6 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _encoding, _char
 	}
 	
 	main.setup = function() {
-		createCanvas(gridWidth * (useAttr.length - 1) + 2 * majorPad, gridWidth * (useAttr.length - 1) + 2.5 * majorPad);
-		background(255);
-		rowCount = source.getRowCount();
 		
 		// update parameters from query string if exists
 		if (typeof params.isAnimate !== "undefined") {
@@ -386,6 +383,10 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _encoding, _char
 		if (typeof params.classes !== "undefined") {
 			classes = params.classes.split(',');
 		}
+		
+		createCanvas(gridWidth * (useAttr.length - 1) + 2 * majorPad, gridWidth * (useAttr.length - 1) + 2.5 * majorPad);
+		background(255);
+		rowCount = source.getRowCount();
 	
 		//get min and max
 		for (var i = 0; i < rowCount; i++) {
