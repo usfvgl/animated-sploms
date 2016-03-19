@@ -91,7 +91,7 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _encoding, _char
 	// 		xmax: start value of box along x-axis
 	// 		ymax: start value of box along y-axis
 	//	}
-	var rectangles;
+	var rectangles = [];
 	var rectColor = "rgba(89, 89, 89, 1)";	
 	var rectStrokeWeight = 1.25;
 	
@@ -324,8 +324,7 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _encoding, _char
 		if (paramArray.length % 6 !== 0) {
 			return;
 		}
-		
-		rectangles = [];
+	
 		for (var i = 0; i < (paramArray.length/6); i++) {
 			rectangles.push({
 				x: +paramArray[i * 6],
@@ -370,7 +369,7 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _encoding, _char
 		
 		if (typeof params.attr !== "undefined") {
 			attr = params.attr.split(',');
-			attr = attr.map(function(d) {return +decodeURIComponent(d); });
+			attr = attr.map(function(d) {return decodeURIComponent(d); });
 		}
 		
 		if (typeof params.useAttr !== "undefined") {
@@ -462,7 +461,9 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _encoding, _char
 	
 	main.draw = function() {
 		plotData(_encoding, isAnimate);
-		drawRects();
+		if (rectangles.length > 1) {
+			drawRects();			
+		}
 	}
 
 	return main;
