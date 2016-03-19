@@ -203,6 +203,7 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _encoding, _char
 		stroke(rectColor);
 		strokeWeight(rectStrokeWeight);
 		rectMode(CORNER);
+		var count = 0;
 		
 		rectangles.forEach(function(r) {
 			var row = useAttr.indexOf(r.y);
@@ -212,6 +213,11 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _encoding, _char
 			var x2 = map(r.xmax, minData[r.x], maxData[r.x], gridX[col] + labelPad, gridX[col] + gridWidth - labelPad);
 			var y2 = map(r.ymax, minData[r.y], maxData[r.y], gridY[row] + gridWidth - labelPad, gridY[row] + labelPad);
 			rect(x1, y2, x2 - x1, y1 - y2);
+			
+			// draw label for rectangle
+			textAlign(CENTER,TOP);
+			textSize(11);
+			text(++count, (x2 + x1)/2, y1);
 		});
 
 	}
@@ -462,7 +468,7 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _encoding, _char
 	
 	main.draw = function() {
 		plotData(_encoding, isAnimate);
-		if (rectangles.length > 1) {
+		if (rectangles.length >= 1) {
 			drawRects();			
 		}
 	}
