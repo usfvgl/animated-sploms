@@ -93,7 +93,7 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _encoding, _char
 	//	}
 	var rectangles = [];
 	var rectColor = "rgba(89, 89, 89, 1)";	
-	var rectStrokeWeight = 1.25;
+	var rectStrokeWeight = 1;
 	
 	// Helper function section
 	
@@ -199,13 +199,14 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _encoding, _char
 	}
 	
 	function drawRects() {
-		noFill();
 		stroke(rectColor);
-		strokeWeight(rectStrokeWeight);
+		textSize(11);
 		rectMode(CORNER);
 		var count = 0;
 		
 		rectangles.forEach(function(r) {
+			noFill();
+			strokeWeight(rectStrokeWeight);
 			var row = useAttr.indexOf(r.y);
 			var col = useAttr.length - 1 - useAttr.indexOf(r.x);
 			var x1 = map(r.xmin, minData[r.x], maxData[r.x], gridX[col] + labelPad, gridX[col] + gridWidth - labelPad);
@@ -216,7 +217,10 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _encoding, _char
 			
 			// draw label for rectangle
 			textAlign(CENTER,TOP);
-			textSize(11);
+			strokeWeight(0.25);
+			if (count <= 1) {
+				noFill();
+			}
 			text(++count, (x2 + x1)/2, y1);
 		});
 
