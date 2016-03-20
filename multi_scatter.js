@@ -219,7 +219,7 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _encoding, _char
 			textAlign(CENTER,TOP);
 			strokeWeight(0.25);
 			if (count <= 1) {
-				noFill();
+				fill(rectStrokeWeight);
 			}
 			text(++count, (x2 + x1)/2, y1);
 		});
