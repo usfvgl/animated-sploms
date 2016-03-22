@@ -29,7 +29,7 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _encoding, _char
 	//	 animateNum: int indicating number of entries to draw at a time during each animation loop}
 	var isAnimate = _animate.isAnimate;
 	var animateStart = 0;
-	var animateNum = 0;
+	var animateNum = 1;
 	if (isAnimate) {
 		animateNum = animate.animateNum;
 	}
@@ -361,12 +361,12 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _encoding, _char
 	main.setup = function() {
 		
 		// update parameters from query string if exists
-		if (typeof params.isAnimate !== "undefined") {
-			isAnimate = (params.isAnimate.toLowerCase() === "true");
-		}
-		
 		if (typeof params.animateNum !== "undefined") {
 			animateNum = +(params.animateNum);
+		}
+		
+		if (typeof params.isAnimate !== "undefined") {
+			isAnimate = (params.isAnimate.toLowerCase() === "true");
 		}
 		
 		if (typeof params.initDraw !== "undefined") {
@@ -465,7 +465,9 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _encoding, _char
 			noLoop();		
 		} else {
 			frameRate(60);
-			//plotData(_encoding, false);
+			if (initDraw) {
+				plotData(_encoding, false);
+			}
 		}
 	
 		drawGrid();

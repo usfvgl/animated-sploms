@@ -2,6 +2,7 @@
 var http = require('http');
 // Path module
 var path = require('path');
+var url = require('url');
 
 // Using the filesystem module
 var fs = require('fs');
@@ -13,7 +14,7 @@ console.log('Server started on port 8080');
 
 function handleRequest(req, res) {
   // What did we request?
-  var pathname = req.url;
+  var pathname = url.parse(req.url, true).pathname;
   
   // If blank let's ask for index.html
   if (pathname == '/') {
@@ -22,6 +23,7 @@ function handleRequest(req, res) {
   
   // Ok what's our file extension
   var ext = path.extname(pathname);
+  var queryData = url.parse(req.url, true).query;
 
   // Map extension to file type
   var typeExt = {
