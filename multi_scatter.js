@@ -33,6 +33,7 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _encoding, _char
 	if (isAnimate) {
 		animateNum = animate.animateNum;
 	}
+	var initDraw = animate.initDraw;
 	
 	var maxData = [];
 	var minData = [];
@@ -366,6 +367,10 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _encoding, _char
 		
 		if (typeof params.animateNum !== "undefined") {
 			animateNum = +(params.animateNum);
+		}
+		
+		if (typeof params.initDraw !== "undefined") {
+			initDraw = (params.initDraw.toLowerCase() === "true");
 		}
 		
 		getRectsParams();
