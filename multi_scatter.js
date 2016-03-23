@@ -55,7 +55,15 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _encoding, _char
 	var pointEncode = {
 		strokeWeight: 0.3,
 		size: 4.5,
-		colors: ["#729ece", "#ff9e4a", "#67bf5c", "#ed665d", "#ad8bc9"]
+		colors: [
+		"#EDC34B",	// yellow
+		"#EE67AC",	// pink
+		"#5DBA9E", // teal
+		"#9D99C9", // purple
+		"#929292",	// gray
+		"#92C05F",	// green
+		"#E48D4B"	// orange
+		]
 	};
 	var shapeEncode = {
 		stroke: pointEncode.colors[0],
