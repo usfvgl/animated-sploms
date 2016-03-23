@@ -200,6 +200,7 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _encoding, _char
 	}
 	
 	function drawRects(strokeColor) {
+		blendMode(REPLACE);
 		stroke(strokeColor);
 		strokeWeight(rectStrokeWeight);		
 		textSize(11);
@@ -225,6 +226,8 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _encoding, _char
 			// }
 			text(++count, (x2 + x1)/2, y1);
 		});
+		
+		blendMode(BLEND);
 
 	}
 
