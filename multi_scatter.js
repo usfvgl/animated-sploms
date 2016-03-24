@@ -411,6 +411,13 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _encoding, _char
 			classes = params.classes.split(',');
 		}
 		
+		if (typeof params.scaleAmount !== "undefined") {
+			scaleAmount = +(params.scaleAmount);
+			gridWidth = gridWidth * scaleAmount;
+			pointEncode.size = pointEncode.size * scaleAmount;
+			pointEncode.strokeWeight = pointEncode.strokeWeight * scaleAmount;
+		}
+		
 		createCanvas(gridWidth * (useAttr.length - 1) + 2 * majorPad, gridWidth * (useAttr.length - 1) + 2.5 * majorPad);
 		background(255);
 		rowCount = source.getRowCount();
