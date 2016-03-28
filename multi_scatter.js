@@ -140,9 +140,9 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _encoding, _char
 		
 			var reversedCount = useAttr.length - count - 1;
 			var labels = [];
-			labels.push(round(minData[useAttr[count]]));
-			labels.push(round(midData[useAttr[count]]));
-			labels.push(round(maxData[useAttr[count]]));
+			labels.push(minData[useAttr[count]]);
+			labels.push(midData[useAttr[count]]);
+			labels.push(maxData[useAttr[count]]);
 	
 			for (var i = 0; i < labels.length; i++) {
 			
@@ -320,15 +320,21 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _encoding, _char
 	}
 	
 	function axisMin(origMin) {
-		if (origMin > 10) {
+		if (round(origMin) > 10) {
+			origMin = round(origMin);
 			origMin -= origMin % 5
+		} else if (round(origMin) === 10) {
+			origMin = round(origMin);
 		}
-		return floor(origMin);
+		return origMin;
 	}
 
 	function axisMax(origMax) {
-		if (floor(origMax) > 10) {
+		if (round(origMax) > 10) {
+			origMax = round(origMax);
 			origMax = floor(origMax - origMax % 5 + 5);
+		} else if (round(origMax) === 10) {
+			origMax = round(origMax);
 		}
 		return origMax;
 	}
