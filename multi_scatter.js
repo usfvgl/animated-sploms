@@ -277,7 +277,10 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _encoding, _char
 		var startIndex = 0;
 	
 		//determine number of rows to use based on whether we're animating
-		if (animate) {
+		if (initDraw) {
+			numData = rowCount;
+			initDraw = false;
+		} else if (animate) {
 			numData = animateNum;
 			startIndex = animateStart;
 		} else {
@@ -490,9 +493,9 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _encoding, _char
 			noLoop();		
 		} else {
 			frameRate(60);
-			if (initDraw) {
-				plotData(_encoding, false);
-			}
+			// if (initDraw) {
+			// 	plotData(_encoding, false);
+			// }
 		}
 	
 		drawGrid();
