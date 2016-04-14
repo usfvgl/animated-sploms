@@ -1,4 +1,4 @@
-function multi_scatter(_dataSource, _attr, _category, _animate, _encoding, _chartTitle) {
+function multi_scatter(_dataSource, _attr, _category, _animate, _chartTitle) {
 
 	var params;
 	
@@ -50,8 +50,6 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _encoding, _char
 	var plotX1, plotY1, plotX2, plotY2, xTitle, yTitle, xAxisLabelX, xAxisLabelY, yAxisLabelX, yAxisLabelY, xLegend, yLegend;
 	var gridX, gridY;
 
-	// Set up encoding. _encoding needs to be a string with one of these values:
-	// color_point, color_shape
 	var pointEncode = {
 		strokeWeight: 0.3,
 		size: 4.5,
@@ -63,30 +61,6 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _encoding, _char
 		"#929292",	// gray
 		"#92C05F",	// green
 		"#E48D4B"	// orange
-		]
-	};
-	var shapeEncode = {
-		stroke: pointEncode.colors[0],
-		strokeWeight: 0.5,
-		size: 4.5,
-		shapes: [
-			function(x, y, r) {
-				ellipse(x, y, r, r);
-			},
-			function(x, y, r) {
-				line(x, y - r/2, x, y + r/2);
-				line(x - r/2, y, x + r/2, y);
-			},
-			function(x, y, r) {
-				rectMode(CENTER);
-				rect(x, y, r, r);
-			},
-			function(x, y, r) {
-				triangle(x, y - r, x - 2*r/1.73, y + r, x + 2*r/1.73, y + r);
-			},
-			function() {
-				quad(x, y - r, x + r, y, x, y + r, x - r, y);
-			}
 		]
 	};
 	
@@ -271,16 +245,14 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _encoding, _char
 	
 	}
 	
-	function plotData(encoding, animate) {
+	function plotData(animate) {
+		
 		fill(0);
 		var numData = 0;
 		var startIndex = 0;
 	
 		//determine number of rows to use based on whether we're animating
-		if (initDraw) {
-			numData = rowCount;
-			initDraw = false;
-		} else if (animate) {
+		if (animate) {
 			numData = animateNum;
 			startIndex = animateStart;
 		} else {
@@ -295,29 +267,18 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _encoding, _char
 				var y = map(source.getNum(adjusted, attrY), minData[attrY], maxData[attrY], gridY[row] + gridWidth - labelPad, gridY[row] + labelPad);					
 				for (var col = 0; col < (gridX.length - row); col++) {
 					var attrX = useAttr[useAttr.length - col - 1];
-					var x = map(source.getNum(adjusted, attrX), minData[attrX], maxData[attrX], gridX[col] + labelPad, gridX[col] + gridWidth - labelPad);
-			
-					if (encoding === "color_point") {
-						strokeWeight(pointEncode.strokeWeight);
-						//noStroke();				//TODO change if want white stroke around circle
-						stroke(255);
-						fill(pointEncode.colors[classes.indexOf(cat)]);
-						ellipse(x, y, pointEncode.size, pointEncode.size);
-					} else if (encoding === "color_shape") {			
-						stroke(pointEncode.colors[classes.indexOf(cat)]);
-						strokeWeight(shapeEncode.strokeWeight);
-						noFill();
-						//Either circles or '+' marks: comment out unused one
-						ellipse(x, y, shapeEncode.size, shapeEncode.size);
-						//plusMark(x, y, shapeEncode.size);
-					}
-				
+					var x = map(source.getNum(adjusted, attrX), minData[attrX], maxData[attrX], gridX[col] + labelPad, gridX[col] + gridWidth - labelPad);			
+					strokeWeight(pointEncode.strokeWeight);
+					stroke(255);
+					fill(pointEncode.colors[classes.indexOf(cat)]);
+					ellipse(x, y, pointEncode.size, pointEncode.size);
 				}	
 			}			
 		}
 	
 		if (animate) {
-			animateStart++;
+			//animateStart++;
+			animateStart += animateNum;
 			animateStart = animateStart % rowCount;
 		}
 	}
@@ -493,9 +454,9 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _encoding, _char
 			noLoop();		
 		} else {
 			frameRate(60);
-			// if (initDraw) {
-			// 	plotData(_encoding, false);
-			// }
+			if (initDraw) {
+				plotData(false);
+			}
 		}
 	
 		drawGrid();
@@ -506,7 +467,7 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _encoding, _char
 	}
 	
 	main.draw = function() {
-		plotData(_encoding, isAnimate);
+		plotData(isAnimate);
 		if (rectangles.length >= 1) {
 			drawRects("rgba(255, 255, 255, 1)")
 			drawRects(rectColor);			
