@@ -235,6 +235,7 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _chartTitle) {
 			rect(loadBar.x, loadBar.y, loadBar.width, loadBar.height);
 			textSize(8);
 			fill(loadBar.fill);
+			noStroke;
 			text("% data displayed", loadBar.x, loadBar.y - 5);
 		}
 		
