@@ -64,6 +64,17 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _chartTitle) {
 		]
 	};
 	
+	var loadBar = {
+		x: 0,
+		y: 0,
+		width: 0,
+		height: 0,
+		strokeWeight: 0.25,
+		stroke: "rgb(169, 169, 169)",
+		fill: "rgb(169, 169, 169)",
+		allLoaded: false
+	};
+	
 	// Set up focus rectangles. rectangles will be populated in setup loop using query string
 	// Will be converted into object with following properties:
 	//	{
@@ -212,6 +223,26 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _chartTitle) {
 		blendMode(BLEND);
 
 	}
+	
+	function drawLoadBar(percentDrawn) {
+		
+		rectMode(CORNER);
+		
+		if (percentDrawn === 0) {
+			noFill();
+			strokeWeight(loadBar.strokeWeight);
+			stroke(loadBar.stroke);
+			rect(loadBar.x, loadBar.y, loadBar.width, loadBar.height);
+			textSize(8);
+			fill(loadBar.fill);
+			text("% data displayed", loadBar.x, loadBar.y - 5);
+		}
+		
+		noStroke();
+		fill(loadBar.fill);
+		rect(loadBar.x, loadBar.y, loadBar.width * percentDrawn, loadBar.height);
+		
+	}
 
 	function drawLegend() {
 	
@@ -277,9 +308,19 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _chartTitle) {
 		}
 	
 		if (animate) {
-			//animateStart++;
 			animateStart += animateNum;
+			
+			if (animateStart >= rowCount) {
+				loadBar.allLoaded = true;
+			}
+			
 			animateStart = animateStart % rowCount;
+			console.log(animateStart);
+			
+			if (!loadBar.allLoaded) {
+				drawLoadBar(animateStart/rowCount);	
+			}
+			
 		}
 	}
 	
@@ -448,6 +489,11 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _chartTitle) {
 	
 		xLegend = plotX2 - gridWidth;
 		yLegend = plotY1 + Math.min(useAttr.length - 2, 3) * gridWidth;
+		
+		loadBar.x = xLegend;
+		loadBar.width = gridWidth;
+		loadBar.height = gridWidth/10;
+		loadBar.y = yLegend - gridWidth/10 - loadBar.height;
 	
 		//call noLoop unless doing animation
 		if (!isAnimate) {
@@ -457,6 +503,7 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _chartTitle) {
 			if (initDraw) {
 				plotData(false);
 			}
+			drawLoadBar(0);
 		}
 	
 		drawGrid();
