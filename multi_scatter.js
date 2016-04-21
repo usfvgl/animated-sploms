@@ -236,27 +236,28 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _chartTitle) {
 	function drawLoadBar(percentDrawn) {
 		
 		rectMode(CORNER);
+		blendMode(REPLACE);
+		strokeWeight(loadBar.strokeWeight);		
 		
-		if (percentDrawn === 0 && !loadBar.allLoaded) {
+		if (percentDrawn === 0) {
 			noFill();
-			strokeWeight(loadBar.strokeWeight);
 			stroke(loadBar.fill);
 			rect(loadBar.x, loadBar.y, loadBar.width, loadBar.height);
-			textSize(textSizes.loadBar);
-			fill(loadBar.fill);
-			noStroke;
-			text("% data animated", loadBar.x, loadBar.y - 5);
+			
+			if (!loadBar.allLoaded) {
+				textSize(textSizes.loadBar);
+				fill(loadBar.fill);
+				noStroke();	
+				text("% data animated", loadBar.x, loadBar.y - 5);				
+			}
+			
 		}
+
+		noStroke();
+		fill(loadBar.fill);
+		rect(loadBar.x, loadBar.y, loadBar.width * percentDrawn, loadBar.height);
 		
-		if (!loadBar.allLoaded) {
-			noStroke();
-			fill(loadBar.fill);
-			rect(loadBar.x, loadBar.y, loadBar.width * percentDrawn, loadBar.height);			
-		} else {
-			noStroke();
-			fill(loadBar.fill);
-			rect(loadBar.x, loadBar.y, loadBar.width * percentDrawn, loadBar.height);
-			strokeWeight(loadBar.strokeWeight);
+		if (loadBar.allLoaded) {
 			stroke(loadBar.stroke);
 			line(loadBar.x + loadBar.width * percentDrawn, loadBar.y, loadBar.x + loadBar.width * percentDrawn, loadBar.y + loadBar.height);
 		}
