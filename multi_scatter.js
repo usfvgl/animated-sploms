@@ -49,6 +49,15 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _chartTitle) {
 	var labelPad;
 	var plotX1, plotY1, plotX2, plotY2, xTitle, yTitle, xAxisLabelX, xAxisLabelY, yAxisLabelX, yAxisLabelY, xLegend, yLegend;
 	var gridX, gridY;
+	var textSizes = {
+		title: 24,
+		axisLabel: 8,
+		axisTitle: 10,
+		rect: 11,
+		loadBar: 10,
+		legendTitle: 16,
+		legendLabel: 14
+	};
 
 	var pointEncode = {
 		strokeWeight: 0.3,
@@ -107,7 +116,7 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _chartTitle) {
 	
 	function drawChartText() {
 		// draw title
-		textSize(24);
+		textSize(textSizes.title);
 		textAlign(CENTER, BOTTOM);
 		fill(0);
 		noStroke();
@@ -118,7 +127,7 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _chartTitle) {
 	function drawAxisLabels() {
 		fill(169, 169, 169);
 		stroke(169, 169, 169);
-		textSize(8);
+		textSize(textSizes.axisLabel);
 		strokeWeight(0.25);
 	
 		for (var count = 0; count < useAttr.length; count++) {
@@ -152,7 +161,7 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _chartTitle) {
 					// draw axis subtitle
 					if (i === 1) {
 						push();
-						textSize(10);
+						textSize(textSizes.axisTitle);
 						stroke(128, 128, 128);
 						text(attr[useAttr[count]], x, plotY1 - subtitleDist);
 						pop();
@@ -173,7 +182,7 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _chartTitle) {
 					// draw axis subtitle
 					if (i === 1) {
 						push();
-						textSize(10);
+						textSize(textSizes.axisTitle);
 						stroke(128, 128, 128);
 						rotate(-PI/2);
 						textAlign(CENTER, CENTER);
@@ -196,7 +205,7 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _chartTitle) {
 		blendMode(REPLACE);
 		stroke(strokeColor);
 		strokeWeight(rectStrokeWeight);		
-		textSize(11);
+		textSize(textSizes.rect);
 		rectMode(CORNER);
 		var count = 0;
 		
@@ -233,10 +242,10 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _chartTitle) {
 			strokeWeight(loadBar.strokeWeight);
 			stroke(loadBar.stroke);
 			rect(loadBar.x, loadBar.y, loadBar.width, loadBar.height);
-			textSize(8);
+			textSize(textSizes.loadBar);
 			fill(loadBar.fill);
 			noStroke;
-			text("% data displayed", loadBar.x, loadBar.y - 5);
+			text("% data animated", loadBar.x, loadBar.y - 5);
 		}
 		
 		noStroke();
@@ -259,14 +268,14 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _chartTitle) {
 		rect(xLegend, yLegend, gridWidth, gridWidth);
 	
 		//legend title
-		textSize(16);
+		textSize(textSizes.legendTitle);
 		textAlign(CENTER, BOTTOM);
 		fill(128, 128, 128);
 		noStroke();
 		text(category.name, xLegend + gridWidth/2, yLegend + padding + yBands/2);
 	
 		//legend key
-		textSize(14);
+		textSize(textSizes.legendLabel);
 		for (var i = 0; i < classes.length; i++) {
 			fill(pointEncode.colors[i]);
 			textAlign(LEFT, CENTER);
@@ -428,6 +437,9 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _chartTitle) {
 			gridWidth = gridWidth * scaleAmount;
 			pointEncode.size = pointEncode.size * scaleAmount;
 			pointEncode.strokeWeight = pointEncode.strokeWeight * scaleAmount;
+			for (var size in textSizes) {
+				textSizes[size] *= scaleAmount;
+			}
 		}
 		
 		createCanvas(gridWidth * (useAttr.length - 1) + 2 * majorPad, gridWidth * (useAttr.length - 1) + 2.5 * majorPad);
