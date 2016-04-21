@@ -78,8 +78,8 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _chartTitle) {
 		y: 0,
 		width: 0,
 		height: 0,
-		strokeWeight: 0.25,
-		stroke: "rgb(169, 169, 169)",
+		strokeWeight: 0.5,
+		stroke: "rgb(255, 255, 255)",
 		fill: "rgb(169, 169, 169)",
 		allLoaded: false
 	};
@@ -237,10 +237,10 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _chartTitle) {
 		
 		rectMode(CORNER);
 		
-		if (percentDrawn === 0) {
+		if (percentDrawn === 0 && !loadBar.allLoaded) {
 			noFill();
 			strokeWeight(loadBar.strokeWeight);
-			stroke(loadBar.stroke);
+			stroke(loadBar.fill);
 			rect(loadBar.x, loadBar.y, loadBar.width, loadBar.height);
 			textSize(textSizes.loadBar);
 			fill(loadBar.fill);
@@ -248,9 +248,18 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _chartTitle) {
 			text("% data animated", loadBar.x, loadBar.y - 5);
 		}
 		
-		noStroke();
-		fill(loadBar.fill);
-		rect(loadBar.x, loadBar.y, loadBar.width * percentDrawn, loadBar.height);
+		if (!loadBar.allLoaded) {
+			noStroke();
+			fill(loadBar.fill);
+			rect(loadBar.x, loadBar.y, loadBar.width * percentDrawn, loadBar.height);			
+		} else {
+			noStroke();
+			fill(loadBar.fill);
+			rect(loadBar.x, loadBar.y, loadBar.width * percentDrawn, loadBar.height);
+			strokeWeight(loadBar.strokeWeight);
+			stroke(loadBar.stroke);
+			line(loadBar.x + loadBar.width * percentDrawn, loadBar.y, loadBar.x + loadBar.width * percentDrawn, loadBar.y + loadBar.height);
+		}
 		
 	}
 
@@ -325,12 +334,7 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _chartTitle) {
 			}
 			
 			animateStart = animateStart % rowCount;
-			console.log(animateStart);
-			
-			if (!loadBar.allLoaded) {
-				drawLoadBar(animateStart/rowCount);	
-			}
-			
+			drawLoadBar(animateStart/rowCount);	
 		}
 	}
 	
