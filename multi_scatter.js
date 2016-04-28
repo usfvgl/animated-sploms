@@ -235,29 +235,34 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _chartTitle) {
 	
 	function drawLoadBar(percentDrawn) {
 		
+		// draw rectangle box
 		rectMode(CORNER);
 		blendMode(REPLACE);
-		strokeWeight(loadBar.strokeWeight);		
-		
-		if (percentDrawn === 0) {
-			noFill();
-			stroke(loadBar.fill);
-			rect(loadBar.x, loadBar.y, loadBar.width, loadBar.height);
-			
-			if (!loadBar.allLoaded) {
-				textSize(textSizes.loadBar);
-				fill(loadBar.fill);
-				noStroke();	
-				text("% data animated", loadBar.x, loadBar.y - 5);				
-			}
-			
-		}
+		strokeWeight(loadBar.strokeWeight);
+		stroke(loadBar.fill);
+		noFill();
+		rect(loadBar.x, loadBar.y, loadBar.width, loadBar.height);
 
+		// draw text
+		fill(255, 255, 255);
+		stroke(255, 255, 255);
+		rect(loadBar.x, loadBar.y - 30, loadBar.width, 30 - loadBar.strokeWeight);
+		textSize(textSizes.loadBar);
+		fill(loadBar.fill);
+		noStroke();
+		textAlign(LEFT, BOTTOM);
+		if (initDraw || loadBar.allLoaded) {
+			text("% data animated", loadBar.x, loadBar.y - 5);
+		} else {
+			text("% data displayed", loadBar.x, loadBar.y - 5);
+		}
+		
 		noStroke();
 		fill(loadBar.fill);
 		rect(loadBar.x, loadBar.y, loadBar.width * percentDrawn, loadBar.height);
 		
-		if (loadBar.allLoaded) {
+		// draw line when all data are loaded (including when initDraw is true)
+		if (loadBar.allLoaded || initDraw) {
 			stroke(loadBar.stroke);
 			line(loadBar.x + loadBar.width * percentDrawn, loadBar.y, loadBar.x + loadBar.width * percentDrawn, loadBar.y + loadBar.height);
 		}
@@ -518,10 +523,14 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _chartTitle) {
 			noLoop();		
 		} else {
 			frameRate(60);
+			
 			if (initDraw) {
 				plotData(false);
+				drawLoadBar(1);
+			} else {
+				drawLoadBar(0);				
 			}
-			drawLoadBar(0);
+
 		}
 	
 		drawGrid();
