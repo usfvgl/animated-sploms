@@ -58,6 +58,8 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _chartTitle) {
 		legendTitle: 16,
 		legendLabel: 14
 	};
+	var canvasWidth;
+	var canvasHeight;
 
 	var pointEncode = {
 		strokeWeight: 0.3,
@@ -306,6 +308,7 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _chartTitle) {
 		fill(0);
 		var numData = 0;
 		var startIndex = 0;
+		var buffer;
 	
 		//determine number of rows to use based on whether we're animating
 		if (animate) {
@@ -313,6 +316,7 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _chartTitle) {
 			startIndex = animateStart;
 		} else {
 			numData = rowCount;
+			buffer = createGraphics(canvasWidth, canvasHeight);
 		}
 
 		for (var data = startIndex; data < (startIndex + numData); data++) {
@@ -324,10 +328,18 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _chartTitle) {
 				for (var col = 0; col < (gridX.length - row); col++) {
 					var attrX = useAttr[useAttr.length - col - 1];
 					var x = map(source.getNum(adjusted, attrX), minData[attrX], maxData[attrX], gridX[col] + labelPad, gridX[col] + gridWidth - labelPad);			
-					strokeWeight(pointEncode.strokeWeight);
-					stroke(255);
-					fill(pointEncode.colors[classes.indexOf(cat)]);
-					ellipse(x, y, pointEncode.size, pointEncode.size);
+					
+					if (animate) {
+						strokeWeight(pointEncode.strokeWeight);
+						stroke(255);
+						fill(pointEncode.colors[classes.indexOf(cat)]);						
+						ellipse(x, y, pointEncode.size, pointEncode.size);
+					} else {
+						buffer.strokeWeight(pointEncode.strokeWeight);
+						buffer.stroke(255);
+						buffer.fill(pointEncode.colors[classes.indexOf(cat)]);						
+						buffer.ellipse(x/2, y/2, pointEncode.size/2, pointEncode.size/2);
+					}
 				}	
 			}			
 		}
@@ -341,6 +353,8 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _chartTitle) {
 			
 			animateStart = animateStart % rowCount;
 			drawLoadBar(animateStart/rowCount);	
+		} else {
+			image(buffer, 0, 0);
 		}
 	}
 	
@@ -452,7 +466,9 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _chartTitle) {
 			}
 		}
 		
-		createCanvas(gridWidth * (useAttr.length - 1) + 2 * majorPad, gridWidth * (useAttr.length - 1) + 2.5 * majorPad);
+		canvasWidth = gridWidth * (useAttr.length - 1) + 2 * majorPad;
+		canvasHeight = gridWidth * (useAttr.length - 1) + 2.5 * majorPad;
+		createCanvas(canvasWidth, canvasHeight);
 		background(255);
 		rowCount = source.getRowCount();
 	
@@ -537,6 +553,13 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _chartTitle) {
 		drawChartText();
 		drawLegend();
 		drawAxisLabels();
+		
+		var blah = createGraphics(canvasWidth, canvasHeight);
+		// blah.background("yellow");
+		// blah.fill(100);
+		// blah.rect(0, 0, 50, 50);
+		// blah.rect(50, 50, 50, 50);
+		// image(blah, 0, 0);
 		
 	}
 	
