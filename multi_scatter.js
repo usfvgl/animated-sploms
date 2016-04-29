@@ -316,7 +316,8 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _chartTitle) {
 			startIndex = animateStart;
 		} else {
 			numData = rowCount;
-			buffer = createGraphics(canvasWidth, canvasHeight);
+			var disp = displayDensity();
+			buffer = createGraphics(canvasWidth * disp, canvasHeight * disp);
 		}
 
 		for (var data = startIndex; data < (startIndex + numData); data++) {
@@ -338,7 +339,7 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _chartTitle) {
 						buffer.strokeWeight(pointEncode.strokeWeight);
 						buffer.stroke(255);
 						buffer.fill(pointEncode.colors[classes.indexOf(cat)]);						
-						buffer.ellipse(x/2, y/2, pointEncode.size/2, pointEncode.size/2);
+						buffer.ellipse(x, y, pointEncode.size, pointEncode.size);
 					}
 				}	
 			}			
@@ -354,7 +355,7 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _chartTitle) {
 			animateStart = animateStart % rowCount;
 			drawLoadBar(animateStart/rowCount);	
 		} else {
-			image(buffer, 0, 0);
+			image(buffer, 0, 0, canvasWidth * disp, canvasHeight * disp, 0, 0, canvasWidth, canvasHeight);
 		}
 	}
 	
