@@ -60,6 +60,15 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _chartTitle) {
 	};
 	var canvasWidth;
 	var canvasHeight;
+	
+	// legend-specific data for determining if a specific value of the encoding attr was clicked
+	// values calculated in drawLegend()
+	var keySize;
+	var keyCenters = [];
+	
+	// variables tracking if user has brushed the data by clicking on a key in the legend
+	var brushed = false;
+	var selected = "";
 
 	var pointEncode = {
 		strokeWeight: 0.3,
@@ -275,7 +284,7 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _chartTitle) {
 	
 		var padding = gridWidth/6;
 		var yBands = (gridWidth - padding * 2)/(classes.length + 1);
-		var keySize = yBands * 0.6;
+		keySize = yBands * 0.6;
 	
 		//draw rectangle around legend box
 		rectMode(CORNER);
@@ -298,7 +307,10 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _chartTitle) {
 			textAlign(LEFT, CENTER);
 			text(classes[i], xLegend + padding + keySize, yLegend + padding + yBands * (i + 1) + yBands/2);
 			rectMode(CENTER);
-			rect(xLegend + padding, yLegend + padding + yBands * (i + 1) + yBands/2, keySize, keySize);
+			var centerX = xLegend + padding;
+			var centerY = yLegend + padding + yBands * (i + 1) + yBands/2;
+			rect(centerX, centerY, keySize, keySize);
+			keyCenters[i] = [centerX, centerY];
 		}
 	
 	}
@@ -569,6 +581,25 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _chartTitle) {
 		if (rectangles.length >= 1) {
 			drawRects("rgba(255, 255, 255, 1)")
 			drawRects(rectColor);			
+		}
+	}
+	
+	main.mousePressed = function() {
+		if (mouseX >= (keyCenters[0][0] - keySize/2) && mouseX <= (keyCenters[0][0] + keySize/2)) {
+			for (var i = 0; i < classes.length; i++) {
+				if (mouseY >= (keyCenters[i][1] - keySize/2) && mouseY <= (keyCenters[i][1] + keySize/2)) {
+					if (!brushed || selected !== classes[i]) {
+						brushed = true;
+						selected = classes[i];
+						console.log(classes[i] + " selected");
+					} else {
+						console.log("de-selected " + classes[i]);
+						brushed = false;
+						selected = "";
+					}
+					break;
+				}
+			}
 		}
 	}
 
