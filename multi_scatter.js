@@ -340,17 +340,21 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _chartTitle) {
 				var y = map(source.getNum(adjusted, attrY), minData[attrY], maxData[attrY], gridY[row] + gridWidth - labelPad, gridY[row] + labelPad);					
 				for (var col = 0; col < (gridX.length - row); col++) {
 					var attrX = useAttr[useAttr.length - col - 1];
-					var x = map(source.getNum(adjusted, attrX), minData[attrX], maxData[attrX], gridX[col] + labelPad, gridX[col] + gridWidth - labelPad);			
+					var x = map(source.getNum(adjusted, attrX), minData[attrX], maxData[attrX], gridX[col] + labelPad, gridX[col] + gridWidth - labelPad);
+					var pointFill = pointEncode.colors[classes.indexOf(cat)];
+					if (brushed && cat !== selected) {
+						pointFill = "rgb(169, 169, 169)";
+					}
 					
 					if (animate) {
 						strokeWeight(pointEncode.strokeWeight);
 						stroke(255);
-						fill(pointEncode.colors[classes.indexOf(cat)]);						
+						fill(pointFill);
 						ellipse(x, y, pointEncode.size, pointEncode.size);
 					} else {
 						buffer.strokeWeight(pointEncode.strokeWeight);
 						buffer.stroke(255);
-						buffer.fill(pointEncode.colors[classes.indexOf(cat)]);						
+						buffer.fill(pointFill);						
 						buffer.ellipse(x, y, pointEncode.size, pointEncode.size);
 					}
 				}	
@@ -417,6 +421,18 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _chartTitle) {
 			});
 		}
 		
+	}
+	
+	// wipes canvase and redraw after brushing enabled/disenabled
+	function brushRedraw() {
+		background(255, 255, 255);
+		animateStart = 0;
+		loadBar.allLoaded = false;
+		drawLoadBar(0);
+		drawGrid();
+		drawChartText();
+		drawLegend();
+		drawAxisLabels();
 	}
 	
 	// p5 functions
@@ -567,13 +583,6 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _chartTitle) {
 		drawLegend();
 		drawAxisLabels();
 		
-		var blah = createGraphics(canvasWidth, canvasHeight);
-		// blah.background("yellow");
-		// blah.fill(100);
-		// blah.rect(0, 0, 50, 50);
-		// blah.rect(50, 50, 50, 50);
-		// image(blah, 0, 0);
-		
 	}
 	
 	main.draw = function() {
@@ -597,6 +606,7 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _chartTitle) {
 						brushed = false;
 						selected = "";
 					}
+					brushRedraw();
 					break;
 				}
 			}
