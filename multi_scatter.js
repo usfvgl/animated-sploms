@@ -69,6 +69,7 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _chartTitle) {
 	// variables tracking if user has brushed the data by clicking on a key in the legend
 	var brushed = false;
 	var selected = "";
+	var brushedColor = "rgb(217, 217, 217)";
 
 	var pointEncode = {
 		strokeWeight: 0.3,
@@ -303,9 +304,15 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _chartTitle) {
 		//legend key
 		textSize(textSizes.legendLabel);
 		for (var i = 0; i < classes.length; i++) {
-			fill(pointEncode.colors[i]);
+			var cat = classes[i];
+			// Change color to grey for brushed out categories if brushing has been enabled
+			if (brushed && cat !== selected) {
+				fill(brushedColor);
+			} else {
+				fill(pointEncode.colors[i]);				
+			}
 			textAlign(LEFT, CENTER);
-			text(classes[i], xLegend + padding + keySize, yLegend + padding + yBands * (i + 1) + yBands/2);
+			text(cat, xLegend + padding + keySize, yLegend + padding + yBands * (i + 1) + yBands/2);
 			rectMode(CENTER);
 			var centerX = xLegend + padding;
 			var centerY = yLegend + padding + yBands * (i + 1) + yBands/2;
@@ -342,8 +349,9 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _chartTitle) {
 					var attrX = useAttr[useAttr.length - col - 1];
 					var x = map(source.getNum(adjusted, attrX), minData[attrX], maxData[attrX], gridX[col] + labelPad, gridX[col] + gridWidth - labelPad);
 					var pointFill = pointEncode.colors[classes.indexOf(cat)];
+					// Change color to grey for brushed out categories if brushing has been enabled
 					if (brushed && cat !== selected) {
-						pointFill = "rgb(169, 169, 169)";
+						pointFill = brushedColor;
 					}
 					
 					if (animate) {
