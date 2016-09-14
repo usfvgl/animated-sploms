@@ -287,7 +287,7 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _chartTitle) {
 	
 		//draw rectangle around legend box
 		rectMode(CORNER);
-		noFill();
+		fill(255);
 		strokeWeight(.5);
 		stroke(169, 169, 169);
 		rect(xLegend, yLegend, gridWidth, gridWidth);
