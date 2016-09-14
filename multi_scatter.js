@@ -71,12 +71,14 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _chartTitle) {
 	var selected = "";
 	var brushedColor = "rgb(217, 217, 217)";
 
+	// encoding for plotted points
 	var pointEncode = {
 		strokeWeight: 0.3,
 		size: 4.5,
 		colors: ['#8dd3c7','#fb8072','#80b1d3','#fdb462','#b3de69','#ffffb3','#bebada']
 	};
 	
+	// stylistic attributes for %-loaded bar
 	var loadBar = {
 		x: 0,
 		y: 0,
@@ -101,6 +103,10 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _chartTitle) {
 	var rectangles = [];
 	var rectColor = "rgba(89, 89, 89, 1)";	
 	var rectStrokeWeight = 1;
+	
+	// Offscreen buffer and relevant info
+	var buffer;
+	var disp;		// Display density
 	
 	// Helper function section
 	
@@ -319,7 +325,6 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _chartTitle) {
 		fill(0);
 		var numData = 0;
 		var startIndex = 0;
-		var buffer;
 	
 		//determine number of rows to use based on whether we're animating
 		if (animate) {
@@ -327,8 +332,6 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _chartTitle) {
 			startIndex = animateStart;
 		} else {
 			numData = rowCount;
-			var disp = displayDensity();
-			buffer = createGraphics(canvasWidth * disp, canvasHeight * disp);
 		}
 
 		for (var data = startIndex; data < (startIndex + numData); data++) {
@@ -340,22 +343,21 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _chartTitle) {
 				for (var col = 0; col < (gridX.length - row); col++) {
 					var attrX = useAttr[useAttr.length - col - 1];
 					var x = map(source.getNum(adjusted, attrX), minData[attrX], maxData[attrX], gridX[col] + labelPad, gridX[col] + gridWidth - labelPad);
+					// Draw point with color encoding to buffer first
 					var pointFill = pointEncode.colors[classes.indexOf(cat)];
-					// Change color to grey for brushed out categories if brushing has been enabled
-					if (brushed && cat !== selected) {
-						pointFill = brushedColor;
-					}
-					
+					buffer.strokeWeight(pointEncode.strokeWeight);
+					buffer.stroke(255);
+					buffer.fill(pointFill);						
+					buffer.ellipse(x, y, pointEncode.size, pointEncode.size);
 					if (animate) {
+						// Change color to grey for brushed out categories if brushing has been enabled
+						if (brushed && cat !== selected) {
+							pointFill = brushedColor;
+						}
 						strokeWeight(pointEncode.strokeWeight);
 						stroke(255);
 						fill(pointFill);
 						ellipse(x, y, pointEncode.size, pointEncode.size);
-					} else {
-						buffer.strokeWeight(pointEncode.strokeWeight);
-						buffer.stroke(255);
-						buffer.fill(pointFill);						
-						buffer.ellipse(x, y, pointEncode.size, pointEncode.size);
 					}
 				}	
 			}			
@@ -363,11 +365,9 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _chartTitle) {
 	
 		if (animate) {
 			animateStart += animateNum;
-			
 			if (animateStart >= rowCount) {
 				loadBar.allLoaded = true;
 			}
-			
 			animateStart = animateStart % rowCount;
 			drawLoadBar(animateStart/rowCount);	
 		} else {
@@ -424,29 +424,31 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _chartTitle) {
 	}
 	
 	function brushPlotArea() {
-		if (brushed) {
-			var d = pixelDensity();
-			var numPixels = 4 * (displayWidth * d) * (displayHeight * d);
-			loadPixels();
-			for (var i = 0; i < numPixels; i += 4) {
-				if (pixels[i] != 255) {
-					pixels[i] = 217;
-					pixels[i + 1] = 217;
-					pixels[i + 2] = 217;
-				}
+		var numPixels = 4 * (displayWidth * disp) * (displayHeight * disp);
+		loadPixels();
+		for (var i = 0; i < numPixels; i += 4) {
+			if (pixels[i] != 255) {
+				pixels[i] = 217;
+				pixels[i + 1] = 217;
+				pixels[i + 2] = 217;
 			}
-			updatePixels();
 		}
+		updatePixels();
 	}
 	
 	// wipes canvase and redraw after brushing enabled/disenabled
 	function brushRedraw() {
-		brushPlotArea();
-		drawLoadBar(animateStart/rowCount);	
-		drawGrid();
-		drawChartText();
-		drawLegend();
-		drawAxisLabels();
+		if (brushed) {
+			brushPlotArea();			
+			drawLoadBar(animateStart/rowCount);	
+			drawGrid();
+			drawChartText();
+			drawLegend();
+			drawAxisLabels();
+		} else {
+			image(buffer, 0, 0, canvasWidth * disp, canvasHeight * disp, 0, 0, canvasWidth, canvasHeight);
+			drawLegend();
+		}
 	}
 	
 	// p5 functions
@@ -597,6 +599,9 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _chartTitle) {
 		drawLegend();
 		drawAxisLabels();
 		
+		// Setting up offscreen buffer
+		disp = displayDensity();
+		buffer = createGraphics(canvasWidth * disp, canvasHeight * disp);
 	}
 	
 	main.draw = function() {
