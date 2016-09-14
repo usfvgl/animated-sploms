@@ -74,15 +74,7 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _chartTitle) {
 	var pointEncode = {
 		strokeWeight: 0.3,
 		size: 4.5,
-		colors: [
-		"#EDC34B",	// yellow
-		"#EE67AC",	// pink
-		"#5DBA9E", // teal
-		"#9D99C9", // purple
-		"#929292",	// gray
-		"#92C05F",	// green
-		"#E48D4B"	// orange
-		]
+		colors: ['#8dd3c7','#fb8072','#80b1d3','#fdb462','#b3de69','#ffffb3','#bebada']
 	};
 	
 	var loadBar = {
@@ -431,12 +423,26 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _chartTitle) {
 		
 	}
 	
+	function brushPlotArea() {
+		if (brushed) {
+			var d = pixelDensity();
+			var numPixels = 4 * (displayWidth * d) * (displayHeight * d);
+			loadPixels();
+			for (var i = 0; i < numPixels; i += 4) {
+				if (pixels[i] != 255) {
+					pixels[i] = 217;
+					pixels[i + 1] = 217;
+					pixels[i + 2] = 217;
+				}
+			}
+			updatePixels();
+		}
+	}
+	
 	// wipes canvase and redraw after brushing enabled/disenabled
 	function brushRedraw() {
-		background(255, 255, 255);
-		animateStart = 0;
-		loadBar.allLoaded = false;
-		drawLoadBar(0);
+		brushPlotArea();
+		drawLoadBar(animateStart/rowCount);	
 		drawGrid();
 		drawChartText();
 		drawLegend();
