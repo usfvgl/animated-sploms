@@ -75,7 +75,7 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _chartTitle) {
 	var pointEncode = {
 		strokeWeight: 0.3,
 		size: 4.5,
-		colors: ['#8dd3c7','#fb8072','#80b1d3','#fdb462','#b3de69','#ffffb3','#bebada']
+		colors: ['#8dd3c7','#fb8072','#80b1d3','#fdb462','#bc80bd','#b3de69','#fccde5','#d9d9d9','#ffffb3','#bebada']
 	};
 	
 	// stylistic attributes for %-loaded bar
@@ -105,7 +105,8 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _chartTitle) {
 	var rectStrokeWeight = 1;
 	
 	// Offscreen buffer and relevant info
-	var buffer;
+	var colorBuffer;
+	var greyBuffer;
 	var disp;		// Display density
 	
 	// Helper function section
@@ -343,14 +344,20 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _chartTitle) {
 				for (var col = 0; col < (gridX.length - row); col++) {
 					var attrX = useAttr[useAttr.length - col - 1];
 					var x = map(source.getNum(adjusted, attrX), minData[attrX], maxData[attrX], gridX[col] + labelPad, gridX[col] + gridWidth - labelPad);
-					// Draw point with color encoding to buffer first
-					var pointFill = pointEncode.colors[classes.indexOf(cat)];
-					buffer.strokeWeight(pointEncode.strokeWeight);
-					buffer.stroke(255);
-					buffer.fill(pointFill);						
-					buffer.ellipse(x, y, pointEncode.size, pointEncode.size);
+					// Draw point with grey encoding to grey buffer first
+					var pointFill = brushedColor;
+					greyBuffer.strokeWeight(pointEncode.strokeWeight);
+					greyBuffer.stroke(255);
+					greyBuffer.fill(pointFill);						
+					greyBuffer.ellipse(x, y, pointEncode.size, pointEncode.size);
+					// Then draw to color buffer
+					pointFill = pointEncode.colors[classes.indexOf(cat)];
+					colorBuffer.strokeWeight(pointEncode.strokeWeight);
+					colorBuffer.stroke(255);
+					colorBuffer.fill(pointFill);						
+					colorBuffer.ellipse(x, y, pointEncode.size, pointEncode.size);
 					if (animate) {
-						// Change color to grey for brushed out categories if brushing has been enabled
+						// Change color back to grey for brushed out categories if brushing has been enabled
 						if (brushed && cat !== selected) {
 							pointFill = brushedColor;
 						}
@@ -371,7 +378,7 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _chartTitle) {
 			animateStart = animateStart % rowCount;
 			drawLoadBar(animateStart/rowCount);	
 		} else {
-			image(buffer, 0, 0, canvasWidth * disp, canvasHeight * disp, 0, 0, canvasWidth, canvasHeight);
+			image(colorBuffer, 0, 0, canvasWidth * disp, canvasHeight * disp, 0, 0, canvasWidth, canvasHeight);
 		}
 	}
 	
@@ -423,31 +430,12 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _chartTitle) {
 		
 	}
 	
-	function brushPlotArea() {
-		var numPixels = 4 * (displayWidth * disp) * (displayHeight * disp);
-		loadPixels();
-		for (var i = 0; i < numPixels; i += 4) {
-			if (pixels[i] != 255) {
-				pixels[i] = 217;
-				pixels[i + 1] = 217;
-				pixels[i + 2] = 217;
-			}
-		}
-		updatePixels();
-	}
-	
 	// wipes canvase and redraw after brushing enabled/disenabled
 	function brushRedraw() {
 		if (brushed) {
-			brushPlotArea();			
-			drawLoadBar(animateStart/rowCount);	
-			drawGrid();
-			drawChartText();
-			drawLegend();
-			drawAxisLabels();
+			image(greyBuffer, 0, 0, canvasWidth * disp, canvasHeight * disp, 0, 0, canvasWidth, canvasHeight);
 		} else {
-			image(buffer, 0, 0, canvasWidth * disp, canvasHeight * disp, 0, 0, canvasWidth, canvasHeight);
-			drawLegend();
+			image(colorBuffer, 0, 0, canvasWidth * disp, canvasHeight * disp, 0, 0, canvasWidth, canvasHeight);
 		}
 	}
 	
@@ -599,9 +587,10 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _chartTitle) {
 		drawLegend();
 		drawAxisLabels();
 		
-		// Setting up offscreen buffer
+		// Setting up offscreen buffers
 		disp = displayDensity();
-		buffer = createGraphics(canvasWidth * disp, canvasHeight * disp);
+		colorBuffer = createGraphics(canvasWidth * disp, canvasHeight * disp);
+		greyBuffer = createGraphics(canvasWidth * disp, canvasHeight * disp);
 	}
 	
 	main.draw = function() {
