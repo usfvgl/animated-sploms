@@ -105,8 +105,10 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _chartTitle) {
 	var rectStrokeWeight = 1;
 	
 	// Offscreen buffer and relevant info
-	var colorBuffer;
-	var greyBuffer;
+	var buffers = {
+		colorBuffer: null,
+		greyBuffer: null		
+	};
 	var disp;		// Display density
 	
 	// Helper function section
@@ -358,17 +360,19 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _chartTitle) {
 				for (var col = 0; col < (gridX.length - row); col++) {
 					var attrX = useAttr[useAttr.length - col - 1];
 					var x = map(source.getNum(adjusted, attrX), minData[attrX], maxData[attrX], gridX[col] + labelPad, gridX[col] + gridWidth - labelPad);
-					// Draw point with grey encoding to grey buffer first
-					var pointFill = brushedColor;
-					drawPoint(x, y, pointFill, greyBuffer);
-					// Then draw to color buffer
-					pointFill = pointEncode.colors[classes.indexOf(cat)];
-					drawPoint(x, y, pointFill, colorBuffer);
+					// Draw point to color buffer first
+					var pointFill = pointEncode.colors[classes.indexOf(cat)];
+					drawPoint(x, y, pointFill, buffers.colorBuffer);
 					if (animate) {
-						// Change color back to grey for brushed out categories if brushing has been enabled
+						// Draw grey point to grey buffer
+						drawPoint(x, y, brushedColor, buffers.greyBuffer);
+						// Draw color point to class-specific buffer
+						drawPoint(x, y, pointFill, buffers[cat]);
+						// Change color to grey for brushed out categories if brushing has been enabled
 						if (brushed && cat !== selected) {
 							pointFill = brushedColor;
 						}
+						// Draw on screen live
 						drawPoint(x, y, pointFill);
 					}
 				}	
@@ -383,7 +387,7 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _chartTitle) {
 			animateStart = animateStart % rowCount;
 			drawLoadBar(animateStart/rowCount);	
 		} else {
-			image(colorBuffer, 0, 0, canvasWidth * disp, canvasHeight * disp, 0, 0, canvasWidth, canvasHeight);
+			image(buffers.colorBuffer, 0, 0, canvasWidth * disp, canvasHeight * disp, 0, 0, canvasWidth, canvasHeight);
 		}
 	}
 	
@@ -438,9 +442,10 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _chartTitle) {
 	// wipes canvase and redraw after brushing enabled/disenabled
 	function brushRedraw() {
 		if (brushed) {
-			image(greyBuffer, 0, 0, canvasWidth * disp, canvasHeight * disp, 0, 0, canvasWidth, canvasHeight);
+			image(buffers.greyBuffer, 0, 0, canvasWidth * disp, canvasHeight * disp, 0, 0, canvasWidth, canvasHeight);
+			image(buffers[selected], 0, 0, canvasWidth * disp, canvasHeight * disp, 0, 0, canvasWidth, canvasHeight);
 		} else {
-			image(colorBuffer, 0, 0, canvasWidth * disp, canvasHeight * disp, 0, 0, canvasWidth, canvasHeight);
+			image(buffers.colorBuffer, 0, 0, canvasWidth * disp, canvasHeight * disp, 0, 0, canvasWidth, canvasHeight);
 		}
 	}
 	
@@ -594,8 +599,15 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _chartTitle) {
 		
 		// Setting up offscreen buffers
 		disp = displayDensity();
-		colorBuffer = createGraphics(canvasWidth * disp, canvasHeight * disp);
-		greyBuffer = createGraphics(canvasWidth * disp, canvasHeight * disp);
+		buffers.colorBuffer = createGraphics(canvasWidth * disp, canvasHeight * disp);
+		if (isAnimate) {
+			buffers.greyBuffer = createGraphics(canvasWidth * disp, canvasHeight * disp);
+			// Class-specific buffers
+			for (var i = 0; i < classes.length; i++) {
+				var cat = classes[i];
+				buffers[cat] = createGraphics(canvasWidth * disp, canvasHeight * disp);
+			}
+		}
 	}
 	
 	main.draw = function() {
