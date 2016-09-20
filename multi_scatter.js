@@ -321,6 +321,20 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _chartTitle) {
 	
 	}
 	
+	function drawPoint(x, y, pointFill, buffer) {
+		if (buffer === undefined) {
+			strokeWeight(pointEncode.strokeWeight);
+			stroke(255);
+			fill(pointFill);
+			ellipse(x, y, pointEncode.size, pointEncode.size);
+		} else {
+			buffer.strokeWeight(pointEncode.strokeWeight);
+			buffer.stroke(255);
+			buffer.fill(pointFill);						
+			buffer.ellipse(x, y, pointEncode.size, pointEncode.size);
+		}
+	}
+	
 	function plotData(animate) {
 		
 		fill(0);
@@ -346,25 +360,16 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _chartTitle) {
 					var x = map(source.getNum(adjusted, attrX), minData[attrX], maxData[attrX], gridX[col] + labelPad, gridX[col] + gridWidth - labelPad);
 					// Draw point with grey encoding to grey buffer first
 					var pointFill = brushedColor;
-					greyBuffer.strokeWeight(pointEncode.strokeWeight);
-					greyBuffer.stroke(255);
-					greyBuffer.fill(pointFill);						
-					greyBuffer.ellipse(x, y, pointEncode.size, pointEncode.size);
+					drawPoint(x, y, pointFill, greyBuffer);
 					// Then draw to color buffer
 					pointFill = pointEncode.colors[classes.indexOf(cat)];
-					colorBuffer.strokeWeight(pointEncode.strokeWeight);
-					colorBuffer.stroke(255);
-					colorBuffer.fill(pointFill);						
-					colorBuffer.ellipse(x, y, pointEncode.size, pointEncode.size);
+					drawPoint(x, y, pointFill, colorBuffer);
 					if (animate) {
 						// Change color back to grey for brushed out categories if brushing has been enabled
 						if (brushed && cat !== selected) {
 							pointFill = brushedColor;
 						}
-						strokeWeight(pointEncode.strokeWeight);
-						stroke(255);
-						fill(pointFill);
-						ellipse(x, y, pointEncode.size, pointEncode.size);
+						drawPoint(x, y, pointFill);
 					}
 				}	
 			}			
