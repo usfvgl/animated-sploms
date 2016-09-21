@@ -323,6 +323,9 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _chartTitle) {
 	
 	}
 	
+	// Draw a point with specified fill at specified location
+	// If buffer is provided, point will be drawn to buffer
+	// Otherwise, point will be drawn on-screen
 	function drawPoint(x, y, pointFill, buffer) {
 		if (buffer === undefined) {
 			strokeWeight(pointEncode.strokeWeight);
@@ -439,7 +442,7 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _chartTitle) {
 		
 	}
 	
-	// wipes canvase and redraw after brushing enabled/disenabled
+	// Loads appropriate buffers after brushing enabled/disenabled
 	function brushRedraw() {
 		if (brushed) {
 			image(buffers.greyBuffer, 0, 0, canvasWidth * disp, canvasHeight * disp, 0, 0, canvasWidth, canvasHeight);
