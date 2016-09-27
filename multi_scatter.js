@@ -56,7 +56,8 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _chartTitle) {
 		rect: 11,
 		loadBar: 10,
 		legendTitle: 16,
-		legendLabel: 14
+		legendLabel: 14,
+		pauseButton: 14
 	};
 	var canvasWidth;
 	var canvasHeight;
@@ -89,6 +90,19 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _chartTitle) {
 		fill: "rgb(169, 169, 169)",
 		allLoaded: false
 	};
+	
+	// stylistic attributes for pause/animate button
+	var pauseButton = {
+		x: 0,
+		y: 0,
+		width: 0,
+		height: 0,
+		stroke: "rgb(255, 255, 255)",
+		fill: "rgb(169, 169, 169)"
+	}
+	
+	// variable tracking if user has paused the animation
+	var paused = false;
 	
 	// Set up focus rectangles. rectangles will be populated in setup loop using query string
 	// Will be converted into object with following properties:
@@ -246,6 +260,32 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _chartTitle) {
 
 	}
 	
+	function drawPauseButton() {
+
+		// clear canvas
+		fill(255, 255, 255);
+		stroke(255, 255, 255);
+		rect(pauseButton.x, pauseButton.y, pauseButton.width, pauseButton.height);
+
+		// draw button
+		fill(pauseButton.fill);
+		stroke(pauseButton.stroke);
+		rect(pauseButton.x, pauseButton.y, pauseButton.width, pauseButton.height, 8);
+		
+		//draw text
+		var buttonText;
+		fill(pauseButton.stroke);
+		noStroke();
+		textAlign(CENTER, CENTER);
+		if (paused) {
+			buttonText = "animate";
+		} else {
+			buttonText = "pause";
+		}
+		textSize(textSizes.pauseButton);
+		text(buttonText, pauseButton.x + pauseButton.width/2, pauseButton.y + pauseButton.height/2 - 0.3);
+	}
+	
 	function drawLoadBar(percentDrawn) {
 		
 		// draw rectangle box
@@ -259,7 +299,7 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _chartTitle) {
 		// draw text
 		fill(255, 255, 255);
 		stroke(255, 255, 255);
-		rect(loadBar.x, loadBar.y - 30, loadBar.width, 30 - loadBar.strokeWeight);
+		rect(loadBar.x, loadBar.y - 20, loadBar.width, 20 - loadBar.strokeWeight);
 		textSize(textSizes.loadBar);
 		fill(loadBar.fill);
 		noStroke();
@@ -579,6 +619,11 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _chartTitle) {
 		loadBar.width = gridWidth;
 		loadBar.height = gridWidth/10;
 		loadBar.y = yLegend - gridWidth/10 - loadBar.height;
+		
+		pauseButton.x = xLegend;
+		pauseButton.width = gridWidth/3 * 2;
+		pauseButton.height = gridWidth/6;
+		pauseButton.y = loadBar.y - pauseButton.height - 30;
 	
 		//call noLoop unless doing animation
 		if (!isAnimate) {
@@ -592,6 +637,8 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _chartTitle) {
 			} else {
 				drawLoadBar(0);				
 			}
+			
+			drawPauseButton();
 
 		}
 	
@@ -622,6 +669,8 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _chartTitle) {
 	}
 	
 	main.mousePressed = function() {
+		
+		// Check if user clicked on legend for brushing
 		if (mouseX >= (keyCenters[0][0] - keySize/2) && mouseX <= (keyCenters[0][0] + keySize/2)) {
 			for (var i = 0; i < classes.length; i++) {
 				if (mouseY >= (keyCenters[i][1] - keySize/2) && mouseY <= (keyCenters[i][1] + keySize/2)) {
@@ -638,6 +687,18 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _chartTitle) {
 					break;
 				}
 			}
+		}
+		
+		// Check if user clicked on pause/animate button
+		if (mouseX >= pauseButton.x && mouseX <= (pauseButton.x + pauseButton.width) 
+			&& mouseY >= pauseButton.y && mouseY <= (pauseButton.y + pauseButton.height)) {
+				paused = !paused;
+				drawPauseButton();
+				if (paused) {
+					noLoop();
+				} else {
+					loop();
+				}
 		}
 	}
 
