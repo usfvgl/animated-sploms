@@ -68,8 +68,8 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _chartTitle) {
 	var keyCenters = [];
 	
 	// variables tracking if user has brushed the data by clicking on a key in the legend
-	var brushed = false;
-	var selected = "";
+	var brushed = 0;
+	var selected = [];
 	var brushedColor = "rgb(217, 217, 217)";
 
 	// encoding for plotted points
@@ -484,11 +484,13 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _chartTitle) {
 	
 	// Loads appropriate buffers after brushing enabled/disenabled
 	function brushRedraw() {
-		if (brushed) {
-			image(buffers.greyBuffer, 0, 0, canvasWidth * disp, canvasHeight * disp, 0, 0, canvasWidth, canvasHeight);
-			image(buffers[selected], 0, 0, canvasWidth * disp, canvasHeight * disp, 0, 0, canvasWidth, canvasHeight);
-		} else {
+		if (brushed === 0) {
 			image(buffers.colorBuffer, 0, 0, canvasWidth * disp, canvasHeight * disp, 0, 0, canvasWidth, canvasHeight);
+		} else {
+			image(buffers.greyBuffer, 0, 0, canvasWidth * disp, canvasHeight * disp, 0, 0, canvasWidth, canvasHeight);
+			for (var i = 0; i < brushed; i++) {
+				image(buffers[selected[i]], 0, 0, canvasWidth * disp, canvasHeight * disp, 0, 0, canvasWidth, canvasHeight);
+			}
 		}
 	}
 	
@@ -674,14 +676,24 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _chartTitle) {
 		if (mouseX >= (keyCenters[0][0] - keySize/2) && mouseX <= (keyCenters[0][0] + keySize/2)) {
 			for (var i = 0; i < classes.length; i++) {
 				if (mouseY >= (keyCenters[i][1] - keySize/2) && mouseY <= (keyCenters[i][1] + keySize/2)) {
-					if (!brushed || selected !== classes[i]) {
-						brushed = true;
-						selected = classes[i];
-						console.log(classes[i] + " selected");
+					var clickedClass = classes[i];
+					var classIndexInSelected = selected.indexOf(clickedClass);
+					
+					if (classIndexInSelected < 0) {
+						selected.push(clickedClass);
+						console.log(classes[i] + " selected.");
 					} else {
-						console.log("de-selected " + classes[i]);
-						brushed = false;
-						selected = "";
+						for (var i = classIndexInSelected; i < brushed - 1; i++) {
+							selected[i] = selected[i + 1];
+						}
+						selected.pop();
+						console.log(classes[i] + "de-selected");
+					}
+					
+					brushed = selected.length;
+					if (brushed === classes.length) {
+						selected = [];
+						brushed = 0;
 					}
 					brushRedraw();
 					break;
