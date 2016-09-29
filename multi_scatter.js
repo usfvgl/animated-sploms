@@ -75,6 +75,7 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _chartTitle) {
 	// encoding for plotted points
 	var pointEncode = {
 		strokeWeight: 0.3,
+		//strokeWeight: 1,
 		size: 4.5,
 		colors: ['#8dd3c7','#fb8072','#80b1d3','#fdb462','#bc80bd','#b3de69','#fccde5','#d9d9d9','#ffffb3','#bebada']
 	};
@@ -263,6 +264,7 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _chartTitle) {
 	function drawPauseButton() {
 
 		// clear canvas
+		rectMode(CORNER);
 		fill(255, 255, 255);
 		stroke(255, 255, 255);
 		rect(pauseButton.x, pauseButton.y, pauseButton.width, pauseButton.height);
@@ -347,7 +349,7 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _chartTitle) {
 		for (var i = 0; i < classes.length; i++) {
 			var cat = classes[i];
 			// Change color to grey for brushed out categories if brushing has been enabled
-			if (brushed && cat !== selected) {
+			if (brushed > 0 && selected.indexOf(cat) < 0) {
 				fill(brushedColor);
 			} else {
 				fill(pointEncode.colors[i]);				
@@ -371,11 +373,15 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _chartTitle) {
 			strokeWeight(pointEncode.strokeWeight);
 			stroke(255);
 			fill(pointFill);
+			//stroke(pointFill);
+			//noFill();
 			ellipse(x, y, pointEncode.size, pointEncode.size);
 		} else {
 			buffer.strokeWeight(pointEncode.strokeWeight);
 			buffer.stroke(255);
-			buffer.fill(pointFill);						
+			buffer.fill(pointFill);
+			//buffer.stroke(pointFill);
+			//buffer.noFill();
 			buffer.ellipse(x, y, pointEncode.size, pointEncode.size);
 		}
 	}
@@ -696,6 +702,7 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _chartTitle) {
 						brushed = 0;
 					}
 					brushRedraw();
+					drawLegend();
 					break;
 				}
 			}
