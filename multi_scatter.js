@@ -57,7 +57,8 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _chartTitle) {
 		loadBar: 10,
 		legendTitle: 16,
 		legendLabel: 14,
-		pauseButton: 14
+		pauseButton: 12,
+		speedToggle: 10
 	};
 	var canvasWidth;
 	var canvasHeight;
@@ -80,10 +81,18 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _chartTitle) {
 		colors: ['#8dd3c7','#fb8072','#80b1d3','#fdb462','#bc80bd','#b3de69','#fccde5','#d9d9d9','#ffffb3','#bebada']
 	};
 	
+	// padding and element size for grid containing load bar, pause button, and speed toggles
+	var elementPad = 0;
+	var textPad = 0;
+	var elementHeight = 0;
+	var textHeight = 0;
+	
 	// stylistic attributes for %-loaded bar
 	var loadBar = {
 		x: 0,
 		y: 0,
+		textX: 0,
+		textY: 0,
 		width: 0,
 		height: 0,
 		strokeWeight: 0.5,
@@ -105,6 +114,16 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _chartTitle) {
 	// variable tracking if user has paused the animation
 	var paused = false;
 	
+	// stylistic attributes for animation speed slider
+	var slider = {
+		x: 0,
+		y: 0,
+		textX: 0,
+		textY: 0,
+		width: 0,
+		fill: "rgb(169, 169, 169)"
+	}
+	
 	// Set up focus rectangles. rectangles will be populated in setup loop using query string
 	// Will be converted into object with following properties:
 	//	{
@@ -124,9 +143,11 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _chartTitle) {
 		colorBuffer: null,
 		greyBuffer: null		
 	};
-	var disp;		// Display density
 	
-	// Helper function section
+	// Display density
+	var disp;
+	
+	// Helper functions section
 	
 	function drawGrid() {
 	    rectMode(CORNER);
@@ -261,10 +282,16 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _chartTitle) {
 
 	}
 	
+	function drawSlider() {
+		slider.slider = createSlider(1, 5, 1, 1);
+		slider.slider.position(slider.x, slider.y);
+		slider.slider.style('width', slider.width + 'px');
+	}
+	
 	function drawPauseButton() {
 
 		// clear canvas
-		rectMode(CORNER);
+		rectMode(CENTER);
 		fill(255, 255, 255);
 		stroke(255, 255, 255);
 		rect(pauseButton.x, pauseButton.y, pauseButton.width, pauseButton.height);
@@ -285,41 +312,45 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _chartTitle) {
 			buttonText = "pause";
 		}
 		textSize(textSizes.pauseButton);
-		text(buttonText, pauseButton.x + pauseButton.width/2, pauseButton.y + pauseButton.height/2 - 0.3);
+		text(buttonText, pauseButton.x, pauseButton.y);
 	}
 	
 	function drawLoadBar(percentDrawn) {
 		
-		// draw rectangle box
+		// draw white rectangle to wipe area clean
 		rectMode(CORNER);
 		blendMode(REPLACE);
+		stroke(255, 255, 255);
+		fill(255, 255, 255);
+		rect(loadBar.x, loadBar.y - textPad - textHeight, gridWidth, textHeight + textPad + elementHeight);
+		
+		// draw rectangle box
 		strokeWeight(loadBar.strokeWeight);
 		stroke(loadBar.fill);
 		noFill();
 		rect(loadBar.x, loadBar.y, loadBar.width, loadBar.height);
 
 		// draw text
-		fill(255, 255, 255);
-		stroke(255, 255, 255);
-		rect(loadBar.x, loadBar.y - 20, loadBar.width, 20 - loadBar.strokeWeight);
 		textSize(textSizes.loadBar);
 		fill(loadBar.fill);
 		noStroke();
-		textAlign(LEFT, BOTTOM);
+		textAlign(LEFT, CENTER);
 		if (initDraw || loadBar.allLoaded) {
-			text("% data animated", loadBar.x, loadBar.y - 5);
+			text("% data animated", loadBar.textX, loadBar.textY);
 		} else {
-			text("% data displayed", loadBar.x, loadBar.y - 5);
+			text("% data displayed", loadBar.textX, loadBar.textY);
 		}
 		
 		noStroke();
 		fill(loadBar.fill);
-		rect(loadBar.x, loadBar.y, loadBar.width * percentDrawn, loadBar.height);
 		
 		// draw line when all data are loaded (including when initDraw is true)
 		if (loadBar.allLoaded || initDraw) {
-			stroke(loadBar.stroke);
+			rect(loadBar.x, loadBar.y, loadBar.width, loadBar.height);
+			stroke(255, 255, 255);
 			line(loadBar.x + loadBar.width * percentDrawn, loadBar.y, loadBar.x + loadBar.width * percentDrawn, loadBar.y + loadBar.height);
+		} else {
+			rect(loadBar.x, loadBar.y, loadBar.width * percentDrawn, loadBar.height);
 		}
 		
 	}
@@ -623,21 +654,35 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _chartTitle) {
 		xLegend = plotX2 - gridWidth;
 		yLegend = plotY1 + Math.min(useAttr.length - 2, 3) * gridWidth;
 		
-		loadBar.x = xLegend;
-		loadBar.width = gridWidth;
-		loadBar.height = gridWidth/10;
-		loadBar.y = yLegend - gridWidth/10 - loadBar.height;
+		elementPad = gridWidth * 0.1;
+		textPad = gridWidth * 0.03;
+		elementHeight = gridWidth * 0.12;
+		textHeight = gridWidth * 0.1;
+		var infoBoxY = yLegend - gridWidth * 0.70;
+
+		slider.textX = xLegend;
+		slider.textY = infoBoxY + textHeight/2;
+		slider.x = xLegend;
+		slider.y = infoBoxY + textHeight + textPad;
+		slider.width = gridWidth * 0.55;
+
+		pauseButton.width = gridWidth * 0.4;
+		pauseButton.height = elementHeight;
+		pauseButton.x = slider.x + gridWidth - pauseButton.width/2;
+		pauseButton.y = slider.y + elementHeight/2;
 		
-		pauseButton.x = xLegend;
-		pauseButton.width = gridWidth/3 * 2;
-		pauseButton.height = gridWidth/6;
-		pauseButton.y = loadBar.y - pauseButton.height - 30;
-	
+		loadBar.textX = xLegend;
+		loadBar.textY = infoBoxY + textHeight + textPad + elementHeight + elementPad + textHeight/2;
+		loadBar.x = xLegend;
+		loadBar.y = infoBoxY + textHeight + textPad + elementHeight + elementPad + textHeight + textPad;
+		loadBar.width = gridWidth;
+		loadBar.height = elementHeight;
+		
 		//call noLoop unless doing animation
 		if (!isAnimate) {
 			noLoop();		
 		} else {
-			frameRate(60);
+			frameRate(30);
 			
 			if (initDraw) {
 				plotData(false);
@@ -647,7 +692,7 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _chartTitle) {
 			}
 			
 			drawPauseButton();
-
+			drawSlider();
 		}
 	
 		drawGrid();
@@ -669,6 +714,8 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _chartTitle) {
 	}
 	
 	main.draw = function() {
+		// update animateNum from slider
+		animateNum = slider.slider.value();
 		plotData(isAnimate);
 		if (rectangles.length >= 1) {
 			drawRects("rgba(255, 255, 255, 1)")
@@ -709,8 +756,8 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _chartTitle) {
 		}
 		
 		// Check if user clicked on pause/animate button
-		if (mouseX >= pauseButton.x && mouseX <= (pauseButton.x + pauseButton.width) 
-			&& mouseY >= pauseButton.y && mouseY <= (pauseButton.y + pauseButton.height)) {
+		if (mouseX >= (pauseButton.x - pauseButton.width/2) && mouseX <= (pauseButton.x + pauseButton.width/2) 
+			&& mouseY >= (pauseButton.y - pauseButton.height/2) && mouseY <= (pauseButton.y + pauseButton.height/2)) {
 				paused = !paused;
 				drawPauseButton();
 				if (paused) {
