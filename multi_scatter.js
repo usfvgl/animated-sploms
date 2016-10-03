@@ -108,7 +108,8 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _chartTitle) {
 		width: 0,
 		height: 0,
 		stroke: "rgb(255, 255, 255)",
-		fill: "rgb(169, 169, 169)"
+		selectedFill: "rgb(169, 169, 169)",
+		deselectedFill: "rgb(217, 217, 217)"
 	}
 	
 	// variable tracking if user has paused the animation
@@ -283,36 +284,52 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _chartTitle) {
 	}
 	
 	function drawSlider() {
-		slider.slider = createSlider(1, 5, 1, 1);
+		// draw title
+		textSize(textSizes.loadBar);
+		fill(loadBar.fill);
+		noStroke();
+		textAlign(LEFT, CENTER);
+		text("Animation speed", slider.textX, slider.textY);
+		
+		// draw slider
+		slider.slider = createSlider(1, 20, 1, 1);
 		slider.slider.position(slider.x, slider.y);
 		slider.slider.style('width', slider.width + 'px');
 	}
 	
 	function drawPauseButton() {
-
+		
 		// clear canvas
 		rectMode(CENTER);
 		fill(255, 255, 255);
 		stroke(255, 255, 255);
 		rect(pauseButton.x, pauseButton.y, pauseButton.width, pauseButton.height);
-
-		// draw button
-		fill(pauseButton.fill);
-		stroke(pauseButton.stroke);
-		rect(pauseButton.x, pauseButton.y, pauseButton.width, pauseButton.height, 8);
 		
-		//draw text
-		var buttonText;
-		fill(pauseButton.stroke);
-		noStroke();
-		textAlign(CENTER, CENTER);
+		var playFill;
+		var pauseFill;
+		console.log(paused);
 		if (paused) {
-			buttonText = "animate";
+			playFill = pauseButton.deselectedFill;
+			pauseFill = pauseButton.selectedFill;
 		} else {
-			buttonText = "pause";
+			playFill = pauseButton.selectedFill;
+			pauseFill = pauseButton.deselectedFill;
 		}
-		textSize(textSizes.pauseButton);
-		text(buttonText, pauseButton.x, pauseButton.y);
+		
+		// draw triangle
+		fill(playFill);
+		stroke(playFill);
+		triangle(pauseButton.x, pauseButton.y, 
+			pauseButton.x - pauseButton.width/2, pauseButton.y - pauseButton.height/2,
+			pauseButton.x - pauseButton.width/2, pauseButton.y + pauseButton.height/2
+		);
+		
+		// draw pause
+		fill(pauseFill);
+		stroke(pauseFill);
+		rectMode(CENTER);
+		rect(pauseButton.x + pauseButton.width/6, pauseButton.y, pauseButton.width/6, pauseButton.height);
+		rect(pauseButton.x + pauseButton.width/12 * 5, pauseButton.y, pauseButton.width/6, pauseButton.height);
 	}
 	
 	function drawLoadBar(percentDrawn) {
@@ -662,11 +679,11 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _chartTitle) {
 
 		slider.textX = xLegend;
 		slider.textY = infoBoxY + textHeight/2;
-		slider.x = xLegend;
+		slider.x = xLegend * 0.996;
 		slider.y = infoBoxY + textHeight + textPad;
-		slider.width = gridWidth * 0.55;
+		slider.width = gridWidth * 0.7;
 
-		pauseButton.width = gridWidth * 0.4;
+		pauseButton.width = gridWidth * 0.25;
 		pauseButton.height = elementHeight;
 		pauseButton.x = slider.x + gridWidth - pauseButton.width/2;
 		pauseButton.y = slider.y + elementHeight/2;
@@ -755,16 +772,17 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _chartTitle) {
 			}
 		}
 		
-		// Check if user clicked on pause/animate button
-		if (mouseX >= (pauseButton.x - pauseButton.width/2) && mouseX <= (pauseButton.x + pauseButton.width/2) 
-			&& mouseY >= (pauseButton.y - pauseButton.height/2) && mouseY <= (pauseButton.y + pauseButton.height/2)) {
-				paused = !paused;
-				drawPauseButton();
-				if (paused) {
-					noLoop();
-				} else {
+		// Check if user clicked on play/pause buttons
+		if (mouseX >= (pauseButton.x - pauseButton.width/2) && mouseY >= (pauseButton.y - pauseButton.height/2)
+			&& mouseY <= (pauseButton.y + pauseButton.height/2)) {
+				if (mouseX <= pauseButton.x) {
+					paused = false;
 					loop();
+				} else if (mouseX <= (pauseButton.x + pauseButton.width/2)) {
+					paused = true;
+					noLoop();
 				}
+				drawPauseButton();
 		}
 	}
 
