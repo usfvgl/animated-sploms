@@ -125,6 +125,9 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _chartTitle) {
 		fill: "rgb(169, 169, 169)"
 	}
 	
+	// Frame rate
+	var speed = 30;
+	
 	// Set up focus rectangles. rectangles will be populated in setup loop using query string
 	// Will be converted into object with following properties:
 	//	{
@@ -284,17 +287,25 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _chartTitle) {
 	}
 	
 	function drawSlider() {
-		// draw title
+		slider.slider = createSlider(1, 60, 1, 1);
+		slider.slider.position(slider.x, slider.y);
+		slider.slider.style('width', slider.width + 'px');
+		slider.slider.changed(drawSliderTitle);
+	}
+	
+	function drawSliderTitle() {
+		// clear canvas
+		var textHeight = gridWidth * 0.1;
+		rectMode(CORNER);
+		fill(255, 255, 255);
+		stroke(255, 255, 255);
+		rect(slider.textX, slider.textY - textHeight/2, slider.width, textHeight);
+		
 		textSize(textSizes.loadBar);
 		fill(loadBar.fill);
 		noStroke();
 		textAlign(LEFT, CENTER);
-		text("Animation speed", slider.textX, slider.textY);
-		
-		// draw slider
-		slider.slider = createSlider(1, 20, 1, 1);
-		slider.slider.position(slider.x, slider.y);
-		slider.slider.style('width', slider.width + 'px');
+		text("Rows per sec: " + slider.slider.value() * speed, slider.textX, slider.textY);		
 	}
 	
 	function drawPauseButton() {
@@ -307,7 +318,7 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _chartTitle) {
 		
 		var playFill;
 		var pauseFill;
-		console.log(paused);
+
 		if (paused) {
 			playFill = pauseButton.deselectedFill;
 			pauseFill = pauseButton.selectedFill;
@@ -681,9 +692,9 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _chartTitle) {
 		slider.textY = infoBoxY + textHeight/2;
 		slider.x = xLegend * 0.996;
 		slider.y = infoBoxY + textHeight + textPad;
-		slider.width = gridWidth * 0.7;
+		slider.width = gridWidth * 0.75;
 
-		pauseButton.width = gridWidth * 0.25;
+		pauseButton.width = gridWidth * 0.2;
 		pauseButton.height = elementHeight;
 		pauseButton.x = slider.x + gridWidth - pauseButton.width/2;
 		pauseButton.y = slider.y + elementHeight/2;
@@ -699,7 +710,7 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _chartTitle) {
 		if (!isAnimate) {
 			noLoop();		
 		} else {
-			frameRate(30);
+			frameRate(speed);
 			
 			if (initDraw) {
 				plotData(false);
@@ -710,6 +721,7 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _chartTitle) {
 			
 			drawPauseButton();
 			drawSlider();
+			drawSliderTitle();
 		}
 	
 		drawGrid();
@@ -784,6 +796,7 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _chartTitle) {
 				}
 				drawPauseButton();
 		}
+		
 	}
 
 	return main;
