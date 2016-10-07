@@ -299,13 +299,13 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _chartTitle) {
 		rectMode(CORNER);
 		fill(255, 255, 255);
 		stroke(255, 255, 255);
-		rect(slider.textX, slider.textY - textHeight/2, slider.width, textHeight);
+		rect(slider.textX, slider.textY - textHeight/2, gridWidth * 1.1, textHeight);
 		
 		textSize(textSizes.loadBar);
 		fill(loadBar.fill);
 		noStroke();
 		textAlign(LEFT, CENTER);
-		text("Rows per sec: " + slider.slider.value() * speed, slider.textX, slider.textY);		
+		text("Rows animated per sec: " + slider.slider.value() * speed, slider.textX, slider.textY);		
 	}
 	
 	function drawPauseButton() {
