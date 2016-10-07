@@ -307,16 +307,12 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _chartTitle) {
 		fill(255, 255, 255);
 		stroke(255, 255, 255);
 		rect(slider.textX, slider.textY - textHeight/2, gridWidth * 1.1, textHeight);
-		
-		var currSpeed = round(frameRate());
-		if (currSpeed === 0) {
-			currSpeed = speed;
-		}
+
 		textSize(textSizes.loadBar);
 		fill(loadBar.fill);
 		noStroke();
 		textAlign(LEFT, CENTER);
-		text("Rows animated per sec: " + slider.slider.value() * currSpeed, slider.textX, slider.textY);
+		text("Rows animated per frame: " + slider.slider.value(), slider.textX, slider.textY);
 	}
 	
 	function drawPauseButton() {
@@ -482,11 +478,11 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _chartTitle) {
 					// Draw point to color buffer first
 					var pointFill = pointEncode.colors[classes.indexOf(cat)];
 					drawPoint(x, y, pointFill, buffers.colorBuffer);
+					// Draw grey point to grey buffer
+					drawPoint(x, y, brushedColor, buffers.greyBuffer);
+					// Draw color point to class-specific buffer
+					drawPoint(x, y, pointFill, buffers[cat]);
 					if (animate) {
-						// Draw grey point to grey buffer
-						drawPoint(x, y, brushedColor, buffers.greyBuffer);
-						// Draw color point to class-specific buffer
-						drawPoint(x, y, pointFill, buffers[cat]);
 						// Change color to grey for brushed out categories if brushing has been enabled
 						if (brushed && cat !== selected) {
 							pointFill = brushedColor;
@@ -720,13 +716,11 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _chartTitle) {
 		// Setting up offscreen buffers
 		disp = displayDensity();
 		buffers.colorBuffer = createGraphics(canvasWidth * disp, canvasHeight * disp);
-		if (isAnimate) {
-			buffers.greyBuffer = createGraphics(canvasWidth * disp, canvasHeight * disp);
-			// Class-specific buffers
-			for (var i = 0; i < classes.length; i++) {
-				var cat = classes[i];
-				buffers[cat] = createGraphics(canvasWidth * disp, canvasHeight * disp);
-			}
+		buffers.greyBuffer = createGraphics(canvasWidth * disp, canvasHeight * disp);
+		// Class-specific buffers
+		for (var i = 0; i < classes.length; i++) {
+			var cat = classes[i];
+			buffers[cat] = createGraphics(canvasWidth * disp, canvasHeight * disp);
 		}
 		
 		//call noLoop unless doing animation
