@@ -287,10 +287,17 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _chartTitle) {
 	}
 	
 	function drawSlider() {
-		slider.slider = createSlider(1, 60, 1, 1);
+		// drawing beyond 30 points per frame starts to really slow down frame rate
+		slider.slider = createSlider(1, 30, 1, 1);
 		slider.slider.position(slider.x, slider.y);
 		slider.slider.style('width', slider.width + 'px');
-		slider.slider.changed(drawSliderTitle);
+		slider.slider.changed(onSliderChange);
+	}
+	
+	function onSliderChange() {
+		// update animateNum from slider
+		animateNum = slider.slider.value();
+		drawSliderTitle();
 	}
 	
 	function drawSliderTitle() {
@@ -301,11 +308,15 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _chartTitle) {
 		stroke(255, 255, 255);
 		rect(slider.textX, slider.textY - textHeight/2, gridWidth * 1.1, textHeight);
 		
+		var currSpeed = round(frameRate());
+		if (currSpeed === 0) {
+			currSpeed = speed;
+		}
 		textSize(textSizes.loadBar);
 		fill(loadBar.fill);
 		noStroke();
 		textAlign(LEFT, CENTER);
-		text("Rows animated per sec: " + slider.slider.value() * speed, slider.textX, slider.textY);		
+		text("Rows animated per sec: " + slider.slider.value() * currSpeed, slider.textX, slider.textY);
 	}
 	
 	function drawPauseButton() {
@@ -576,11 +587,11 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _chartTitle) {
 		}
 		
 		if (typeof params.isAnimate !== "undefined") {
-			isAnimate = (params.isAnimate.toLowerCase() === "true");
+			isAnimate = (decodeURIComponent(params.isAnimate).toLowerCase() === "true");
 		}
 		
 		if (typeof params.initDraw !== "undefined") {
-			initDraw = (params.initDraw.toLowerCase() === "true");
+			initDraw = (decodeURIComponent(params.initDraw).toLowerCase() === "true");
 		}
 		
 		getRectsParams();
@@ -706,6 +717,18 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _chartTitle) {
 		loadBar.width = gridWidth;
 		loadBar.height = elementHeight;
 		
+		// Setting up offscreen buffers
+		disp = displayDensity();
+		buffers.colorBuffer = createGraphics(canvasWidth * disp, canvasHeight * disp);
+		if (isAnimate) {
+			buffers.greyBuffer = createGraphics(canvasWidth * disp, canvasHeight * disp);
+			// Class-specific buffers
+			for (var i = 0; i < classes.length; i++) {
+				var cat = classes[i];
+				buffers[cat] = createGraphics(canvasWidth * disp, canvasHeight * disp);
+			}
+		}
+		
 		//call noLoop unless doing animation
 		if (!isAnimate) {
 			noLoop();		
@@ -729,22 +752,10 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _chartTitle) {
 		drawLegend();
 		drawAxisLabels();
 		
-		// Setting up offscreen buffers
-		disp = displayDensity();
-		buffers.colorBuffer = createGraphics(canvasWidth * disp, canvasHeight * disp);
-		if (isAnimate) {
-			buffers.greyBuffer = createGraphics(canvasWidth * disp, canvasHeight * disp);
-			// Class-specific buffers
-			for (var i = 0; i < classes.length; i++) {
-				var cat = classes[i];
-				buffers[cat] = createGraphics(canvasWidth * disp, canvasHeight * disp);
-			}
-		}
 	}
 	
 	main.draw = function() {
-		// update animateNum from slider
-		animateNum = slider.slider.value();
+		//console.log("slider value: " + slider.slider.value() + " frame rate: " + frameRate());
 		plotData(isAnimate);
 		if (rectangles.length >= 1) {
 			drawRects("rgba(255, 255, 255, 1)")
