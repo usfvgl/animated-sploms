@@ -484,7 +484,7 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _chartTitle) {
 					drawPoint(x, y, pointFill, buffers[cat]);
 					if (animate) {
 						// Change color to grey for brushed out categories if brushing has been enabled
-						if (brushed && cat !== selected) {
+						if (brushed && (selected.indexOf(cat) < 0)) {
 							pointFill = brushedColor;
 						}
 						// Draw on screen live
