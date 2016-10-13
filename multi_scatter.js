@@ -30,8 +30,8 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _chartTitle) {
 	var isAnimate = _animate.isAnimate;
 	var animateStart = 0;
 	var animateNum = 1;
-	if (isAnimate) {
-		animateNum = animate.animateNum;
+	if (isAnimate && (typeof _animate.animateNum !== "undefined")) {
+		animateNum = _animate.animateNum;
 	}
 	var initDraw = animate.initDraw;
 	
@@ -288,7 +288,7 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _chartTitle) {
 	
 	function drawSlider() {
 		// drawing beyond 30 points per frame starts to really slow down frame rate
-		slider.slider = createSlider(1, 30, 1, 1);
+		slider.slider = createSlider(1, 30, animateNum, 1);
 		slider.slider.position(slider.x, slider.y);
 		slider.slider.style('width', slider.width + 'px');
 		slider.slider.changed(onSliderChange);

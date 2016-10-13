@@ -14,20 +14,20 @@
 </body>
 <script language="javascript" type="text/javascript">
 	
-	var dataSource = "../data/synthetic-4-1-1.csv";
+	var dataSource = "../data/iris.csv";
 	var attr = {
-		all: ["v","w","x","y","z","class"],
-		use: [0, 1, 2, 3, 4]
+		all: ["sepal length", "sepal width", "petal length", "petal width", "class"],
+		use: [0, 1, 2, 3]
 	};
 	var category = {
 		name: "class",
-		index: 5,
-		values: ["A", "B", "C", "D"]
+		index: 4,
+		values: ["Iris-setosa", "Iris-versicolor", "Iris-virginica"]
 	};
 	var animate = {
 		isAnimate: true
 	};
-	var chartTitle = "Synthetic Scatterplot Matrix";
+	var chartTitle = "Iris Scatterplot Matrix";
 	
 	var chart = multi_scatter(dataSource, attr, category, animate, chartTitle);
 	var slider;
