@@ -295,9 +295,16 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _chartTitle) {
 	}
 	
 	function onSliderChange() {
+		// session logging info
+		var entry = {};
+		entry.time = millis();
+		var prevNum = animateNum;
 		// update animateNum from slider
 		animateNum = slider.slider.value();
 		drawSliderTitle();
+		//update session logging info
+		entry.change = animateNum - prevNum;
+		main.session.speed.push(entry);
 	}
 	
 	function drawSliderTitle() {
@@ -749,7 +756,7 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _chartTitle) {
 	}
 	
 	main.draw = function() {
-		//console.log("slider value: " + slider.slider.value() + " frame rate: " + frameRate());
+		//console.log("animateNum: " + animateNum + " slider value: " + slider.slider.value() + " frame rate: " + frameRate());
 		plotData(isAnimate);
 		if (rectangles.length >= 1) {
 			drawRects("rgba(255, 255, 255, 1)")
@@ -767,21 +774,25 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _chartTitle) {
 					var classIndexInSelected = selected.indexOf(clickedClass);
 					
 					if (classIndexInSelected < 0) {
-						selected.push(clickedClass);
-						console.log(classes[i] + " selected.");
+						if (brushed === classes.length - 1) {
+							// selecting the only un-selected class: essentially un-brushing
+							selected = [];
+							brushed = 0;
+						} else {
+							// selected clicked class
+							selected.push(clickedClass);
+							main.session.brush.push(millis());
+						}
 					} else {
+						// de-selected clicked class
+						main.session.unbrush.push(millis());
 						for (var i = classIndexInSelected; i < brushed - 1; i++) {
 							selected[i] = selected[i + 1];
 						}
 						selected.pop();
-						console.log(classes[i] + "de-selected");
 					}
 					
 					brushed = selected.length;
-					if (brushed === classes.length) {
-						selected = [];
-						brushed = 0;
-					}
 					brushRedraw();
 					drawLegend();
 					break;
@@ -793,9 +804,11 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _chartTitle) {
 		if (mouseX >= (pauseButton.x - pauseButton.width/2) && mouseY >= (pauseButton.y - pauseButton.height/2)
 			&& mouseY <= (pauseButton.y + pauseButton.height/2)) {
 				if (mouseX <= pauseButton.x) {
+					main.session.play.push(millis());
 					paused = false;
 					loop();
 				} else if (mouseX <= (pauseButton.x + pauseButton.width/2)) {
+					main.session.pause.push(millis());
 					paused = true;
 					noLoop();
 				}
@@ -803,6 +816,15 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _chartTitle) {
 		}
 		
 	}
+	
+	// session tracking
+	main.session = {
+		pause: [],
+		play: [],
+		brush: [],
+		unbrush: [],
+		speed: []
+	};
 
 	return main;
 	
