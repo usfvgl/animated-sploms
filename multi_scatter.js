@@ -296,15 +296,13 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _chartTitle) {
 	
 	function onSliderChange() {
 		// session logging info
-		var entry = {};
-		entry.time = millis();
+		var time = millis();
 		var prevNum = animateNum;
 		// update animateNum from slider
 		animateNum = slider.slider.value();
 		drawSliderTitle();
 		//update session logging info
-		entry.change = animateNum - prevNum;
-		main.session.speed.push(entry);
+		main.session.push(getEventEntry("rows per frame", time, animateNum - prevNum));
 	}
 	
 	function drawSliderTitle() {
@@ -573,6 +571,15 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _chartTitle) {
 		}
 	}
 	
+	// create event tracking entry object
+	function getEventEntry(eventName, time, details) {
+		var object = {};
+		object.event = eventName;
+		object.timestamp = time;
+		object.details = details;
+		return object
+	}
+	
 	// p5 functions
 	main.preload = function() {
 		params = getURLParams();
@@ -756,7 +763,8 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _chartTitle) {
 	}
 	
 	main.draw = function() {
-		//console.log("animateNum: " + animateNum + " slider value: " + slider.slider.value() + " frame rate: " + frameRate());
+		main.frameRate.n += 1;
+		main.frameRate.runningTtl += frameRate();
 		plotData(isAnimate);
 		if (rectangles.length >= 1) {
 			drawRects("rgba(255, 255, 255, 1)")
@@ -765,6 +773,8 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _chartTitle) {
 	}
 	
 	main.mousePressed = function() {
+		// get timestamp for event tracking
+		var time = millis();
 		
 		// Check if user clicked on legend for brushing
 		if (mouseX >= (keyCenters[0][0] - keySize/2) && mouseX <= (keyCenters[0][0] + keySize/2)) {
@@ -781,11 +791,11 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _chartTitle) {
 						} else {
 							// selected clicked class
 							selected.push(clickedClass);
-							main.session.brush.push(millis());
+							main.session.push(getEventEntry("brush", time, clickedClass));
 						}
 					} else {
 						// de-selected clicked class
-						main.session.unbrush.push(millis());
+						main.session.push(getEventEntry("unbrush", time, clickedClass));
 						for (var i = classIndexInSelected; i < brushed - 1; i++) {
 							selected[i] = selected[i + 1];
 						}
@@ -803,12 +813,12 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _chartTitle) {
 		// Check if user clicked on play/pause buttons
 		if (mouseX >= (pauseButton.x - pauseButton.width/2) && mouseY >= (pauseButton.y - pauseButton.height/2)
 			&& mouseY <= (pauseButton.y + pauseButton.height/2)) {
-				if (mouseX <= pauseButton.x) {
-					main.session.play.push(millis());
+				if (mouseX <= pauseButton.x && paused) {
+					main.session.push(getEventEntry("play", time, ""));
 					paused = false;
 					loop();
-				} else if (mouseX <= (pauseButton.x + pauseButton.width/2)) {
-					main.session.pause.push(millis());
+				} else if (mouseX > pauseButton.x && mouseX <= (pauseButton.x + pauseButton.width/2) && !paused) {
+					main.session.push(getEventEntry("pause", time, ""));
 					paused = true;
 					noLoop();
 				}
@@ -817,13 +827,18 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _chartTitle) {
 		
 	}
 	
-	// session tracking
-	main.session = {
-		pause: [],
-		play: [],
-		brush: [],
-		unbrush: [],
-		speed: []
+	// Session tracking: array of event objects of form:
+	// {
+	//  event: one of the following: pause, play, brush, unbrush, rows per frame
+	//  timestamp: number of milliseconds (thousandths of a second) since starting the program
+	//  details: for brush or unbrush, name of class brushed/unbrushed;
+	//           for speed, change in animate num
+	// }
+	main.session = [];
+
+	main.frameRate = {
+		n: 0,
+		runningTtl: 0
 	};
 
 	return main;
