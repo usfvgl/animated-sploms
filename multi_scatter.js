@@ -127,6 +127,9 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _chartTitle) {
 	
 	// Frame rate
 	var speed = 30;
+
+	// Max number of points drawn per frame
+	var maxPointsPerFrame = 500;
 	
 	// Set up focus rectangles. rectangles will be populated in setup loop using query string
 	// Will be converted into object with following properties:
@@ -287,8 +290,10 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _chartTitle) {
 	}
 	
 	function drawSlider() {
-		// drawing beyond 30 points per frame starts to really slow down frame rate
-		slider.slider = createSlider(1, 30, animateNum, 1);
+		var pointsPerRow = useAttr.length * (useAttr.length - 1) / 2;
+		// Max number of rows drawn per frame to maintain 30 frames/sec frame rate
+		var maxVal = Math.round(maxPointsPerFrame / pointsPerRow);
+		slider.slider = createSlider(1, maxVal, animateNum, 1);
 		slider.slider.position(slider.x, slider.y);
 		slider.slider.style('width', slider.width + 'px');
 		slider.slider.changed(onSliderChange);
