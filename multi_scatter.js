@@ -292,7 +292,7 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _chartTitle) {
 	function drawSlider() {
 		var pointsPerRow = useAttr.length * (useAttr.length - 1) / 2;
 		// Max number of rows drawn per frame to maintain 30 frames/sec frame rate
-		var maxVal = Math.round(maxPointsPerFrame / pointsPerRow);
+		var maxVal = Math.floor(maxPointsPerFrame / pointsPerRow);
 		slider.slider = createSlider(1, maxVal, animateNum, 1);
 		slider.slider.position(slider.x, slider.y);
 		slider.slider.style('width', slider.width + 'px');
@@ -846,6 +846,16 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _chartTitle) {
 		runningTtl: 0
 	};
 
+	main.getAvgFrameRate = function(seconds) {
+		main.frameRate.n = 0;
+		main.frameRate.runningTtl = 0;
+		setTimeout(function(){
+			var thisN = main.frameRate.n;
+			var thisTtl = main.frameRate.runningTtl;
+			console.log("Avg. frame rate in the last " + seconds + " seconds: " + Math.round(thisTtl/thisN));
+		}, 1000 * seconds);
+	}
+	
 	return main;
 	
 }
