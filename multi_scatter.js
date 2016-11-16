@@ -154,20 +154,6 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _chartTitle) {
 	// Display density
 	var disp;
 	
-	// Session tracking: array of event objects of form:
-	// {
-	//  event: one of the following: pause, play, brush, unbrush, rows per frame
-	//  timestamp: number of milliseconds (thousandths of a second) since starting the program
-	//  details: for brush or unbrush, name of class brushed/unbrushed;
-	//           for speed, change in animate num
-	// }
-	main.session = [];
-	main.sessionId = Date.now();
-	main.frameRate = {
-		n: 0,
-		runningTtl: 0
-	};
-	
 	// Helper functions section
 	
 	function drawGrid() {
@@ -592,71 +578,11 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _chartTitle) {
 	
 	// create event tracking entry object
 	function getEventEntry(eventName, time, details) {
-		// var object = {};
-		// object.event = eventName;
-		// object.timestamp = time;
-		// object.details = details;
-		// return object
-		return [main.sessionId, eventName, time, details];
-	}
-	
-	// get average frame rate for a given amount of time
-	main.getAvgFrameRate = function(seconds) {
-		main.frameRate.n = 0;
-		main.frameRate.runningTtl = 0;
-		setTimeout(function(){
-			var thisN = main.frameRate.n;
-			var thisTtl = main.frameRate.runningTtl;
-			console.log("Avg. frame rate in the last " + seconds + " seconds: " + Math.round(thisTtl/thisN));
-		}, 1000 * seconds);
-	}
-	
-	function logSession() {
-		console.log(main.session);
-		gapi.client.sheets.spreadsheets.values.append({
-			spreadsheetId: "15Cuo54gsQPBd-RSo5OTjegBUFb_Wucu15xapcVlom10",
-			range: "Sheet1!A1:D1",
-			valueInputOption: "USER_ENTERED",
-			majorDimension: "ROWS",
-			values: main.session,
-		});
-	}
-
-	/**
-	 * Load Sheets API client library.
-	 */
-	function loadSheetsApi() {
-		var discoveryUrl = 'https://sheets.googleapis.com/$discovery/rest?version=v4';
-		gapi.client.setApiKey('AIzaSyDzYCg4JamzTh-19RYq3rCxW507c367w7Y');
-		gapi.client.load(discoveryUrl).then(function(){
-			window.onbeforeunload = logSession;
-			//TODO remove test code
-			gapi.client.sheets.spreadsheets.values.get({
-				spreadsheetId: "15Cuo54gsQPBd-RSo5OTjegBUFb_Wucu15xapcVlom10",
-				range: "Sheet1!A1:D2",
-			}).then(function(response) {
-				var range = response.result;
-				for (var i = 0; i < range.values.length; i++) {
-					console.log(range.values[i]);
-				}
-			}, function(response) {
-				console.log("Error: " + response.result.error.message);
-			});
-			
-			gapi.client.sheets.spreadsheets.values.append({
-				spreadsheetId: "15Cuo54gsQPBd-RSo5OTjegBUFb_Wucu15xapcVlom10",
-				range: "Sheet1!A1:D1",
-				valueInputOption: "USER_ENTERED",
-				majorDimension: "ROWS",
-				values: [
-					[1, 2, 3, 4],
-				],
-			}).then(function(response) {
-				console.log(response.tableRange);
-			}, function(response) {
-				console.log("Error: " + response.result.error.message);
-			});
-		});
+		var object = {};
+		object.event = eventName;
+		object.timestamp = time;
+		object.details = details;
+		return object
 	}
 	
 	// p5 functions
@@ -666,7 +592,6 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _chartTitle) {
 			dataSource = params.source;
 		}
 		source = loadTable(dataSource, "csv", "header");
-		loadSheetsApi();
 	}
 	
 	main.setup = function() {
@@ -905,6 +830,30 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _chartTitle) {
 				drawPauseButton();
 		}
 		
+	}
+	
+	// Session tracking: array of event objects of form:
+	// {
+	//  event: one of the following: pause, play, brush, unbrush, rows per frame
+	//  timestamp: number of milliseconds (thousandths of a second) since starting the program
+	//  details: for brush or unbrush, name of class brushed/unbrushed;
+	//           for speed, change in animate num
+	// }
+	main.session = [];
+
+	main.frameRate = {
+		n: 0,
+		runningTtl: 0
+	};
+
+	main.getAvgFrameRate = function(seconds) {
+		main.frameRate.n = 0;
+		main.frameRate.runningTtl = 0;
+		setTimeout(function(){
+			var thisN = main.frameRate.n;
+			var thisTtl = main.frameRate.runningTtl;
+			console.log("Avg. frame rate in the last " + seconds + " seconds: " + Math.round(thisTtl/thisN));
+		}, 1000 * seconds);
 	}
 	
 	return main;
