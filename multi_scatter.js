@@ -73,12 +73,21 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _chartTitle) {
 	var selected = [];
 	var brushedColor = "rgb(217, 217, 217)";
 
-	// encoding for plotted points
+	// Encoding used for plotting points. _encoding needs to be one of the following Strings:
+	// filled_normal:  filled cirlces without color blending (default)
+	// filled_blended: filled circles with color blending
+	// alpha_blended:  filled circles with alpha blending
+	// open:           unfilled circles with color outline
+	var encoding = "filled_normal";
+
+	// encoding variables for plotted points
 	var pointEncode = {
-		strokeWeight: 0.3,
-		//strokeWeight: 1,
+		filledStrokeWeight: 0.3,
+		openStrokeWeight: 0.8,
 		size: 4.5,
-		colors: ['#8dd3c7','#fb8072','#80b1d3','#fdb462','#bc80bd','#b3de69','#fccde5','#d9d9d9','#ffffb3','#bebada']
+		colors: ['#8dd3c7','#fb8072','#80b1d3','#fdb462','#bc80bd','#b3de69','#fccde5','#d9d9d9','#ffffb3','#bebada'],
+		blend: "darken",
+		alpha: 125
 	};
 	
 	// padding and element size for grid containing load bar, pause button, and speed toggles
@@ -428,7 +437,11 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _chartTitle) {
 			if (brushed > 0 && selected.indexOf(cat) < 0) {
 				fill(brushedColor);
 			} else {
-				fill(pointEncode.colors[i]);				
+				var pointFill = pointEncode.colors[i];
+				if (encoding === "alpha_blended") {
+					pointFill = addAlpha(pointFill);
+				}
+				fill(pointFill);
 			}
 			textAlign(LEFT, CENTER);
 			text(cat, xLegend + padding + keySize, yLegend + padding + yBands * (i + 1) + yBands/2);
@@ -445,21 +458,69 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _chartTitle) {
 	// If buffer is provided, point will be drawn to buffer
 	// Otherwise, point will be drawn on-screen
 	function drawPoint(x, y, pointFill, buffer) {
-		if (buffer === undefined) {
-			strokeWeight(pointEncode.strokeWeight);
-			stroke(255);
-			fill(pointFill);
-			//stroke(pointFill);
-			//noFill();
-			ellipse(x, y, pointEncode.size, pointEncode.size);
-		} else {
-			buffer.strokeWeight(pointEncode.strokeWeight);
-			buffer.stroke(255);
-			buffer.fill(pointFill);
-			//buffer.stroke(pointFill);
-			//buffer.noFill();
-			buffer.ellipse(x, y, pointEncode.size, pointEncode.size);
+		
+		if (encoding === "alpha_blended") {
+			pointFill = addAlpha(pointFill);
 		}
+		
+		if (buffer === undefined) {
+			
+			if(encoding === "open") {
+				strokeWeight(pointEncode.openStrokeWeight);
+				stroke(pointFill);
+				noFill();
+				ellipse(x, y, pointEncode.size, pointEncode.size);
+			} else {
+				strokeWeight(pointEncode.filledStrokeWeight);
+				stroke(255);
+				if(encoding === "filled_blended") {
+					noFill();
+					ellipse(x, y, pointEncode.size, pointEncode.size);
+					fill(pointFill);
+					blendMode(pointEncode.blend);
+					ellipse(x, y, pointEncode.size, pointEncode.size);
+					blendMode(BLEND);
+				} else {
+					fill(pointFill);
+					ellipse(x, y, pointEncode.size, pointEncode.size);
+				}
+			}
+
+		} else {
+			
+			if(encoding === "open") {
+				buffer.strokeWeight(pointEncode.openStrokeWeight);
+				buffer.stroke(pointFill);
+				buffer.noFill();
+				buffer.ellipse(x, y, pointEncode.size, pointEncode.size);
+			} else {
+				buffer.strokeWeight(pointEncode.filledStrokeWeight);
+				buffer.stroke(255);
+				if(encoding === "filled_blended") {
+					buffer.noFill();
+					buffer.ellipse(x, y, pointEncode.size, pointEncode.size);
+					buffer.fill(pointFill);
+					buffer.blendMode(pointEncode.blend);
+					buffer.ellipse(x, y, pointEncode.size, pointEncode.size);
+					buffer.blendMode(BLEND);
+				} else {
+					buffer.fill(pointFill);
+					buffer.ellipse(x, y, pointEncode.size, pointEncode.size);
+				}
+			}
+			
+		}
+		
+	}
+	
+	// If encoding use is alpha blending, adds alpha value to color given as
+	// a String and return the color
+	function addAlpha(colorString) {
+		var c = color(colorString);
+		var rVal = red(c);
+		var gVal = green(c);
+		var bVal = blue(c);
+		return color(rVal, gVal, bVal, pointEncode.alpha);
 	}
 	
 	function plotData(animate) {
@@ -571,8 +632,12 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _chartTitle) {
 		} else {
 			image(buffers.greyBuffer, 0, 0, canvasWidth * disp, canvasHeight * disp, 0, 0, canvasWidth, canvasHeight);
 			for (var i = 0; i < brushed; i++) {
+				if (encoding === "filled_blended" && i === 1) {
+					blendMode(pointEncode.blend);
+				}
 				image(buffers[selected[i]], 0, 0, canvasWidth * disp, canvasHeight * disp, 0, 0, canvasWidth, canvasHeight);
 			}
+			blendMode(BLEND);
 		}
 	}
 	
@@ -637,17 +702,25 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _chartTitle) {
 		
 		if (typeof params.scaleAmount !== "undefined") {
 			scaleAmount = +(params.scaleAmount);
-			gridWidth = gridWidth * scaleAmount;
-			pointEncode.size = pointEncode.size * scaleAmount;
-			pointEncode.strokeWeight = pointEncode.strokeWeight * scaleAmount;
+			majorPad *= scaleAmount;
+			gridWidth *= scaleAmount;
+			tickLen *= scaleAmount;
+			tickLabelDist *= scaleAmount;
+			subtitleDist *= scaleAmount;
+			pointEncode.size *= scaleAmount;
+			pointEncode.strokeWeight *= scaleAmount;
 			for (var size in textSizes) {
 				textSizes[size] *= scaleAmount;
 			}
 		}
 		
+		if (typeof params.encoding !== "undefined") {
+			encoding = params.encoding.toLowerCase();
+		}
+
 		canvasWidth = gridWidth * (useAttr.length - 1) + 2 * majorPad;
 		canvasHeight = gridWidth * (useAttr.length - 1) + 2.5 * majorPad;
-		createCanvas(canvasWidth, canvasHeight);
+		var canvas = createCanvas(canvasWidth, canvasHeight);
 		background(255);
 		rowCount = source.getRowCount();
 	
@@ -754,7 +827,7 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _chartTitle) {
 			} else {
 				drawLoadBar(0);				
 			}
-			
+
 			drawPauseButton();
 			drawSlider();
 			drawSliderTitle();
