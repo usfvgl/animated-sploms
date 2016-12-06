@@ -154,10 +154,21 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _chartTitle) {
 	var rectColor = "rgba(89, 89, 89, 1)";	
 	var rectStrokeWeight = 1;
 	
+	// Set up highlight rectangle to be dragged around by user
+	var highlightRect = {
+		width: 30,
+		height: 40,
+		x: 0,
+		y: 0,
+		fill: '#252525',
+		strokeWeight: 1,
+		on: false
+	};
+	
 	// Offscreen buffer and relevant info
 	var buffers = {
 		colorBuffer: null,
-		greyBuffer: null		
+		greyBuffer: null
 	};
 	
 	// Display density
@@ -166,6 +177,7 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _chartTitle) {
 	// Helper functions section
 	
 	function drawGrid() {
+		blendMode(REPLACE);
 	    rectMode(CORNER);
 	    noFill();
 		strokeWeight(.5);
@@ -176,7 +188,20 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _chartTitle) {
 				rect(gridX[j], gridY[i], gridWidth, gridWidth);
 			}
 		}
-		
+	}
+	
+	function clearPlotArea() {
+		blendMode(REPLACE);
+	    rectMode(CORNER);
+	    fill(255, 255, 255);
+		strokeWeight(.5);
+		stroke(255, 255, 255);
+	
+		for (var i = 0; i < gridY.length; i++) {
+			for (var j = gridX.length - 1 - i; j >= 0; j--) {
+				rect(gridX[j], gridY[i], gridWidth, gridWidth);
+			}
+		}
 	}
 	
 	function drawChartText() {
@@ -296,6 +321,15 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _chartTitle) {
 		
 		blendMode(BLEND);
 
+	}
+	
+	function drawHighlightRect(strokeColor) {
+		blendMode(REPLACE);
+		noFill();
+		stroke(strokeColor);
+		strokeWeight(highlightRect.strokeWeight);
+		rectMode(CENTER);
+		rect(highlightRect.x, highlightRect.y, highlightRect.width, highlightRect.height);
 	}
 	
 	function drawSlider() {
@@ -627,6 +661,8 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _chartTitle) {
 	
 	// Loads appropriate buffers after brushing enabled/disenabled
 	function brushRedraw() {
+		clearPlotArea();
+		drawGrid();
 		if (brushed === 0) {
 			image(buffers.colorBuffer, 0, 0, canvasWidth * disp, canvasHeight * disp, 0, 0, canvasWidth, canvasHeight);
 		} else {
@@ -669,6 +705,11 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _chartTitle) {
 		if (typeof params.isAnimate !== "undefined") {
 			isAnimate = (decodeURIComponent(params.isAnimate).toLowerCase() === "true");
 		}
+
+		if (typeof params.highlight !== "undefined") {
+			highlightRect.on = (decodeURIComponent(params.highlight).toLowerCase() === "true");
+		}
+
 		
 		if (typeof params.initDraw !== "undefined") {
 			initDraw = (decodeURIComponent(params.initDraw).toLowerCase() === "true");
@@ -781,6 +822,9 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _chartTitle) {
 		xLegend = plotX2 - gridWidth;
 		yLegend = plotY1 + Math.min(useAttr.length - 2, 3) * gridWidth;
 		
+		highlightRect.x = xLegend - gridWidth/2 + highlightRect.width/2;
+		highlightRect.y = yLegend + highlightRect.height/2;
+		
 		elementPad = gridWidth * 0.1;
 		textPad = gridWidth * 0.03;
 		elementHeight = gridWidth * 0.12;
@@ -848,6 +892,10 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _chartTitle) {
 			drawRects("rgba(255, 255, 255, 1)")
 			drawRects(rectColor);			
 		}
+		
+		if (highlightRect.on) {
+			drawHighlightRect(highlightRect.fill);
+		}
 	}
 	
 	main.mousePressed = function() {
@@ -882,6 +930,7 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _chartTitle) {
 					
 					brushed = selected.length;
 					brushRedraw();
+					drawHighlightRect(highlightRect.fill);
 					drawLegend();
 					break;
 				}
@@ -903,6 +952,23 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _chartTitle) {
 				drawPauseButton();
 		}
 		
+	}
+	
+	main.mouseDragged = function() {
+		var x = mouseX;
+		var y = mouseY;
+				
+		if ((Math.abs(x - highlightRect.x) < highlightRect.width/2)
+			&& (Math.abs(y - highlightRect.y) < highlightRect.height/2)) {
+				drawHighlightRect("rgba(255, 255, 255, 1)");
+				brushRedraw();
+				highlightRect.x = mouseX;
+				highlightRect.y = mouseY;
+				drawHighlightRect(highlightRect.fill);
+		}
+
+		// prevent default: see http://p5js.org/reference/#/p5/mouseDragged
+		return false;
 	}
 	
 	// Session tracking: array of event objects of form:
