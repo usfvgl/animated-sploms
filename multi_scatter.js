@@ -162,7 +162,8 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _chartTitle) {
 		y: 0,
 		fill: '#252525',
 		strokeWeight: 1,
-		on: false
+		on: false,
+		clicked: false
 	};
 	
 	// Offscreen buffer and relevant info
@@ -190,18 +191,17 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _chartTitle) {
 		}
 	}
 	
-	function clearPlotArea() {
+	function resetPlotArea() {
 		blendMode(REPLACE);
-	    rectMode(CORNER);
+	    rectMode(CORNERS);
 	    fill(255, 255, 255);
 		strokeWeight(.5);
 		stroke(255, 255, 255);
-	
-		for (var i = 0; i < gridY.length; i++) {
-			for (var j = gridX.length - 1 - i; j >= 0; j--) {
-				rect(gridX[j], gridY[i], gridWidth, gridWidth);
-			}
-		}
+		rect(plotX1, plotY1, plotX2 - gridWidth, plotY2);
+		rect(plotX2 - gridWidth, plotY1, plotX2, yLegend - gridWidth);
+		drawGrid();
+		stroke(169, 169, 169);
+		line(xLegend, yLegend, xLegend, yLegend + gridWidth);
 	}
 	
 	function drawChartText() {
@@ -661,8 +661,7 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _chartTitle) {
 	
 	// Loads appropriate buffers after brushing enabled/disenabled
 	function brushRedraw() {
-		clearPlotArea();
-		drawGrid();
+		resetPlotArea();
 		if (brushed === 0) {
 			image(buffers.colorBuffer, 0, 0, canvasWidth * disp, canvasHeight * disp, 0, 0, canvasWidth, canvasHeight);
 		} else {
@@ -822,8 +821,10 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _chartTitle) {
 		xLegend = plotX2 - gridWidth;
 		yLegend = plotY1 + Math.min(useAttr.length - 2, 3) * gridWidth;
 		
-		highlightRect.x = xLegend - gridWidth/2 + highlightRect.width/2;
-		highlightRect.y = yLegend + highlightRect.height/2;
+		if (highlightRect.on) {
+			highlightRect.x = xLegend - gridWidth/2 + highlightRect.width/2;
+			highlightRect.y = yLegend + highlightRect.height/2;
+		}
 		
 		elementPad = gridWidth * 0.1;
 		textPad = gridWidth * 0.03;
@@ -898,7 +899,7 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _chartTitle) {
 		}
 	}
 	
-	main.mousePressed = function() {
+	main.mouseClicked = function() {
 		// get timestamp for event tracking
 		var time = millis();
 		
@@ -930,8 +931,10 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _chartTitle) {
 					
 					brushed = selected.length;
 					brushRedraw();
-					drawHighlightRect(highlightRect.fill);
 					drawLegend();
+					if (highlightRect.on) {
+						drawHighlightRect(highlightRect.fill);
+					}
 					break;
 				}
 			}
@@ -952,19 +955,68 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _chartTitle) {
 				drawPauseButton();
 		}
 		
+		// prevent default
+		return false;
+	}
+	
+	// Below mouse events are mainly used for highlight box for user study purpose only
+	
+	main.mousePressed = function() {
+		
+		if (!highlightRect.on) {
+			return false;
+		}
+		
+		var x = mouseX;
+		var y = mouseY;
+		
+		// see if user clicked in highlight box
+		if ((Math.abs(x - highlightRect.x) < highlightRect.width/2)
+			&& (Math.abs(y - highlightRect.y) < highlightRect.height/2)) {
+				highlightRect.clicked = true;
+				brushRedraw();
+		}
+	}
+	
+	main.mouseReleased = function() {
+		
+		if (!highlightRect.on) {
+			return false;
+		}
+		
+		var x = mouseX;
+		var y = mouseY;
+		
+		if (highlightRect.clicked) {
+			highlightRect.x = x;
+			highlightRect.y = y;
+			drawHighlightRect(highlightRect.fill);
+			highlightRect.clicked = false;
+		}
+		
+		// prevent default
+		return false;
+	}
+	
+	main.mouseMoved = function() {
+		if (highlightRect.on && highlightRect.clicked) {
+			brushRedraw();
+			highlightRect.x = mouseX;
+			highlightRect.y = mouseY;
+			drawHighlightRect(highlightRect.fill);
+		}
+		
+		// prevent default
+		return false;
 	}
 	
 	main.mouseDragged = function() {
-		var x = mouseX;
-		var y = mouseY;
-				
-		if ((Math.abs(x - highlightRect.x) < highlightRect.width/2)
-			&& (Math.abs(y - highlightRect.y) < highlightRect.height/2)) {
-				drawHighlightRect("rgba(255, 255, 255, 1)");
-				brushRedraw();
-				highlightRect.x = mouseX;
-				highlightRect.y = mouseY;
-				drawHighlightRect(highlightRect.fill);
+		
+		if (highlightRect.on && highlightRect.clicked) {
+			brushRedraw();
+			highlightRect.x = mouseX;
+			highlightRect.y = mouseY;
+			drawHighlightRect(highlightRect.fill);
 		}
 
 		// prevent default: see http://p5js.org/reference/#/p5/mouseDragged
