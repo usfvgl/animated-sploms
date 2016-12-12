@@ -157,7 +157,7 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _chartTitle) {
 	// Set up highlight rectangle to be dragged around by user
 	var highlightRect = {
 		width: 30,
-		height: 40,
+		height: 30,
 		x: 0,
 		y: 0,
 		fill: '#252525',
@@ -195,7 +195,7 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _chartTitle) {
 		blendMode(REPLACE);
 	    rectMode(CORNERS);
 	    fill(255, 255, 255);
-		strokeWeight(.5);
+		strokeWeight(1);
 		stroke(255, 255, 255);
 		rect(plotX1, plotY1, plotX2 - gridWidth, plotY2);
 		rect(plotX2 - gridWidth, plotY1, plotX2, yLegend - gridWidth);
@@ -323,6 +323,7 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _chartTitle) {
 
 	}
 	
+	// Draw highlight rectangle (for user study purpose only)
 	function drawHighlightRect(strokeColor) {
 		blendMode(REPLACE);
 		noFill();
@@ -330,6 +331,29 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _chartTitle) {
 		strokeWeight(highlightRect.strokeWeight);
 		rectMode(CENTER);
 		rect(highlightRect.x, highlightRect.y, highlightRect.width, highlightRect.height);
+	}
+	
+	function setHighlightRectCenter(x, y) {
+		var xOffset = highlightRect.width/2;
+		var yOffset = highlightRect.height/2;
+		// set valid x value for center of highlightRect
+		if (x < (plotX1 + xOffset)) {
+			highlightRect.x = plotX1 + xOffset;
+		} else if (x > (plotX2 - gridWidth - xOffset) && y > (yLegend - gridWidth - yOffset)) {
+			highlightRect.x = plotX2 - gridWidth - xOffset;
+		} else if (x > (plotX2 - yOffset)) {
+			highlightRect.x = plotX2 - xOffset;
+		} else {
+			highlightRect.x = x;
+		}
+		// set valid y value for center of highlightRect
+		if (y < (plotY1 + yOffset)) {
+			hightlightRect.y = plotY1 + yOffset;
+		} else if (y > (plotY2 - yOffset)) {
+			highlightRect.y = plotY2 - yOffset;
+		} else {
+			highlightRect.y = y;
+		}
 	}
 	
 	function drawSlider() {
@@ -988,8 +1012,7 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _chartTitle) {
 		var y = mouseY;
 		
 		if (highlightRect.clicked) {
-			highlightRect.x = x;
-			highlightRect.y = y;
+			setHighlightRectCenter(x, y);
 			drawHighlightRect(highlightRect.fill);
 			highlightRect.clicked = false;
 		}
@@ -1001,8 +1024,7 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _chartTitle) {
 	main.mouseMoved = function() {
 		if (highlightRect.on && highlightRect.clicked) {
 			brushRedraw();
-			highlightRect.x = mouseX;
-			highlightRect.y = mouseY;
+			setHighlightRectCenter(mouseX, mouseY);
 			drawHighlightRect(highlightRect.fill);
 		}
 		
@@ -1014,8 +1036,7 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _chartTitle) {
 		
 		if (highlightRect.on && highlightRect.clicked) {
 			brushRedraw();
-			highlightRect.x = mouseX;
-			highlightRect.y = mouseY;
+			setHighlightRectCenter(mouseX, mouseY);
 			drawHighlightRect(highlightRect.fill);
 		}
 
