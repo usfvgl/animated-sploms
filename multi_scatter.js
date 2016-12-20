@@ -910,8 +910,13 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _chartTitle) {
 	}
 	
 	main.draw = function() {
+		// Frame rate tracking info: can delete
 		main.frameRate.n += 1;
 		main.frameRate.runningTtl += frameRate();
+		
+		// Fix cursor symbol as arrow
+		cursor(ARROW);
+		
 		plotData(isAnimate);
 		if (rectangles.length >= 1) {
 			drawRects("rgba(255, 255, 255, 1)")
