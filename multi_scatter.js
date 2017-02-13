@@ -1106,14 +1106,15 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _chartTitle) {
 	
 	main.mouseDragged = function() {
 		
-		if (highlightRect.on && highlightRect.clicked) {
-			brushRedraw();
-			setHighlightRectCenter(mouseX, mouseY);
-			drawHighlightRect(highlightRect.fill);
-		}
-
-		// prevent default: see http://p5js.org/reference/#/p5/mouseDragged
-		return false;
+		// if (highlightRect.on && highlightRect.clicked) {
+// 			brushRedraw();
+// 			setHighlightRectCenter(mouseX, mouseY);
+// 			drawHighlightRect(highlightRect.fill);
+// 		}
+//
+// 		// prevent default: see http://p5js.org/reference/#/p5/mouseDragged
+// 		return false;
+		return mouseMoved();
 	}
 	
 	// Session tracking: array of event objects of form:
