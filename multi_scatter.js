@@ -72,6 +72,16 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _chartTitle) {
 	var brushed = 0;
 	var selected = [];
 	var brushedColor = "rgb(217, 217, 217)";
+	
+	// Color for x and y axis label 
+	var axisLabelTextColor = {
+		highlight: "#fb8072",		// when user mouse over a square in the matrix
+		regular: "rgb(169, 169, 169)",
+	};
+	var axisLabelHighlight = {
+		x: -1,
+		y: -1
+	}
 
 	// Encoding used for plotting points. _encoding needs to be one of the following Strings:
 	// filled_normal:  filled cirlces without color blending (default)
@@ -213,10 +223,47 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _chartTitle) {
 		text(_chartTitle, xTitle, yTitle);
 
 	}
+	
+	function drawXAxisSubtitle(attrNum, textXPosition, highlight) {
+		push();
+		textSize(textSizes.axisTitle);
+		strokeWeight(0.25);
+		stroke(axisLabelTextColor.highlight);
+		fill(axisLabelTextColor.highlight);
+		textAlign(CENTER, CENTER);
+		if (!highlight) {
+			stroke(255, 255, 255);
+			fill(255, 255, 255);
+			text(attr[useAttr[attrNum]], textXPosition, plotY1 - subtitleDist);
+			fill(axisLabelTextColor.regular);
+			stroke(axisLabelTextColor.regular);
+		}
+		text(attr[useAttr[attrNum]], textXPosition, plotY1 - subtitleDist);
+		pop();
+	}
+	
+	function drawYAxisSubtitle(attrNum, textYPosition, highlight) {
+		push();
+		textSize(textSizes.axisTitle);
+		strokeWeight(0.25);
+		stroke(axisLabelTextColor.highlight);
+		fill(axisLabelTextColor.highlight);
+		rotate(-PI/2);
+		textAlign(CENTER, CENTER);
+		if (!highlight) {
+			stroke(255, 255, 255);
+			fill(255, 255, 255);
+			text(attr[useAttr[attrNum]], -textYPosition, plotX1 - 1.5 * subtitleDist);
+			fill(axisLabelTextColor.regular);
+			stroke(axisLabelTextColor.regular);
+		}
+		text(attr[useAttr[attrNum]], -textYPosition, plotX1 - 1.5 * subtitleDist);
+		pop();
+	}
 
 	function drawAxisLabels() {
-		fill(169, 169, 169);
-		stroke(169, 169, 169);
+		fill(axisLabelTextColor.regular);
+		stroke(axisLabelTextColor.regular);
 		textSize(textSizes.axisLabel);
 		strokeWeight(0.25);
 	
@@ -250,11 +297,7 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _chartTitle) {
 				
 					// draw axis subtitle
 					if (i === 1) {
-						push();
-						textSize(textSizes.axisTitle);
-						stroke(128, 128, 128);
-						text(attr[useAttr[count]], x, plotY1 - subtitleDist);
-						pop();
+						drawXAxisSubtitle(count, x, false);
 					}
 				
 					stroke(0,0,0);
@@ -271,13 +314,7 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _chartTitle) {
 				
 					// draw axis subtitle
 					if (i === 1) {
-						push();
-						textSize(textSizes.axisTitle);
-						stroke(128, 128, 128);
-						rotate(-PI/2);
-						textAlign(CENTER, CENTER);
-						text(attr[useAttr[count]], -y, plotX1 - 1.5 * subtitleDist);
-						pop();
+						drawYAxisSubtitle(count, y, false);
 					}
 				
 					stroke(0,0,0);
@@ -989,6 +1026,7 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _chartTitle) {
 	}
 	
 	// Below mouse events are mainly used for highlight box for user study purpose only
+	// mousemove event also used for axis label highlighting
 	
 	main.mousePressed = function() {
 		
@@ -1031,6 +1069,29 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _chartTitle) {
 			brushRedraw();
 			setHighlightRectCenter(mouseX, mouseY);
 			drawHighlightRect(highlightRect.fill);
+		}
+		
+		// axis label highlighting
+		var xAttrRev = Math.floor((mouseX - plotX1)/gridWidth);		
+		var xAttr = useAttr.length - 1 - xAttrRev;
+		var yAttr = Math.floor((mouseY - plotY1)/gridWidth);
+		
+		// Un-highlight axis labels
+		if (axisLabelHighlight.x !== -1 && axisLabelHighlight.y !== -1 && (axisLabelHighlight.x !== xAttr || axisLabelHighlight.y !== yAttr)) {
+			var currxAttrRev = useAttr.length - 1 - axisLabelHighlight.x;
+			drawXAxisSubtitle(axisLabelHighlight.x, plotX1 + gridWidth * (0.5 + currxAttrRev), false);
+			drawYAxisSubtitle(axisLabelHighlight.y, plotY1 + gridWidth * (0.5 + axisLabelHighlight.y), false);
+		}
+		
+		// If valid mouse position, highlight axis labels
+		if (xAttr < 0 || yAttr < 0 || (xAttr > useAttr.length - 1) || (yAttr > useAttr.length - 1) || xAttr <= yAttr) {
+			axisLabelHighlight.x = -1;
+			axisLabelHighlight.y = -1;
+		} else if (axisLabelHighlight.x !== xAttr || axisLabelHighlight.y !== yAttr) {
+			axisLabelHighlight.x = xAttr;
+			axisLabelHighlight.y = yAttr;
+			drawXAxisSubtitle(xAttr, plotX1 + gridWidth * (0.5 + xAttrRev), true);
+			drawYAxisSubtitle(yAttr, plotY1 + gridWidth * (0.5 + yAttr), true);
 		}
 		
 		// prevent default
