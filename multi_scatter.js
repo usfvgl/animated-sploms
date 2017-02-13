@@ -80,7 +80,9 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _chartTitle) {
 	};
 	var axisLabelHighlight = {
 		x: -1,
-		y: -1
+		y: -1,
+		xPos: [],
+		yPos: []
 	}
 
 	// Encoding used for plotting points. _encoding needs to be one of the following Strings:
@@ -224,8 +226,9 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _chartTitle) {
 
 	}
 	
-	function drawXAxisSubtitle(attrNum, textXPosition, highlight) {
+	function drawXAxisSubtitle(attrNum, highlight) {
 		push();
+		var textXPosition = axisLabelHighlight.xPos[attrNum];
 		textSize(textSizes.axisTitle);
 		strokeWeight(0.25);
 		stroke(axisLabelTextColor.highlight);
@@ -242,8 +245,9 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _chartTitle) {
 		pop();
 	}
 	
-	function drawYAxisSubtitle(attrNum, textYPosition, highlight) {
+	function drawYAxisSubtitle(attrNum, highlight) {
 		push();
+		var textYPosition = axisLabelHighlight.yPos[attrNum];
 		textSize(textSizes.axisTitle);
 		strokeWeight(0.25);
 		stroke(axisLabelTextColor.highlight);
@@ -297,7 +301,8 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _chartTitle) {
 				
 					// draw axis subtitle
 					if (i === 1) {
-						drawXAxisSubtitle(count, x, false);
+						axisLabelHighlight.xPos[count] = x;
+						drawXAxisSubtitle(count, false);
 					}
 				
 					stroke(0,0,0);
@@ -314,7 +319,8 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _chartTitle) {
 				
 					// draw axis subtitle
 					if (i === 1) {
-						drawYAxisSubtitle(count, y, false);
+						axisLabelHighlight.yPos[count] = y;
+						drawYAxisSubtitle(count, false);
 					}
 				
 					stroke(0,0,0);
@@ -325,7 +331,7 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _chartTitle) {
 			}
 		
 		}
-	
+
 	}
 	
 	function drawRects(strokeColor) {
@@ -1079,8 +1085,8 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _chartTitle) {
 		// Un-highlight axis labels
 		if (axisLabelHighlight.x !== -1 && axisLabelHighlight.y !== -1 && (axisLabelHighlight.x !== xAttr || axisLabelHighlight.y !== yAttr)) {
 			var currxAttrRev = useAttr.length - 1 - axisLabelHighlight.x;
-			drawXAxisSubtitle(axisLabelHighlight.x, plotX1 + gridWidth * (0.5 + currxAttrRev), false);
-			drawYAxisSubtitle(axisLabelHighlight.y, plotY1 + gridWidth * (0.5 + axisLabelHighlight.y), false);
+			drawXAxisSubtitle(axisLabelHighlight.x, false);
+			drawYAxisSubtitle(axisLabelHighlight.y, false);
 		}
 		
 		// If valid mouse position, highlight axis labels
@@ -1090,8 +1096,8 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _chartTitle) {
 		} else if (axisLabelHighlight.x !== xAttr || axisLabelHighlight.y !== yAttr) {
 			axisLabelHighlight.x = xAttr;
 			axisLabelHighlight.y = yAttr;
-			drawXAxisSubtitle(xAttr, plotX1 + gridWidth * (0.5 + xAttrRev), true);
-			drawYAxisSubtitle(yAttr, plotY1 + gridWidth * (0.5 + yAttr), true);
+			drawXAxisSubtitle(xAttr, true);
+			drawYAxisSubtitle(yAttr, true);
 		}
 		
 		// prevent default
