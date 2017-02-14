@@ -75,7 +75,7 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _chartTitle) {
 	
 	// Color for x and y axis label 
 	var axisLabelTextColor = {
-		highlight: "#fb8072",		// when user mouse over a square in the matrix
+		highlight: "rgb(0, 0, 0)",		// when user mouse over a square in the matrix
 		regular: "rgb(169, 169, 169)",
 	};
 	var axisLabelHighlight = {
