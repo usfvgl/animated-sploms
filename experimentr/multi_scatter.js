@@ -1,4 +1,5 @@
-function multi_scatter(_dataSource, _attr, _category, _animate, _chartTitle) {
+//TODO remove _rectangles and all _rectangles-related references
+function multi_scatter(_dataSource, _attr, _category, _animate, _encoding, _chartTitle, _rectangles, _highlight, div_name) {
 
 	var params;
 	
@@ -33,7 +34,7 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _chartTitle) {
 	if (isAnimate && (typeof _animate.animateNum !== "undefined")) {
 		animateNum = _animate.animateNum;
 	}
-	var initDraw = animate.initDraw;
+	var initDraw = _animate.initDraw;
 	
 	var maxData = [];
 	var minData = [];
@@ -41,7 +42,7 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _chartTitle) {
 	var rowCount;
 
 	// formatting plot area
-	var majorPad = 55;
+	var majorPad = 50;
 	var gridWidth = 125;
 	var tickLen = 3;
 	var tickLabelDist = tickLen * 1.5;
@@ -72,7 +73,7 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _chartTitle) {
 	var brushed = 0;
 	var selected = [];
 	var brushedColor = "rgb(217, 217, 217)";
-	
+
 	// Color for x and y axis label 
 	var axisLabelTextColor = {
 		highlight: "rgb(0, 0, 0)",		// when user mouse over a square in the matrix
@@ -93,6 +94,9 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _chartTitle) {
 	// alpha_blended:  filled circles with alpha blending
 	// open:           unfilled circles with color outline
 	var encoding = "filled_normal";
+	if ((_encoding.toLowerCase() === "filled_blended") || (_encoding.toLowerCase() === "alpha_blended") || (_encoding.toLowerCase() === "open")) {
+		encoding = _encoding.toLowerCase();
+	}
 
 	// encoding variables for plotted points
 	var pointEncode = {
@@ -167,23 +171,25 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _chartTitle) {
 	var rectangles = [];
 	var rectColor = "rgba(89, 89, 89, 1)";	
 	var rectStrokeWeight = 1;
-	
+
 	// Set up highlight rectangle to be dragged around by user
 	var highlightRect = {
 		width: 30,
 		height: 30,
 		x: 0,
 		y: 0,
+		xAttr: 0,
+		yAttr: 0,
 		fill: '#252525',
 		strokeWeight: 1,
 		on: false,
 		clicked: false
 	};
-	
+
 	// Offscreen buffer and relevant info
 	var buffers = {
 		colorBuffer: null,
-		greyBuffer: null
+		greyBuffer: null		
 	};
 	
 	// Display density
@@ -203,6 +209,7 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _chartTitle) {
 				rect(gridX[j], gridY[i], gridWidth, gridWidth);
 			}
 		}
+		
 	}
 	
 	function resetPlotArea() {
@@ -227,7 +234,7 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _chartTitle) {
 		text(_chartTitle, xTitle, yTitle);
 
 	}
-	
+
 	function drawXAxisSubtitle(attrNum, highlight) {
 		push();
 		var textXPosition = axisLabelHighlight.xPos[attrNum];
@@ -268,8 +275,8 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _chartTitle) {
 	}
 
 	function drawAxisLabels() {
-		fill(axisLabelTextColor.regular);
-		stroke(axisLabelTextColor.regular);
+		fill(169, 169, 169);
+		stroke(169, 169, 169);
 		textSize(textSizes.axisLabel);
 		strokeWeight(0.25);
 	
@@ -333,7 +340,7 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _chartTitle) {
 			}
 		
 		}
-
+	
 	}
 	
 	function drawRects(strokeColor) {
@@ -367,7 +374,7 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _chartTitle) {
 		blendMode(BLEND);
 
 	}
-	
+
 	// Draw highlight rectangle (for user study purpose only)
 	function drawHighlightRect(strokeColor) {
 		blendMode(REPLACE);
@@ -393,83 +400,12 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _chartTitle) {
 		}
 		// set valid y value for center of highlightRect
 		if (y < (plotY1 + yOffset)) {
-			hightlightRect.y = plotY1 + yOffset;
+			highlightRect.y = plotY1 + yOffset;
 		} else if (y > (plotY2 - yOffset)) {
 			highlightRect.y = plotY2 - yOffset;
 		} else {
 			highlightRect.y = y;
 		}
-	}
-	
-	function drawSlider() {
-		var pointsPerRow = useAttr.length * (useAttr.length - 1) / 2;
-		// Max number of rows drawn per frame to maintain 30 frames/sec frame rate
-		var maxVal = Math.floor(maxPointsPerFrame / pointsPerRow);
-		slider.slider = createSlider(1, maxVal, animateNum, 1);
-		slider.slider.position(slider.x, slider.y);
-		slider.slider.style('width', slider.width + 'px');
-		slider.slider.changed(onSliderChange);
-	}
-	
-	function onSliderChange() {
-		// session logging info
-		var time = millis();
-		var prevNum = animateNum;
-		// update animateNum from slider
-		animateNum = slider.slider.value();
-		drawSliderTitle();
-		//update session logging info
-		main.session.push(getEventEntry("rows per frame", time, animateNum - prevNum));
-	}
-	
-	function drawSliderTitle() {
-		// clear canvas
-		var textHeight = gridWidth * 0.1;
-		rectMode(CORNER);
-		fill(255, 255, 255);
-		stroke(255, 255, 255);
-		rect(slider.textX, slider.textY - textHeight/2, gridWidth * 1.1, textHeight);
-
-		textSize(textSizes.loadBar);
-		fill(loadBar.fill);
-		noStroke();
-		textAlign(LEFT, CENTER);
-		text("Rows animated per frame: " + slider.slider.value(), slider.textX, slider.textY);
-	}
-	
-	function drawPauseButton() {
-		
-		// clear canvas
-		rectMode(CENTER);
-		fill(255, 255, 255);
-		stroke(255, 255, 255);
-		rect(pauseButton.x, pauseButton.y, pauseButton.width, pauseButton.height);
-		
-		var playFill;
-		var pauseFill;
-
-		if (paused) {
-			playFill = pauseButton.deselectedFill;
-			pauseFill = pauseButton.selectedFill;
-		} else {
-			playFill = pauseButton.selectedFill;
-			pauseFill = pauseButton.deselectedFill;
-		}
-		
-		// draw triangle
-		fill(playFill);
-		stroke(playFill);
-		triangle(pauseButton.x, pauseButton.y, 
-			pauseButton.x - pauseButton.width/2, pauseButton.y - pauseButton.height/2,
-			pauseButton.x - pauseButton.width/2, pauseButton.y + pauseButton.height/2
-		);
-		
-		// draw pause
-		fill(pauseFill);
-		stroke(pauseFill);
-		rectMode(CENTER);
-		rect(pauseButton.x + pauseButton.width/6, pauseButton.y, pauseButton.width/6, pauseButton.height);
-		rect(pauseButton.x + pauseButton.width/12 * 5, pauseButton.y, pauseButton.width/6, pauseButton.height);
 	}
 	
 	function drawLoadBar(percentDrawn) {
@@ -773,11 +709,6 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _chartTitle) {
 		if (typeof params.isAnimate !== "undefined") {
 			isAnimate = (decodeURIComponent(params.isAnimate).toLowerCase() === "true");
 		}
-
-		if (typeof params.highlight !== "undefined") {
-			highlightRect.on = (decodeURIComponent(params.highlight).toLowerCase() === "true");
-		}
-
 		
 		if (typeof params.initDraw !== "undefined") {
 			initDraw = (decodeURIComponent(params.initDraw).toLowerCase() === "true");
@@ -822,16 +753,22 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _chartTitle) {
 				textSizes[size] *= scaleAmount;
 			}
 		}
-		
-		if (typeof params.encoding !== "undefined") {
-			encoding = params.encoding.toLowerCase();
-		}
 
 		canvasWidth = gridWidth * (useAttr.length - 1) + 2 * majorPad;
 		canvasHeight = gridWidth * (useAttr.length - 1) + 2.5 * majorPad;
 		var canvas = createCanvas(canvasWidth, canvasHeight);
 		background(255);
 		rowCount = source.getRowCount();
+
+		// Turn on draggable highlight rectangle for user study purposes
+		if (_highlight !== "undefined" && _highlight.toLowerCase() === "true") {
+			highlightRect.on = _highlight;
+		}
+
+		// if given, set parent div
+		if (div_name !== "undefined") {
+			canvas.parent(div_name);
+		}
 	
 		//get min and max
 		for (var i = 0; i < rowCount; i++) {
@@ -889,12 +826,12 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _chartTitle) {
 	
 		xLegend = plotX2 - gridWidth;
 		yLegend = plotY1 + Math.min(useAttr.length - 2, 3) * gridWidth;
-		
+
 		if (highlightRect.on) {
 			highlightRect.x = xLegend - gridWidth/2 + highlightRect.width/2;
 			highlightRect.y = yLegend + highlightRect.height/2;
 		}
-		
+
 		elementPad = gridWidth * 0.1;
 		textPad = gridWidth * 0.03;
 		elementHeight = gridWidth * 0.12;
@@ -942,9 +879,6 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _chartTitle) {
 				drawLoadBar(0);				
 			}
 
-			drawPauseButton();
-			drawSlider();
-			drawSliderTitle();
 		}
 	
 		drawGrid();
@@ -972,70 +906,11 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _chartTitle) {
 			drawHighlightRect(highlightRect.fill);
 		}
 	}
-	
-	main.mouseClicked = function() {
-		// get timestamp for event tracking
-		var time = millis();
-		
-		// Check if user clicked on legend for brushing
-		if (mouseX >= (keyCenters[0][0] - keySize/2) && mouseX <= (keyCenters[0][0] + keySize/2)) {
-			for (var i = 0; i < classes.length; i++) {
-				if (mouseY >= (keyCenters[i][1] - keySize/2) && mouseY <= (keyCenters[i][1] + keySize/2)) {
-					var clickedClass = classes[i];
-					var classIndexInSelected = selected.indexOf(clickedClass);
-					
-					if (classIndexInSelected < 0) {
-						if (brushed === classes.length - 1) {
-							// selecting the only un-selected class: essentially un-brushing
-							selected = [];
-							brushed = 0;
-						} else {
-							// selected clicked class
-							selected.push(clickedClass);
-							main.session.push(getEventEntry("brush", time, clickedClass));
-						}
-					} else {
-						// de-selected clicked class
-						main.session.push(getEventEntry("unbrush", time, clickedClass));
-						for (var i = classIndexInSelected; i < brushed - 1; i++) {
-							selected[i] = selected[i + 1];
-						}
-						selected.pop();
-					}
-					
-					brushed = selected.length;
-					brushRedraw();
-					drawLegend();
-					if (highlightRect.on) {
-						drawHighlightRect(highlightRect.fill);
-					}
-					break;
-				}
-			}
-		}
-		
-		// Check if user clicked on play/pause buttons
-		if (mouseX >= (pauseButton.x - pauseButton.width/2) && mouseY >= (pauseButton.y - pauseButton.height/2)
-			&& mouseY <= (pauseButton.y + pauseButton.height/2)) {
-				if (mouseX <= pauseButton.x && paused) {
-					main.session.push(getEventEntry("play", time, ""));
-					paused = false;
-					loop();
-				} else if (mouseX > pauseButton.x && mouseX <= (pauseButton.x + pauseButton.width/2) && !paused) {
-					main.session.push(getEventEntry("pause", time, ""));
-					paused = true;
-					noLoop();
-				}
-				drawPauseButton();
-		}
-		
-		// prevent default
-		return false;
-	}
-	
+
 	// Below mouse events are mainly used for highlight box for user study purpose only
-	// mousemove event also used for axis label highlighting
 	
+	// Function return value indicates whether highlightRect has been clicked by user
+	// to be moved
 	main.mousePressed = function() {
 		
 		if (!highlightRect.on) {
@@ -1050,26 +925,39 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _chartTitle) {
 			&& (Math.abs(y - highlightRect.y) < highlightRect.height/2)) {
 				highlightRect.clicked = true;
 				brushRedraw();
-		}
-	}
-	
-	main.mouseReleased = function() {
-		
-		if (!highlightRect.on) {
+				return true;
+		} else {
 			return false;
 		}
 		
+	}
+	
+	// Function return value indicates whether highlightRect has been placed by user,
+	// true only if user has previously clicked on highlightRect
+	main.mouseReleased = function() {
+		
+		if (!highlightRect.on || !highlightRect.clicked) {
+			return false;
+		}
+		
+		var time = millis();
 		var x = mouseX;
 		var y = mouseY;
 		
-		if (highlightRect.clicked) {
-			setHighlightRectCenter(x, y);
-			drawHighlightRect(highlightRect.fill);
-			highlightRect.clicked = false;
-		}
+		setHighlightRectCenter(x, y);
+		drawHighlightRect(highlightRect.fill);
+		highlightRect.clicked = false;
 		
-		// prevent default
-		return false;
+		// Adjust to actual x and y values and store in highlightRect
+		var col = Math.floor((x - plotX1)/gridWidth);
+		var xAttr = useAttr.length - 1 - col;
+		var yAttr = Math.floor((y - plotY1)/gridWidth);
+		main.highlightRect.x = map(x, gridX[col] + labelPad, gridX[col] + gridWidth - labelPad, minData[xAttr], maxData[xAttr]);
+		main.highlightRect.y = map(y, gridY[yAttr] + gridWidth - labelPad, gridY[yAttr] + labelPad, minData[yAttr], maxData[yAttr]);
+		main.highlightRect.xAttr = attr[useAttr[xAttr]];
+		main.highlightRect.yAttr = attr[useAttr[yAttr]];
+		return true;
+		
 	}
 	
 	main.mouseMoved = function() {
@@ -1080,9 +968,16 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _chartTitle) {
 		}
 		
 		// axis label highlighting
-		var xAttrRev = Math.floor((mouseX - plotX1)/gridWidth);		
+		var xAttrRev = Math.floor((mouseX - plotX1)/gridWidth);
 		var xAttr = useAttr.length - 1 - xAttrRev;
 		var yAttr = Math.floor((mouseY - plotY1)/gridWidth);
+		
+		// mouseMoved gets called oddly before screen loads.
+		// the above will therefore yield NaN
+		// exit callback if that's the case
+		if (xAttrRev !== xAttrRev || xAttr !== xAttr || yAttr !== yAttr) {
+			return;
+		}
 		
 		// Un-highlight axis labels
 		if (axisLabelHighlight.x !== -1 && axisLabelHighlight.y !== -1 && (axisLabelHighlight.x !== xAttr || axisLabelHighlight.y !== yAttr)) {
@@ -1101,15 +996,12 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _chartTitle) {
 			drawXAxisSubtitle(xAttr, true);
 			drawYAxisSubtitle(yAttr, true);
 		}
-		
-		// prevent default
-		return false;
 	}
 	
 	main.mouseDragged = function() {
-		return mouseMoved();
+		mouseMoved();
 	}
-	
+
 	// Session tracking: array of event objects of form:
 	// {
 	//  event: one of the following: pause, play, brush, unbrush, rows per frame
@@ -1118,6 +1010,12 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _chartTitle) {
 	//           for speed, change in animate num
 	// }
 	main.session = [];
+	
+	// Highlight rectangle logging information
+	main.highlightRect = {
+		x: 0,
+		y: 0
+	};
 
 	main.frameRate = {
 		n: 0,
