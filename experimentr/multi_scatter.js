@@ -1049,15 +1049,26 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _encoding, _char
 			var xCol = attr.indexOf(main.highlightRect.xAttr);
 			var yCol = attr.indexOf(main.highlightRect.yAttr);
 			var x, y;
+			var cat;
 			var count = 0;
+			var counts = {};
+			
 			for (var row = 0; row < rowCount; row++) {
 				x = source.getNum(row, xCol);
 				y = source.getNum(row, yCol);
 				if (x > main.highlightRect.xLow && x < main.highlightRect.xHigh
 					&& y > main.highlightRect.yLow && y < main.highlightRect.yHigh) {
+						cat = source.getString(row, category.name);
 						count++;
+						if (counts[cat] === undefined) {
+							counts[cat] = 1;
+						} else {
+							counts[cat]++;
+						}
 				}
 			}
+			
+			console.log(counts);
 			return count;
 		}
 	}
