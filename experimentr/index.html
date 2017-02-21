@@ -78,8 +78,10 @@
 		// Only log time and highlightRect information when user released mouse
 		// after previously clicking on it. See multi_scatter.mouseReleased()
 		if(chart.mouseReleased()) {
-			storeInfo[tag + '_rectXValue'] = chart.highlightRect.x;
-			storeInfo[tag + '_rectYValue'] = chart.highlightRect.y;
+			storeInfo[tag + '_rectXLow'] = chart.highlightRect.xLow;
+			storeInfo[tag + '_rectXHigh'] = chart.highlightRect.xHigh;
+			storeInfo[tag + '_rectYLow'] = chart.highlightRect.yLow;
+			storeInfo[tag + '_rectYHigh'] = chart.highlightRect.yHigh;
 			storeInfo[tag + '_rectXAttr'] = chart.highlightRect.xAttr;
 			storeInfo[tag + '_rectYAttr'] = chart.highlightRect.yAttr;
 			if(storeInfo[tag + '_firstSelectTime'] === undefined) {
