@@ -78,18 +78,7 @@
 		// Only log time and highlightRect information when user released mouse
 		// after previously clicking on it. See multi_scatter.mouseReleased()
 		if(chart.mouseReleased()) {
-			storeInfo[tag + '_rectXValue'] = chart.highlightRect.x;
-			storeInfo[tag + '_rectYValue'] = chart.highlightRect.y;
-			storeInfo[tag + '_rectXAttr'] = chart.highlightRect.xAttr;
-			storeInfo[tag + '_rectYAttr'] = chart.highlightRect.yAttr;
-			if(storeInfo[tag + '_firstSelectTime'] === undefined) {
-				storeInfo[tag + '_firstSelectTime'] = timestamp;
-				//experimentr.release();
-			} else {
-				storeInfo[tag + '_lastSelectTime'] = timestamp;
-			}
-
-			console.log(chart.highlightRect.x, chart.highlightRect.y);
+			console.log("n", [chart.getNumPointsInRect()], chart.highlightRect.xAttr, [chart.highlightRect.xLow, chart.highlightRect.xHigh], chart.highlightRect.yAttr, [chart.highlightRect.yLow, chart.highlightRect.yHigh]);
 		}
 
 		// prevent default: see p5 documentation
