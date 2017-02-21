@@ -952,6 +952,12 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _encoding, _char
 		var col = Math.floor((x - plotX1)/gridWidth);
 		var xAttr = useAttr.length - 1 - col;
 		var yAttr = Math.floor((y - plotY1)/gridWidth);
+		
+		// If rect not in valid grid, return false
+		if (xAttr <= yAttr) {
+			return false;
+		}
+		
 		var xLow = x - highlightRect.width/2;
 		var xHigh = x + highlightRect.width/2;
 		var yLow = y + highlightRect.height/2;
@@ -1017,13 +1023,9 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _encoding, _char
 	// }
 	main.session = [];
 	
-	// Highlight rectangle logging information
-	main.highlightRect = {
-		xLow: 0,
-		yLow: 0,
-		xHigh: 0,
-		yHigh: 0
-	};
+	// Highlight rectangle logging information containing actual x/y values
+	// xLow, yLow, xHigh, yHigh will be added/updated in mouseReleased callback
+	main.highlightRect = {};
 
 	main.frameRate = {
 		n: 0,
@@ -1038,6 +1040,26 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _encoding, _char
 			var thisTtl = main.frameRate.runningTtl;
 			console.log("Avg. frame rate in the last " + seconds + " seconds: " + Math.round(thisTtl/thisN));
 		}, 1000 * seconds);
+	}
+	
+	main.getNumPointsInRect = function() {
+		if (main.highlightRect.xLow === undefined) {
+			return 0;
+		} else {
+			var xCol = attr.indexOf(main.highlightRect.xAttr);
+			var yCol = attr.indexOf(main.highlightRect.yAttr);
+			var x, y;
+			var count = 0;
+			for (var row = 0; row < rowCount; row++) {
+				x = source.getNum(row, xCol);
+				y = source.getNum(row, yCol);
+				if (x > main.highlightRect.xLow && x < main.highlightRect.xHigh
+					&& y > main.highlightRect.yLow && y < main.highlightRect.yHigh) {
+						count++;
+				}
+			}
+			return count;
+		}
 	}
 	
 	return main;
