@@ -1,6 +1,4 @@
-<script language="javascript" type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/p5.js/0.4.19/p5.js"></script>
-<script language="javascript" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.5.4/addons/p5.dom.js"></script>
-<script language="javascript" type="text/javascript" src="../multi_scatter.js"></script>
+
 <style>
 body {
   font-family: sans-serif;
@@ -21,165 +19,29 @@ td {
 </style>
 
 <p>
-Load Class:
-<a href="?class-800-001">01</a> &bull;
-<a href="?class-800-002">02</a> &bull;
-<a href="?class-800-003">03</a> &bull;
-<a href="?class-800-004">04</a> &bull;
-<a href="?class-800-005">05</a> &bull;
-<a href="?class-800-006">06</a> &bull;
-<a href="?class-800-007">07</a> &bull;
-<a href="?class-800-008">08</a><br/>
-Load Blobs:
-<a href="?blobs-800-001">01</a> &bull;
-<a href="?blobs-800-002">02</a> &bull;
-<a href="?blobs-800-003">03</a> &bull;
-<a href="?blobs-800-004">04</a> &bull;
-<a href="?blobs-800-005">05</a> &bull;
-<a href="?blobs-800-006">06</a> &bull;
-<a href="?blobs-800-007">07</a> &bull;
-<a href="?blobs-800-008">08</a><br/>
-Load Tests:
-<a href="?test01">01</a> &bull;
-<a href="?test02">02</a> &bull;
-<a href="?test03">03</a> &bull;
-<a href="?test04">04</a> &bull;
-<a href="?test05">05</a> &bull;
-<a href="?test06">06</a> &bull;
-<a href="?test07">07</a> &bull;
-<a href="?test08">08</a> &bull;
-<a href="?test01">09</a> &bull;
-<a href="?test02">10</a> &bull;
-<a href="?test03">11</a> &bull;
-<a href="?test04">12</a><br/>
-Load Same:
-<a href="?same01">01</a> &bull;
-<a href="?same02">02</a> &bull;
-<a href="?same03">03</a> &bull;
-<a href="?same04">04</a> &bull;
-<a href="?same05">05</a> &bull;
-<a href="?same06">06</a> &bull;
-<a href="?same07">07</a> &bull;
-<a href="?same08">08</a>
+Load Data:
+<a href="?data00">00</a> &bull;
+<a href="?data01">01</a> &bull;
+<a href="?data02">02</a> &bull;
+<a href="?data03">03</a> &bull;
+<a href="?data04">04</a> &bull;
+<a href="?data05">05</a> &bull;
+<a href="?data06">06</a> &bull;
+<a href="?data07">07</a> &bull;
+<a href="?data08">08</a> &bull;
+<a href="overview.html">Overview</a>
 </p>
 
 <table align="center">
 <tr>
-  <td><div id="chart"></div></td>
-  <td><img id="static"></td>
+  <td><iframe id="animated" width="620" height="700" frameborder="0" scrolling="no" marginwidth="0" marginheight="0"></iframe></td>
+  <td><iframe id="static" width="620" height="700" frameborder="0" scrolling="no" marginwidth="0" marginheight="0"></iframe></td>
 </tr>
 </table>
 
-<br/>
-
-<table align="center" border="1" cellspacing="0" padding="2">
-<thead>
-  <tr>
-    <th colspan="3">Points</th>
-    <th colspan="3">Variable 1</th>
-    <th colspan="3">Variable 2</th>
-  </tr>
-  <tr>
-    <th>Class</th>
-    <th>Total</th>
-    <th>Best</th>
-    <th>Name</th>
-    <th>Min</th>
-    <th>Max</th>
-    <th>Name</th>
-    <th>Min</th>
-    <th>Max</th>
-  </tr>
-</thead>
-<tbody>
-  <tr id="debug">
-  </tr>
-</tbody>
-</table>
-
-
-
-<p id="output"></p>
-
 <script language="javascript" type="text/javascript">
-	var dataName = window.location.search ? window.location.search.slice(1) : "class-800-001";
-  var dataSource = dataName + ".csv";
-  var dataImage = dataName + ".png";
+  var search = window.location.search ? window.location.search.slice(1) : "data00";
 
-  var attr = {
-		all: ["v", "w", "x", "y", "z", "class"],
-		use: [0, 1, 2, 3, 4]
-	};
-
-	var category = {
-		name: "class",
-		index: 5,
-		values: ["A", "B", "C", "D", "E"]
-	};
-
-	var animate = {
-		isAnimate: true,
-		initDraw: true,
-		animateNum: 8
-	};
-
-	var chart = multi_scatter(dataSource, attr, category, animate, "filled_normal", dataName, null, "true", "chart");
-
-  var maxNum = 0;
-
-  var cells = ["n_class", "n_cur", "n_max", "x_var", "x_min", "x_max", "y_var", "y_min", "y_max"];
-  var row = document.getElementById("debug");
-  var td = {};
-
-  cells.forEach(function(d, i) {
-    td[d] = row.insertCell(-1);
-    td[d].innerHTML = "&nbsp;";
-  });
-
-	function preload() { chart.preload(); }
-  function draw() { chart.draw(); }
-
-	function setup() {
-		chart.setup();
-    document.getElementById("static").src = dataImage;
-    document.getElementById("static").height = document.getElementById("chart").clientHeight;
-	}
-
-	function mousePressed() {
-		chart.mousePressed();
-		return false;
-	}
-
-	function mouseReleased() {
-		var timestamp = Date.now();
-
-		if(chart.mouseReleased()) {
-      var count = chart.getNumPointsInRect();
-      var sum = Object.values(count).reduce(function(a, b) { return a + b; }, 0);
-
-      maxNum = sum > maxNum ? sum : maxNum;
-
-      td.n_class.innerHTML = Object.keys(count).length;
-      td.n_cur.innerHTML = sum;
-      td.n_max.innerHTML = maxNum;
-      td.x_var.innerHTML = chart.highlightRect.xAttr;
-      td.x_min.innerHTML = chart.highlightRect.xLow.toFixed(2);
-      td.x_max.innerHTML = chart.highlightRect.xHigh.toFixed(2);
-      td.y_var.innerHTML = chart.highlightRect.yAttr;
-      td.y_min.innerHTML = chart.highlightRect.yLow.toFixed(2);
-      td.y_max.innerHTML = chart.highlightRect.yHigh.toFixed(2);
-		}
-
-		return false;
-	}
-
-	function mouseMoved() {
-		chart.mouseMoved();
-		return false;
-	}
-
-	function mouseDragged() {
-		chart.mouseDragged();
-		return false;
-	}
+  document.getElementById("animated").src = "template.html?" + search + "&true";
+  document.getElementById("static").src = "template.html?" + search + "&false";
 </script>
