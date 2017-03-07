@@ -752,6 +752,10 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _encoding, _char
 			for (var size in textSizes) {
 				textSizes[size] *= scaleAmount;
 			}
+
+			highlightRect.width *= scaleAmount;
+			highlightRect.height *= scaleAmount;
+			highlightRect.strokeWeight *= scaleAmount;
 		}
 
 		canvasWidth = gridWidth * (useAttr.length - 1) + 2 * majorPad;

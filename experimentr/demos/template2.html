@@ -22,23 +22,6 @@ td {
 
 <div id="chart" align="center"></div>
 
-<br/>
-<br/>
-<br/>
-<br/>
-<br/>
-<br/>
-<br/>
-<br/>
-<br/>
-<br/>
-<br/>
-<br/>
-<br/>
-<br/>
-<br/>
-<br/>
-
 <table align="center" border="1" cellspacing="0" padding="2">
 <thead>
   <tr>
@@ -65,11 +48,16 @@ td {
 </table>
 
 <script language="javascript" type="text/javascript">
-  var search = window.location.search ? window.location.search.slice(1) : "data00&true";
-  var params = search.split('&');
 
-  var data = params.length === 2 ? params[0] : 'data00';
-  var toanimate = params.length === 2 && params[1] === "true" ? true : false;
+  var data;
+
+  try {
+    data =  window.location.search.split('&')[0].slice(1);
+    data = data.split('=')[1]
+  }
+  catch (e) {
+    data = 'data_2_0';
+  }
 
   var attr = {
 		all: ["v", "w", "x", "y", "z", "class"],
@@ -83,7 +71,6 @@ td {
 	};
 
 	var animate = {
-		isAnimate: toanimate,
 		initDraw: true,
 		animateNum: 10
 	};
@@ -103,6 +90,7 @@ td {
 
 	function preload() {
     chart.preload();
+    console.log(getURLParams());
   }
 
   function draw() { chart.draw(); }
