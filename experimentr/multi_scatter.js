@@ -174,8 +174,8 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _encoding, _char
 
 	// Set up highlight rectangle to be dragged around by user
 	var highlightRect = {
-		width: 22,
-		height: 22,
+		width: 20,
+		height: 20,
 		x: 0,
 		y: 0,
 		xAttr: 0,
