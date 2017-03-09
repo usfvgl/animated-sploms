@@ -748,7 +748,8 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _encoding, _char
 			tickLabelDist *= scaleAmount;
 			subtitleDist *= scaleAmount;
 			pointEncode.size *= scaleAmount;
-			pointEncode.strokeWeight *= scaleAmount;
+			pointEncode.filledStrokeWeight *= scaleAmount;
+			pointEncode.openStrokeWeight *= scaleAmount;
 			for (var size in textSizes) {
 				textSizes[size] *= scaleAmount;
 			}
