@@ -33,7 +33,7 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _chartTitle) {
 	if (isAnimate && (typeof _animate.animateNum !== "undefined")) {
 		animateNum = _animate.animateNum;
 	}
-	var initDraw = animate.initDraw;
+	var initDraw = _animate.initDraw;
 	
 	var maxData = [];
 	var minData = [];
@@ -403,9 +403,7 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _chartTitle) {
 	
 	function drawSlider() {
 		var pointsPerRow = useAttr.length * (useAttr.length - 1) / 2;
-		// Max number of rows drawn per frame to maintain 30 frames/sec frame rate
-		var maxVal = Math.floor(maxPointsPerFrame / pointsPerRow);
-		slider.slider = createSlider(1, maxVal, animateNum, 1);
+		slider.slider = createSlider(1, rowCount, animateNum, 1);
 		slider.slider.position(slider.x, slider.y);
 		slider.slider.style('width', slider.width + 'px');
 		slider.slider.changed(onSliderChange);
@@ -1080,9 +1078,16 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _chartTitle) {
 		}
 		
 		// axis label highlighting
-		var xAttrRev = Math.floor((mouseX - plotX1)/gridWidth);		
+		var xAttrRev = Math.floor((mouseX - plotX1)/gridWidth);
 		var xAttr = useAttr.length - 1 - xAttrRev;
 		var yAttr = Math.floor((mouseY - plotY1)/gridWidth);
+		
+		// mouseMoved gets called oddly before screen loads.
+		// the above will therefore yield NaN
+		// exit callback if that's the case
+		if (xAttrRev !== xAttrRev || xAttr !== xAttr || yAttr !== yAttr) {
+			return;
+		}
 		
 		// Un-highlight axis labels
 		if (axisLabelHighlight.x !== -1 && axisLabelHighlight.y !== -1 && (axisLabelHighlight.x !== xAttr || axisLabelHighlight.y !== yAttr)) {

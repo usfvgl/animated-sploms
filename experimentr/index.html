@@ -126,7 +126,8 @@
 	
 	function printDebugInfo() {
 		console.log(storeInfo);
-		console.log("# points in rect", chart.getNumPointsInRect());
+		var info = chart.getDataInRect();
+		console.log("# points in rect", info.numPoints, "# classes", info.numClasses);
 	}
 	
 </script>

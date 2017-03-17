@@ -1046,8 +1046,8 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _encoding, _char
 			console.log("Avg. frame rate in the last " + seconds + " seconds: " + Math.round(thisTtl/thisN));
 		}, 1000 * seconds);
 	}
-
-	main.getNumPointsInRect = function() {
+	
+	main.getDataInRect = function() {
 		if (main.highlightRect.xLow === undefined) {
 			return 0;
 		} else {
@@ -1057,7 +1057,8 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _encoding, _char
 			var cat;
 			var count = 0;
 			var counts = {};
-
+			var classCount = 0;
+			
 			for (var row = 0; row < rowCount; row++) {
 				x = source.getNum(row, xCol);
 				y = source.getNum(row, yCol);
@@ -1067,14 +1068,17 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _encoding, _char
 						count++;
 						if (counts[cat] === undefined) {
 							counts[cat] = 1;
+							classCount++;
 						} else {
 							counts[cat]++;
 						}
 				}
 			}
-
-			//console.log(counts);
-			return counts;
+			
+			return {
+				numPoints: count,
+				numClasses: classCount
+			};
 		}
 	}
 
