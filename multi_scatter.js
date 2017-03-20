@@ -1,4 +1,4 @@
-function multi_scatter(_dataSource, _attr, _category, _animate, _chartTitle) {
+function multi_scatter(_dataSource, _attr, _category, _animate, _chartTitle, div_name) {
 
 	var params;
 	
@@ -110,6 +110,12 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _chartTitle) {
 	var elementHeight = 0;
 	var textHeight = 0;
 	
+	// log where canvas is created relative to page to correctly-position p5.dom elements
+	var canvasPosition = {
+		x: 0,
+		y: 0
+	}
+
 	// stylistic attributes for %-loaded bar
 	var loadBar = {
 		x: 0,
@@ -413,7 +419,6 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _chartTitle) {
 	function onSpinnerChange() {
 		// update animateNum from slider
 		animateNum = parseInt(spinner.spinner.value());
-		drawSpinnerTitle();
 	}
 	
 	function drawSpinnerTitle() {
@@ -478,7 +483,7 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _chartTitle) {
 		textSize(textSizes.loadBar);
 		fill(loadBar.fill);
 		noStroke();
-		textAlign(LEFT, CENTER);
+		textAlign(RIGHT, CENTER);
 		if (initDraw || loadBar.allLoaded) {
 			text(numRowsDrawn + "/" + rowCount + " rows animated", loadBar.textX, loadBar.textY);
 		} else {
@@ -492,7 +497,7 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _chartTitle) {
 		if (loadBar.allLoaded || initDraw) {
 			rect(loadBar.x, loadBar.y, loadBar.width, loadBar.height);
 			stroke(255, 255, 255);
-			line(loadBar.x + loadBar.width * numRowsDrawn/rowCount, loadBar.y, loadBar.x + loadBar.width * numRowsDrawn, loadBar.y + loadBar.height);
+			line(loadBar.x + loadBar.width * numRowsDrawn/rowCount, loadBar.y, loadBar.x + loadBar.width * numRowsDrawn/rowCount, loadBar.y + loadBar.height);
 		} else {
 			rect(loadBar.x, loadBar.y, loadBar.width * numRowsDrawn/rowCount, loadBar.height);
 		}
@@ -817,9 +822,16 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _chartTitle) {
 		canvasWidth = gridWidth * (useAttr.length - 1) + 2 * majorPad;
 		canvasHeight = gridWidth * (useAttr.length - 1) + 2.5 * majorPad;
 		var canvas = createCanvas(canvasWidth, canvasHeight);
+		canvasPosition.x = canvas.position().x;
+		canvasPosition.y = canvas.position().y;
 		background(255);
 		rowCount = source.getRowCount();
 	
+		// if given, set parent div
+		if (div_name !== "undefined") {
+			canvas.parent(div_name);
+		}
+
 		//get min and max
 		for (var i = 0; i < rowCount; i++) {
 		
@@ -890,16 +902,16 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _chartTitle) {
 
 		spinner.textX = xLegend;
 		spinner.textY = infoBoxY + textHeight/2;
-		spinner.x = xLegend * 0.996;
-		spinner.y = infoBoxY + textHeight + textPad;
+		spinner.x = canvasPosition.x + xLegend * 0.996;
+		spinner.y = canvasPosition.y + infoBoxY + textHeight + textPad;
 		spinner.width = gridWidth * 0.75;
 
 		pauseButton.width = gridWidth * 0.2;
 		pauseButton.height = elementHeight;
-		pauseButton.x = spinner.x + gridWidth - pauseButton.width/2;
-		pauseButton.y = spinner.y + elementHeight/2;
+		pauseButton.x = spinner.x + gridWidth - pauseButton.width/2 - canvasPosition.x;
+		pauseButton.y = spinner.y + elementHeight/2 - canvasPosition.y;
 		
-		loadBar.textX = xLegend;
+		loadBar.textX = xLegend + gridWidth;
 		loadBar.textY = infoBoxY + textHeight + textPad + elementHeight + elementPad + textHeight/2;
 		loadBar.x = xLegend;
 		loadBar.y = infoBoxY + textHeight + textPad + elementHeight + elementPad + textHeight + textPad;
