@@ -138,8 +138,8 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _chartTitle) {
 	// variable tracking if user has paused the animation
 	var paused = false;
 	
-	// stylistic attributes for animation speed slider
-	var slider = {
+	// stylistic attributes for animation speed spinner
+	var spinner = {
 		x: 0,
 		y: 0,
 		textX: 0,
@@ -401,38 +401,27 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _chartTitle) {
 		}
 	}
 	
-	function drawSlider() {
-		var pointsPerRow = useAttr.length * (useAttr.length - 1) / 2;
-		slider.slider = createSlider(1, rowCount, animateNum, 1);
-		slider.slider.position(slider.x, slider.y);
-		slider.slider.style('width', slider.width + 'px');
-		slider.slider.changed(onSliderChange);
+	function drawSpinner() {
+		spinner.spinner = createInput(1, "number");
+		spinner.spinner.attribute("max", rowCount);
+		spinner.spinner.attribute("step", 1);
+		spinner.spinner.input(onSpinnerChange);
+		spinner.spinner.position(spinner.x, spinner.y);
+		spinner.spinner.style('width', spinner.width + 'px');
 	}
 	
-	function onSliderChange() {
-		// session logging info
-		var time = millis();
-		var prevNum = animateNum;
+	function onSpinnerChange() {
 		// update animateNum from slider
-		animateNum = slider.slider.value();
-		drawSliderTitle();
-		//update session logging info
-		main.session.push(getEventEntry("rows per frame", time, animateNum - prevNum));
+		animateNum = parseInt(spinner.spinner.value());
+		drawSpinnerTitle();
 	}
 	
-	function drawSliderTitle() {
-		// clear canvas
-		var textHeight = gridWidth * 0.1;
-		rectMode(CORNER);
-		fill(255, 255, 255);
-		stroke(255, 255, 255);
-		rect(slider.textX, slider.textY - textHeight/2, gridWidth * 1.1, textHeight);
-
+	function drawSpinnerTitle() {
 		textSize(textSizes.loadBar);
 		fill(loadBar.fill);
 		noStroke();
 		textAlign(LEFT, CENTER);
-		text("Rows animated per frame: " + slider.slider.value(), slider.textX, slider.textY);
+		text("Rows per frame", spinner.textX, spinner.textY);
 	}
 	
 	function drawPauseButton() {
@@ -470,7 +459,7 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _chartTitle) {
 		rect(pauseButton.x + pauseButton.width/12 * 5, pauseButton.y, pauseButton.width/6, pauseButton.height);
 	}
 	
-	function drawLoadBar(percentDrawn) {
+	function drawLoadBar(numRowsDrawn) {
 		
 		// draw white rectangle to wipe area clean
 		rectMode(CORNER);
@@ -491,9 +480,9 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _chartTitle) {
 		noStroke();
 		textAlign(LEFT, CENTER);
 		if (initDraw || loadBar.allLoaded) {
-			text("% data animated", loadBar.textX, loadBar.textY);
+			text(numRowsDrawn + "/" + rowCount + " rows animated", loadBar.textX, loadBar.textY);
 		} else {
-			text("% data displayed", loadBar.textX, loadBar.textY);
+			text(numRowsDrawn + "/" + rowCount + " rows displayed", loadBar.textX, loadBar.textY);
 		}
 		
 		noStroke();
@@ -503,9 +492,9 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _chartTitle) {
 		if (loadBar.allLoaded || initDraw) {
 			rect(loadBar.x, loadBar.y, loadBar.width, loadBar.height);
 			stroke(255, 255, 255);
-			line(loadBar.x + loadBar.width * percentDrawn, loadBar.y, loadBar.x + loadBar.width * percentDrawn, loadBar.y + loadBar.height);
+			line(loadBar.x + loadBar.width * numRowsDrawn/rowCount, loadBar.y, loadBar.x + loadBar.width * numRowsDrawn, loadBar.y + loadBar.height);
 		} else {
-			rect(loadBar.x, loadBar.y, loadBar.width * percentDrawn, loadBar.height);
+			rect(loadBar.x, loadBar.y, loadBar.width * numRowsDrawn/rowCount, loadBar.height);
 		}
 		
 	}
@@ -672,7 +661,7 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _chartTitle) {
 				loadBar.allLoaded = true;
 			}
 			animateStart = animateStart % rowCount;
-			drawLoadBar(animateStart/rowCount);	
+			drawLoadBar(animateStart);	
 		} else {
 			image(buffers.colorBuffer, 0, 0, canvasWidth * disp, canvasHeight * disp, 0, 0, canvasWidth, canvasHeight);
 		}
@@ -899,16 +888,16 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _chartTitle) {
 		textHeight = gridWidth * 0.1;
 		var infoBoxY = yLegend - gridWidth * 0.70;
 
-		slider.textX = xLegend;
-		slider.textY = infoBoxY + textHeight/2;
-		slider.x = xLegend * 0.996;
-		slider.y = infoBoxY + textHeight + textPad;
-		slider.width = gridWidth * 0.75;
+		spinner.textX = xLegend;
+		spinner.textY = infoBoxY + textHeight/2;
+		spinner.x = xLegend * 0.996;
+		spinner.y = infoBoxY + textHeight + textPad;
+		spinner.width = gridWidth * 0.75;
 
 		pauseButton.width = gridWidth * 0.2;
 		pauseButton.height = elementHeight;
-		pauseButton.x = slider.x + gridWidth - pauseButton.width/2;
-		pauseButton.y = slider.y + elementHeight/2;
+		pauseButton.x = spinner.x + gridWidth - pauseButton.width/2;
+		pauseButton.y = spinner.y + elementHeight/2;
 		
 		loadBar.textX = xLegend;
 		loadBar.textY = infoBoxY + textHeight + textPad + elementHeight + elementPad + textHeight/2;
@@ -941,8 +930,8 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _chartTitle) {
 			}
 
 			drawPauseButton();
-			drawSlider();
-			drawSliderTitle();
+			drawSpinner();
+			drawSpinnerTitle();
 		}
 	
 		drawGrid();
@@ -1088,7 +1077,7 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _chartTitle) {
 		if (xAttrRev !== xAttrRev || xAttr !== xAttr || yAttr !== yAttr) {
 			return;
 		}
-		
+
 		// Un-highlight axis labels
 		if (axisLabelHighlight.x !== -1 && axisLabelHighlight.y !== -1 && (axisLabelHighlight.x !== xAttr || axisLabelHighlight.y !== yAttr)) {
 			var currxAttrRev = useAttr.length - 1 - axisLabelHighlight.x;
