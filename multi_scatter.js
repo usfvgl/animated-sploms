@@ -1,5 +1,5 @@
 function multi_scatter(_dataSource, _attr, _category, _animate, _chartTitle, div_name) {
-
+console.log("in multi_scatter");
 	var params;
 	
 	var main = {};
@@ -409,6 +409,7 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _chartTitle, div
 	
 	function drawSpinner() {
 		spinner.spinner = createInput(1, "number");
+		spinner.spinner.attribute("min", 1);
 		spinner.spinner.attribute("max", rowCount);
 		spinner.spinner.attribute("step", 1);
 		spinner.spinner.input(onSpinnerChange);
@@ -748,6 +749,7 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _chartTitle, div
 	
 	// p5 functions
 	main.preload = function() {
+		console.log("in multi_scatter preload method");
 		params = getURLParams();
 		if (typeof params.source !== "undefined") {
 			dataSource = params.source;
@@ -756,7 +758,7 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _chartTitle, div
 	}
 	
 	main.setup = function() {
-		
+		console.log("in multi_scatter setup method");
 		// update parameters from query string if exists
 		if (typeof params.animateNum !== "undefined") {
 			animateNum = +(params.animateNum);

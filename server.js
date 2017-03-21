@@ -8,9 +8,9 @@ var url = require('url');
 var fs = require('fs');
 
 var server = http.createServer(handleRequest);
-server.listen(8080);
+server.listen(8000);
 
-console.log('Server started on port 8080');
+console.log('Server started on port 8000');
 
 function handleRequest(req, res) {
   // What did we request?

@@ -20,15 +20,19 @@
 <script language="javascript" type="text/javascript">
   var config;
 	var chart;
-	var loading = false;
+
   function onDataSelect() {
-    config = get_data_config();
+		config = get_data_config();
+		remove();
     chart = multi_scatter(config.path, config.attr, config.category, config.animate, "", "chart");
+	  new p5();
 	}
   document.getElementById("data-select").addEventListener("change", onDataSelect);
 	
-	onDataSelect();
-	function preload() {
+	config = get_data_config();
+  chart = multi_scatter(config.path, config.attr, config.category, config.animate, "", "chart");
+
+  function preload() {
 		chart.preload();
 	}
 	
