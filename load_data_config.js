@@ -34,7 +34,7 @@ var data_config = [
     },
     {
         name: "wine",
-        path: "../data/wine-jittered-all.csv",
+        path: "data/wine-jittered-all.csv",
         attr: {
             all: [
                 '',
