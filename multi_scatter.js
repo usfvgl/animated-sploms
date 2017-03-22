@@ -1,5 +1,5 @@
 function multi_scatter(_dataSource, _attr, _category, _animate, _chartTitle, div_name) {
-console.log("in multi_scatter");
+
 	var params;
 	
 	var main = {};
@@ -412,6 +412,7 @@ console.log("in multi_scatter");
 		spinner.spinner.attribute("min", 1);
 		spinner.spinner.attribute("max", rowCount);
 		spinner.spinner.attribute("step", 1);
+		spinner.spinner.attribute("style", "font-size: 10px; text-align: right");
 		spinner.spinner.input(onSpinnerChange);
 		spinner.spinner.position(spinner.x, spinner.y);
 		spinner.spinner.style('width', spinner.width + 'px');
@@ -749,7 +750,6 @@ console.log("in multi_scatter");
 	
 	// p5 functions
 	main.preload = function() {
-		console.log("in multi_scatter preload method");
 		params = getURLParams();
 		if (typeof params.source !== "undefined") {
 			dataSource = params.source;
@@ -758,7 +758,6 @@ console.log("in multi_scatter");
 	}
 	
 	main.setup = function() {
-		console.log("in multi_scatter setup method");
 		// update parameters from query string if exists
 		if (typeof params.animateNum !== "undefined") {
 			animateNum = +(params.animateNum);
@@ -822,9 +821,12 @@ console.log("in multi_scatter");
 		}
 
 		canvasWidth = gridWidth * (useAttr.length - 1) + 2 * majorPad;
-		canvasHeight = gridWidth * (useAttr.length - 1) + 2.5 * majorPad;
+		if (_chartTitle && _chartTitle.length > 0) {
+			canvasHeight = gridWidth * (useAttr.length - 1) + 2.5 * majorPad;
+		} else {
+			canvasHeight = gridWidth * (useAttr.length - 1) + 2 * majorPad;
+		}
 		var canvas = createCanvas(canvasWidth, canvasHeight);
-		canvasPosition.x = canvas.position().x;
 		canvasPosition.y = canvas.position().y;
 		background(255);
 		rowCount = source.getRowCount();
@@ -834,6 +836,8 @@ console.log("in multi_scatter");
 			canvas.parent(div_name);
 		}
 
+		canvasPosition.x = canvas.position().x;
+		
 		//get min and max
 		for (var i = 0; i < rowCount; i++) {
 		
@@ -871,7 +875,6 @@ console.log("in multi_scatter");
 	    plotY1 = height - (width - 2 * majorPad) - majorPad;
 	    plotY2 = height - majorPad;
 
-		//gridWidth = (width - 2 * majorPad)/(useAttr.length - 1);
 		labelPad = gridWidth * 0.1;	
 		gridX = [];
 		gridY = [];
@@ -889,6 +892,9 @@ console.log("in multi_scatter");
 		yAxisLabelY = (plotY1 + plotY2)/2;
 	
 		xLegend = plotX2 - gridWidth;
+		if (useAttr.length <= 4) {	// give space between legend and plot area for smaller SPLOMS
+			xLegend += gridWidth/4;
+		}
 		yLegend = plotY1 + Math.min(useAttr.length - 2, 3) * gridWidth;
 		
 		if (highlightRect.on) {
@@ -904,7 +910,7 @@ console.log("in multi_scatter");
 
 		spinner.textX = xLegend;
 		spinner.textY = infoBoxY + textHeight/2;
-		spinner.x = canvasPosition.x + xLegend * 0.996;
+		spinner.x = canvasPosition.x + xLegend;
 		spinner.y = canvasPosition.y + infoBoxY + textHeight + textPad;
 		spinner.width = gridWidth * 0.75;
 
@@ -949,7 +955,9 @@ console.log("in multi_scatter");
 		}
 	
 		drawGrid();
-		drawChartText();
+		if (_chartTitle && _chartTitle.length > 0) {
+			drawChartText();
+		}
 		drawLegend();
 		drawAxisLabels();
 		

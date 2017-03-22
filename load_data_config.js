@@ -29,7 +29,8 @@ var data_config = [
 		    values: ["Fair", "Good", "Very Good", "Premium", "Ideal"]
         },
         animate: {
-            isAnimate: true
+            isAnimate: true,
+            initDraw: false
         }
     },
     {
@@ -64,6 +65,51 @@ var data_config = [
 	        isAnimate: true,
             initDraw: true
 	    }
+    },
+    {
+        name: "abalone",
+        path: "data/abalone-shuffled-all.csv",
+        attr: {
+            all: [
+                "",
+                "Sex",
+                "Length",
+                "Diameter",
+                "Height",
+                "Whole weight",
+                "Shucked weight",
+                "Viscera weight",
+                "Shell weight",
+                "Rings"
+            ],
+            use: [2, 3, 4, 5, 6, 7, 8, 9]
+        },
+        category: {
+            name: "Sex",
+            index: 1,
+            values: ["M", "F", "I"]
+        },
+        animate: {
+            isAnimate: true,
+            initDraw: true
+        }
+    },
+    {
+        name: "iris",
+        path: "data/iris.csv",
+        attr: {
+            all: ["sepal length", "sepal width", "petal length", "petal width", "class"],
+            use: [0, 1, 2, 3]
+        },
+        category: {
+            name: "class",
+            index: 4,
+            values: ["Iris-setosa", "Iris-versicolor", "Iris-virginica"]
+        },
+        animate: {
+            isAnimate: true,
+            initDraw: true
+        }
     }
 ];
 
