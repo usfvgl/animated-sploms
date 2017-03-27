@@ -408,7 +408,7 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _chartTitle, div
 	}
 	
 	function drawSpinner() {
-		spinner.spinner = createInput(1, "number");
+		spinner.spinner = createInput(animateNum, "number");
 		spinner.spinner.attribute("min", 1);
 		spinner.spinner.attribute("max", rowCount);
 		spinner.spinner.attribute("step", 1);
