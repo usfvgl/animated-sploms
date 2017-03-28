@@ -91,7 +91,7 @@ var data_config = [
         },
         animate: {
             isAnimate: true,
-            initDraw: true
+            initDraw: false
         }
     },
     {
