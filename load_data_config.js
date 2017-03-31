@@ -21,16 +21,17 @@ var data_config = [
         path: "data/diamonds-shuffled-all.csv",
         attr: {
             all: ["","carat","cut","color","clarity","depth","table","price","x","y","z"],
-		    use: [1, 5, 6, 7, 8, 9, 10]
+      use: [1, 5, 6, 7, 8, 9, 10]
         },
         category: {
             name: "cut",
-		    index: 2,
-		    values: ["Fair", "Good", "Very Good", "Premium", "Ideal"]
+      index: 2,
+      values: ["Fair", "Good", "Very Good", "Premium", "Ideal"]
         },
         animate: {
             isAnimate: true,
-            initDraw: false
+            initDraw: false,
+            animateNum: 10
         }
     },
     {
@@ -54,17 +55,17 @@ var data_config = [
                 'OD280/OD315 of diluted wines',   // 13
                 'Proline'                         // 14
             ],
-	        use: [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14]
-	    },
+          use: [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14]
+      },
         category: {
             name: "Class",
             index: 1,
             values: ['1', '2', '3']
         },
         animate: {
-	        isAnimate: true,
-            initDraw: true
-	    }
+          isAnimate: true,
+          initDraw: true
+        }
     },
     {
         name: "abalone",
