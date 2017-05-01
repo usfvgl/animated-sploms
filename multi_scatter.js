@@ -156,23 +156,6 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _chartTitle, div
 	
 	// Frame rate
 	var speed = 30;
-
-	// Max number of points drawn per frame
-	var maxPointsPerFrame = 500;
-	
-	// Set up focus rectangles. rectangles will be populated in setup loop using query string
-	// Will be converted into object with following properties:
-	//	{
-	//		x: column index of x-axis attribute
-	//		y: column index of y-axis attribute
-	// 		xmin: start value of box along x-axis
-	// 		ymin: start value of box along y-axis
-	// 		xmax: start value of box along x-axis
-	// 		ymax: start value of box along y-axis
-	//	}
-	var rectangles = [];
-	var rectColor = "rgba(89, 89, 89, 1)";	
-	var rectStrokeWeight = 1;
 	
 	// Set up highlight rectangle to be dragged around by user
 	var highlightRect = {
@@ -339,38 +322,6 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _chartTitle, div
 			}
 		
 		}
-
-	}
-	
-	function drawRects(strokeColor) {
-		blendMode(REPLACE);
-		stroke(strokeColor);
-		strokeWeight(rectStrokeWeight);		
-		textSize(textSizes.rect);
-		rectMode(CORNER);
-		var count = 0;
-		
-		rectangles.forEach(function(r) {
-			noFill();
-			var row = useAttr.indexOf(r.y);
-			var col = useAttr.length - 1 - useAttr.indexOf(r.x);
-			var x1 = map(r.xmin, minData[r.x], maxData[r.x], gridX[col] + labelPad, gridX[col] + gridWidth - labelPad);
-			var y1 = map(r.ymin, minData[r.y], maxData[r.y], gridY[row] + gridWidth - labelPad, gridY[row] + labelPad);
-			var x2 = map(r.xmax, minData[r.x], maxData[r.x], gridX[col] + labelPad, gridX[col] + gridWidth - labelPad);
-			var y2 = map(r.ymax, minData[r.y], maxData[r.y], gridY[row] + gridWidth - labelPad, gridY[row] + labelPad);
-			rect(x1, y2, x2 - x1, y1 - y2);
-			
-			// draw label for rectangle
-			textAlign(CENTER,TOP);
-			fill(strokeColor);
-			// strokeWeight(0.25);
-			// if (count <= 1) {
-			// 	fill(rectStrokeWeight);
-			// }
-			text(++count, (x2 + x1)/2, y1);
-		});
-		
-		blendMode(BLEND);
 
 	}
 	
@@ -694,34 +645,6 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _chartTitle, div
 		return origMax;
 	}
 	
-	// Get rectangle attributes from query string if exists. Query string is a series of comma-separated integers in the following order:
-	// x,y,xmin,ymin,xmax,ymax
-	// for multiple rectangles, enter the attributes for the next rectangle after ymax, of the previous rectangle
-	function getRectsParams() {
-		
-		if (typeof params.rects === "undefined") {
-			return;
-		}
-		
-		var paramArray = params.rects.split(',');
-		
-		if (paramArray.length % 6 !== 0) {
-			return;
-		}
-	
-		for (var i = 0; i < (paramArray.length/6); i++) {
-			rectangles.push({
-				x: +paramArray[i * 6],
-				y: +paramArray[i * 6 + 1],
-				xmin: +paramArray[i * 6 + 2],
-				ymin: +paramArray[i * 6 + 3],
-				xmax: +paramArray[i * 6 + 4],
-				ymax: +paramArray[i * 6 + 5]
-			});
-		}
-		
-	}
-	
 	// Loads appropriate buffers after brushing enabled/disenabled
 	function brushRedraw() {
 		resetPlotArea();
@@ -775,8 +698,6 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _chartTitle, div
 		if (typeof params.initDraw !== "undefined") {
 			initDraw = (decodeURIComponent(params.initDraw).toLowerCase() === "true");
 		}
-		
-		getRectsParams();
 		
 		if (typeof params.chartTitle !== "undefined") {
 			_chartTitle = decodeURIComponent(params.chartTitle);
@@ -972,10 +893,6 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _chartTitle, div
 		cursor(ARROW);
 		
 		plotData(isAnimate);
-		if (rectangles.length >= 1) {
-			drawRects("rgba(255, 255, 255, 1)")
-			drawRects(rectColor);			
-		}
 		
 		if (highlightRect.on) {
 			drawHighlightRect(highlightRect.fill);
@@ -1082,6 +999,7 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _chartTitle, div
 	}
 	
 	main.mouseMoved = function() {
+		// Handle movement of highlight box when user is dragging it
 		if (highlightRect.on && highlightRect.clicked) {
 			brushRedraw();
 			setHighlightRectCenter(mouseX, mouseY);
