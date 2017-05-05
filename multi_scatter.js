@@ -3,6 +3,8 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _chartTitle, div
 	var params;
 	
 	var main = {};
+
+	var canvas;
 	
 	// Variables section
 	
@@ -47,7 +49,7 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _chartTitle, div
 	var tickLabelDist = tickLen * 1.5;
 	var subtitleDist = tickLen * 7;
 	var labelPad;
-	var plotX1, plotY1, plotX2, plotY2, xTitle, yTitle, xAxisLabelX, xAxisLabelY, yAxisLabelX, yAxisLabelY, xLegend, yLegend;
+	var plotX1, plotY1, plotX2, plotY2, xTitle, yTitle, xAxisLabelX, xAxisLabelY, yAxisLabelX, yAxisLabelY, xLegend, yLegend, infoBoxY;
 	var gridX, gridY;
 	var textSizes = {
 		title: 24,
@@ -662,15 +664,6 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _chartTitle, div
 		}
 	}
 	
-	// create event tracking entry object
-	function getEventEntry(eventName, time, details) {
-		var object = {};
-		object.event = eventName;
-		object.timestamp = time;
-		object.details = details;
-		return object
-	}
-	
 	// p5 functions
 	main.preload = function() {
 		params = getURLParams();
@@ -747,8 +740,7 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _chartTitle, div
 		} else {
 			canvasHeight = gridWidth * (useAttr.length - 1) + 2 * majorPad;
 		}
-		var canvas = createCanvas(canvasWidth, canvasHeight);
-		canvasPosition.y = canvas.position().y;
+		canvas = createCanvas(canvasWidth, canvasHeight);
 		background(255);
 		rowCount = source.getRowCount();
 	
@@ -757,7 +749,10 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _chartTitle, div
 			canvas.parent(div_name);
 		}
 
+		// Canvas x position is accurate at this point but not the y position
+		// Set canvasPosition.y to null and set during first draw loop
 		canvasPosition.x = canvas.position().x;
+		canvasPosition.y = null;
 		
 		//get min and max
 		for (var i = 0; i < rowCount; i++) {
@@ -827,18 +822,19 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _chartTitle, div
 		textPad = gridWidth * 0.03;
 		elementHeight = gridWidth * 0.12;
 		textHeight = gridWidth * 0.1;
-		var infoBoxY = yLegend - gridWidth * 0.70;
+		infoBoxY = yLegend - gridWidth * 0.70;
 
 		spinner.textX = xLegend;
 		spinner.textY = infoBoxY + textHeight/2;
 		spinner.x = canvasPosition.x + xLegend;
-		spinner.y = canvasPosition.y + infoBoxY + textHeight + textPad;
+		//spinner.y will be set during first draw loop. See note on setting values
+		//for canvasPosition.y above
 		spinner.width = gridWidth * 0.75;
 
 		pauseButton.width = gridWidth * 0.2;
 		pauseButton.height = elementHeight;
-		pauseButton.x = spinner.x + gridWidth - pauseButton.width/2 - canvasPosition.x;
-		pauseButton.y = spinner.y + elementHeight/2 - canvasPosition.y;
+		pauseButton.x = plotX2 - pauseButton.width/2;
+		pauseButton.y = infoBoxY + textHeight + textPad + elementHeight/2;
 		
 		loadBar.textX = xLegend + gridWidth;
 		loadBar.textY = infoBoxY + textHeight + textPad + elementHeight + elementPad + textHeight/2;
@@ -871,7 +867,6 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _chartTitle, div
 			}
 
 			drawPauseButton();
-			drawSpinner();
 			drawSpinnerTitle();
 		}
 	
@@ -891,7 +886,14 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _chartTitle, div
 		
 		// Fix cursor symbol as arrow
 		cursor(ARROW);
-		
+
+		// canvasPosition.y will be null only during first draw loop
+		if (canvasPosition.y === null) {
+			canvasPosition.y = canvas.position().y;
+			spinner.y = canvasPosition.y + infoBoxY + textHeight + textPad;
+			drawSpinner();
+		}
+
 		plotData(isAnimate);
 		
 		if (highlightRect.on) {
@@ -900,9 +902,6 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _chartTitle, div
 	}
 	
 	main.mouseClicked = function() {
-		// get timestamp for event tracking
-		var time = millis();
-		
 		// Check if user clicked on legend for brushing
 		if (mouseX >= (keyCenters[0][0] - keySize/2) && mouseX <= (keyCenters[0][0] + keySize/2)) {
 			for (var i = 0; i < classes.length; i++) {
@@ -918,11 +917,9 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _chartTitle, div
 						} else {
 							// selected clicked class
 							selected.push(clickedClass);
-							main.session.push(getEventEntry("brush", time, clickedClass));
 						}
 					} else {
 						// de-selected clicked class
-						main.session.push(getEventEntry("unbrush", time, clickedClass));
 						for (var i = classIndexInSelected; i < brushed - 1; i++) {
 							selected[i] = selected[i + 1];
 						}
@@ -944,11 +941,9 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _chartTitle, div
 		if (mouseX >= (pauseButton.x - pauseButton.width/2) && mouseY >= (pauseButton.y - pauseButton.height/2)
 			&& mouseY <= (pauseButton.y + pauseButton.height/2)) {
 				if (mouseX <= pauseButton.x && paused) {
-					main.session.push(getEventEntry("play", time, ""));
 					paused = false;
 					loop();
 				} else if (mouseX > pauseButton.x && mouseX <= (pauseButton.x + pauseButton.width/2) && !paused) {
-					main.session.push(getEventEntry("pause", time, ""));
 					paused = true;
 					noLoop();
 				}
@@ -981,21 +976,47 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _chartTitle, div
 	
 	main.mouseReleased = function() {
 		
-		if (!highlightRect.on) {
+		if (!highlightRect.on || !highlightRect.clicked) {
 			return false;
 		}
 		
+		var time = millis();
 		var x = mouseX;
 		var y = mouseY;
 		
-		if (highlightRect.clicked) {
-			setHighlightRectCenter(x, y);
-			drawHighlightRect(highlightRect.fill);
-			highlightRect.clicked = false;
-		}
+		setHighlightRectCenter(x, y);
+		drawHighlightRect(highlightRect.fill);
+		highlightRect.clicked = false;
 		
-		// prevent default
-		return false;
+		// Adjust to actual x and y values and store in highlightRect
+		var col = Math.floor((x - plotX1)/gridWidth);
+		var xAttr = useAttr.length - 1 - col;
+		var row = Math.floor((y - plotY1)/gridWidth);
+		var yAttr = row;
+
+		// If rect not in valid grid, return false
+		if (xAttr <= yAttr) {
+			return false;
+		}
+
+		// Adjust attr to corresponding attribute number in original data
+		xAttr = useAttr[xAttr];
+		yAttr = useAttr[yAttr];
+
+		var xLow = x - highlightRect.width/2;
+		var xHigh = x + highlightRect.width/2;
+		var yLow = y + highlightRect.height/2;
+		var yHigh = y - highlightRect.height/2;
+		main.highlightRect.xAttr = attr[xAttr];
+		main.highlightRect.yAttr = attr[yAttr];
+		main.highlightRect.xLow = map(xLow, gridX[col] + labelPad, gridX[col] + gridWidth - labelPad, minData[xAttr], maxData[xAttr]);
+		main.highlightRect.xHigh = map(xHigh, gridX[col] + labelPad, gridX[col] + gridWidth - labelPad, minData[xAttr], maxData[xAttr]);
+		main.highlightRect.yLow = map(yLow, gridY[row] + gridWidth - labelPad, gridY[row] + labelPad, minData[yAttr], maxData[yAttr]);
+		main.highlightRect.yHigh = map(yHigh, gridY[row] + gridWidth - labelPad, gridY[row] + labelPad, minData[yAttr], maxData[yAttr]);
+		var selectedInfo = main.getDataInRect();
+		main.highlightRect.numPoints = selectedInfo.numPoints;
+		main.highlightRect.numClasses = selectedInfo.numClasses;
+		return true;
 	}
 	
 	main.mouseMoved = function() {
@@ -1043,15 +1064,10 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _chartTitle, div
 	main.mouseDragged = function() {
 		return mouseMoved();
 	}
-	
-	// Session tracking: array of event objects of form:
-	// {
-	//  event: one of the following: pause, play, brush, unbrush, rows per frame
-	//  timestamp: number of milliseconds (thousandths of a second) since starting the program
-	//  details: for brush or unbrush, name of class brushed/unbrushed;
-	//           for speed, change in animate num
-	// }
-	main.session = [];
+
+	// Highlight rectangle logging information containing actual x/y values
+	// xLow, yLow, xHigh, yHigh will be added/updated in mouseReleased callback
+	main.highlightRect = {};
 
 	main.frameRate = {
 		n: 0,
@@ -1066,6 +1082,41 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _chartTitle, div
 			var thisTtl = main.frameRate.runningTtl;
 			console.log("Avg. frame rate in the last " + seconds + " seconds: " + Math.round(thisTtl/thisN));
 		}, 1000 * seconds);
+	}
+
+	main.getDataInRect = function() {
+		if (main.highlightRect.xLow === undefined) {
+			return 0;
+		} else {
+			var xCol = attr.indexOf(main.highlightRect.xAttr);
+			var yCol = attr.indexOf(main.highlightRect.yAttr);
+			var x, y;
+			var cat;
+			var count = 0;
+			var counts = {};
+			var classCount = 0;
+
+			for (var row = 0; row < rowCount; row++) {
+				x = source.getNum(row, xCol);
+				y = source.getNum(row, yCol);
+				if (x > main.highlightRect.xLow && x < main.highlightRect.xHigh
+					&& y > main.highlightRect.yLow && y < main.highlightRect.yHigh) {
+						cat = source.getString(row, category.name);
+						count++;
+						if (counts[cat] === undefined) {
+							counts[cat] = 1;
+							classCount++;
+						} else {
+							counts[cat]++;
+						}
+				}
+			}
+
+			return {
+				numPoints: count,
+				numClasses: classCount
+			};
+		}
 	}
 	
 	return main;
