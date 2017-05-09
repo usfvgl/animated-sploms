@@ -37,6 +37,15 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _chartTitle, div
 	}
 	var initDraw = _animate.initDraw;
 	
+	// For sampling purposes
+	var sampling = false;
+	var samplingData = {
+		shuffled: false,
+		numRows: 0,			// # of rows to plot
+		startIndex: 0,		// index into array of indices at beginning of each draw loop
+		indices: []			// array of indices to plot
+	}
+
 	var maxData = [];
 	var minData = [];
 	var midData = [];
@@ -573,8 +582,34 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _chartTitle, div
 		return color(rVal, gVal, bVal, pointEncode.alpha);
 	}
 	
+	function plotDatum(rowNum, animate) {
+		for (var row = 0; row < gridY.length; row++) {
+			var cat = source.getString(rowNum, category.name);
+			var attrY = useAttr[row];
+			var y = map(source.getNum(rowNum, attrY), minData[attrY], maxData[attrY], gridY[row] + gridWidth - labelPad, gridY[row] + labelPad);					
+			for (var col = 0; col < (gridX.length - row); col++) {
+				var attrX = useAttr[useAttr.length - col - 1];
+				var x = map(source.getNum(rowNum, attrX), minData[attrX], maxData[attrX], gridX[col] + labelPad, gridX[col] + gridWidth - labelPad);
+				// Draw point to color buffer first
+				var pointFill = pointEncode.colors[classes.indexOf(cat)];
+				drawPoint(x, y, pointFill, buffers.colorBuffer);
+				// Draw grey point to grey buffer
+				drawPoint(x, y, brushedColor, buffers.greyBuffer);
+				// Draw color point to class-specific buffer
+				drawPoint(x, y, pointFill, buffers[cat]);
+				if (animate) {
+					// Change color to grey for brushed out categories if brushing has been enabled
+					if (brushed && (selected.indexOf(cat) < 0)) {
+						pointFill = brushedColor;
+					}
+					// Draw on screen live
+					drawPoint(x, y, pointFill);
+				}
+			}	
+		}
+	}
+
 	function plotData(animate) {
-		
 		fill(0);
 		var numData = 0;
 		var startIndex = 0;
@@ -582,49 +617,74 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _chartTitle, div
 		//determine number of rows to use based on whether we're animating
 		if (animate) {
 			numData = animateNum;
-			startIndex = animateStart;
+			
+			if (sampling) {
+				startIndex = samplingData.startIndex
+			} else {
+				startIndex = animateStart;
+			}
 		} else {
 			numData = rowCount;
 		}
 
 		for (var data = startIndex; data < (startIndex + numData); data++) {
-			var adjusted = data % rowCount;
-			for (var row = 0; row < gridY.length; row++) {
-				var cat = source.getString(adjusted, category.name);
-				var attrY = useAttr[row];
-				var y = map(source.getNum(adjusted, attrY), minData[attrY], maxData[attrY], gridY[row] + gridWidth - labelPad, gridY[row] + labelPad);					
-				for (var col = 0; col < (gridX.length - row); col++) {
-					var attrX = useAttr[useAttr.length - col - 1];
-					var x = map(source.getNum(adjusted, attrX), minData[attrX], maxData[attrX], gridX[col] + labelPad, gridX[col] + gridWidth - labelPad);
-					// Draw point to color buffer first
-					var pointFill = pointEncode.colors[classes.indexOf(cat)];
-					drawPoint(x, y, pointFill, buffers.colorBuffer);
-					// Draw grey point to grey buffer
-					drawPoint(x, y, brushedColor, buffers.greyBuffer);
-					// Draw color point to class-specific buffer
-					drawPoint(x, y, pointFill, buffers[cat]);
-					if (animate) {
-						// Change color to grey for brushed out categories if brushing has been enabled
-						if (brushed && (selected.indexOf(cat) < 0)) {
-							pointFill = brushedColor;
-						}
-						// Draw on screen live
-						drawPoint(x, y, pointFill);
-					}
-				}	
-			}			
-		}
-	
-		if (animate) {
-			animateStart += animateNum;
-			if (animateStart >= rowCount) {
-				loadBar.allLoaded = true;
+			var adjusted;
+
+			if (sampling) {
+				adjusted = data % samplingData.numRows;
+				adjusted = samplingData.indices[adjusted];
+			} else {
+				adjusted = data % rowCount;
 			}
-			animateStart = animateStart % rowCount;
-			drawLoadBar(animateStart);	
+
+			plotDatum(adjusted, animate);
+		}
+		
+		if (animate) {
+
+			if (sampling) {
+				samplingData.startIndex += animateNum;
+
+				if (samplingData.startIndex >= samplingData.numRows) {
+					loadBar.allLoaded = true;
+					samplingData.shuffled = false;
+				}
+
+				samplingData.startIndex = samplingData.startIndex % samplingData.numRows;
+				drawLoadBar(samplingData.startIndex);
+				shuffleSamplingIndices();
+			} else {
+				animateStart += animateNum;
+
+				if (animateStart >= rowCount) {
+					loadBar.allLoaded = true;
+				}
+
+				animateStart = animateStart % rowCount;
+				drawLoadBar(animateStart);
+			}
 		} else {
 			image(buffers.colorBuffer, 0, 0, canvasWidth * disp, canvasHeight * disp, 0, 0, canvasWidth, canvasHeight);
 		}
+	}
+
+	function shuffleSamplingIndices() {
+		if (samplingData.shuffled) {
+			return;
+		}
+		
+		var lastIndex = samplingData.startIndex + samplingData.numRows;
+		
+		for (var i = samplingData.startIndex; i < lastIndex; i++) {
+			var currIndex = i % samplingData.numRows;
+			var swapIndex = Math.floor(Math.random() * (lastIndex - i)) + i;
+			swapIndex = swapIndex % samplingData.numRows;
+			var temp = samplingData.indices[swapIndex];
+			samplingData.indices[swapIndex] = samplingData.indices[currIndex];
+			samplingData.indices[currIndex] = temp;
+		}
+
+		samplingData.shuffled = true;
 	}
 	
 	function axisMin(origMin) {
@@ -687,6 +747,21 @@ function multi_scatter(_dataSource, _attr, _category, _animate, _chartTitle, div
 			highlightRect.on = (decodeURIComponent(params.highlight).toLowerCase() === "true");
 		}
 
+		if (typeof params.sampling !== "undefined") {
+			sampling = (decodeURIComponent(params.sampling).toLowerCase() === "true");
+
+			// Set # of rows to plot for sampling data
+			samplingData.numRows = source.getRowCount();
+			
+			// Populate array of indices to sample
+			for (var i = 0; i < samplingData.numRows; i++) {
+				samplingData.indices[i] = i;
+			}
+
+			// Shuffle indices
+			shuffleSamplingIndices();
+
+		}
 		
 		if (typeof params.initDraw !== "undefined") {
 			initDraw = (decodeURIComponent(params.initDraw).toLowerCase() === "true");
