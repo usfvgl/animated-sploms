@@ -1,0 +1,19 @@
+table, th, td {
+    border: 1px solid black;
+}
+
+th, td {
+    font-size: 14px;
+    text-align: center;
+    width: 80px;
+}
+
+.center {
+    text-align: center
+}
+
+#highlight_info {
+    border-collapse: collapse;
+    margin: 0 auto;
+    visibility: hidden;
+}
