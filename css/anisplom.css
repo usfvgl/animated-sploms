@@ -1,7 +1,8 @@
 
 /* basic styles */
 
-div#chart {
+.anisplom {
+  text-align: center;
   overflow: auto;
 }
 

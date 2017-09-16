@@ -16,7 +16,7 @@
 
 <section class="hero is-light">
   <div class="hero-body">
-    <div class="container">
+    <div class="container has-text-centered">
       <h1 class="title">
         Animated SPLOMs
       </h1>
@@ -35,9 +35,9 @@
 
       <!-- github links -->
       <p class="has-text-centered">
-        <a class="button is-small is-outlined"><span class="icon"><i class="fa fa-github"></i></span>&nbsp; Website Repository</a>
+        <a class="button is-small is-outlined"><span class="icon"><i class="fa fa-github fa-lg"></i></span>&nbsp; Website Repository</a>
 
-        <a class="button is-small is-outlined"><span class="icon"><i class="fa fa-github"></i></span>&nbsp; User Study Repository</a>
+        <a class="button is-small is-outlined"><span class="icon"><i class="fa fa-github fa-lg"></i></span>&nbsp; User Study Repository</a>
       </p>
 
     </div>
@@ -46,40 +46,45 @@
 
 <section class="section">
   <div class="content">
-    <div class="columns">
-      <!-- dropdown for dataset selection -->
-      <div class="column is-narrow">
-        <label class="label">Select Dataset:</label>
-
-        <p class="control has-icons-left">
+    <!-- dropdown for dataset selection -->
+    <div class="level">
+      <div class="level-item has-text-centered">
+        <label class="has-text-weight-bold">Select Dataset:</label>
+        &nbsp;
+        <span class="control has-icons-left">
           <span class="select">
             <select id="data-select">
               <option value="abalone">abalone</option>
               <option value="diamonds">diamonds</option>
               <option value="iris">iris</option>
-              <option value="synthetic">synthetic</option>
-              <option value="wine" selected>wine</option>
+              <option value="synthetic" selected>synthetic</option>
+              <option value="wine">wine</option>
             </select>
           </span>
-          <span class="icon is-small is-left">
+
+          <span class="icon is-small is-right">
             <i class="fa fa-table"></i>
           </span>
-        </p>
+        </span> <!-- /control -->
       </div>
-
-      <!-- div for anisplom chart -->
-      <div id="chart" class="column"></div>
     </div>
+
+    <div class="anisplom">
+      <span id="chart"></span>
+    </div>
+
   </div>
 </section>
 
 <!-- information -->
 <section class="section">
-  <div class="content">
-    <h2>Parameters</h2>
+  <div class="container has-text-centered">
+    <div class="content">
+      <h2>Parameters</h2>
 
-    <p>Our tool supports the following URL query parameters:</p>
+      <p>Our tool supports the following URL query parameters:</p>
 
+    </div>
   </div>
 </section>
 
