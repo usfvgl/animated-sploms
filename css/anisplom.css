@@ -6,6 +6,10 @@
   overflow: auto;
 }
 
+#chart {
+  position: relative;
+}
+
 /* animation delays */
 
 span#animation span:nth-of-type(1),
