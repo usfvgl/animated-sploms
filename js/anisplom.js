@@ -618,16 +618,16 @@ function anisplom(_div, _source, _params) {
 
   function drawBuffers() {
     if (brushed.active) {
-      image(buffers.grey, 0, 0, config.canvas.width * displayDensity(), config.canvas.height * displayDensity(), 0, 0, config.canvas.width, config.canvas.height);
+      image(buffers.grey, 0, 0, config.canvas.width, config.canvas.height);
 
       for (var name in brushed.status) {
         if (!brushed.status[name]) {
-          image(buffers.classes[name], 0, 0, config.canvas.width * displayDensity(), config.canvas.height * displayDensity(), 0, 0, config.canvas.width, config.canvas.height);
+          image(buffers.classes[name], 0, 0, config.canvas.width, config.canvas.height);
         }
       }
     }
     else {
-      image(buffers.color, 0, 0, config.canvas.width * displayDensity(), config.canvas.height * displayDensity(), 0, 0, config.canvas.width, config.canvas.height);
+      image(buffers.color, 0, 0, config.canvas.width, config.canvas.height);
     }
   }
 
@@ -726,19 +726,21 @@ function anisplom(_div, _source, _params) {
     config.canvas.height = config.canvas.width;
 
     // setup offscreen buffers
-    var density = displayDensity();
-
-    buffers['color'] = createGraphics(config.canvas.width * density, config.canvas.height * density);
-    buffers['grey'] = createGraphics(config.canvas.width * density, config.canvas.height * density);
+    buffers['color'] = createGraphics(config.canvas.width, config.canvas.height);
+    buffers['grey'] = createGraphics(config.canvas.width, config.canvas.height);
     buffers['classes'] = {};
+
+    buffers['color'].pixelDensity(pixelDensity());
+    buffers['grey'].pixelDensity(pixelDensity());
 
     // setup class colors and buffers
     for (var i = 0; i < _source.classes.names.length; i++) {
       var name = String(_source.classes.names[i]);
       data.colors[name] = config.point.color[i];
 
-      buffers['classes'][name] = createGraphics(config.canvas.width * density, config.canvas.height * density);
+      buffers['classes'][name] = createGraphics(config.canvas.width, config.canvas.height);
       brushed.status[name] = false;
+      buffers['classes'][name].pixelDensity(pixelDensity());
     }
 
     // calculate grid locations
@@ -892,21 +894,21 @@ function anisplom(_div, _source, _params) {
 
         if (!brushed.active) {
           // just draw the color buffer
-          image(buffers.color, 0, 0, config.canvas.width * displayDensity(), config.canvas.height * displayDensity(), 0, 0, config.canvas.width, config.canvas.height);
+          image(buffers.color, 0, 0, config.canvas.width, config.canvas.height);
         }
         else {
           // if brushing, just show appropriate buffer
           if (!brushed.status[key.name]) {
-            image(buffers.classes[key.name], 0, 0, config.canvas.width * displayDensity(), config.canvas.height * displayDensity(), 0, 0, config.canvas.width, config.canvas.height);
+            image(buffers.classes[key.name], 0, 0, config.canvas.width, config.canvas.height);
           }
           // if unbrushing have to draw gray buffer first
           // and then redraw the rest
           else{
-            image(buffers.grey, 0, 0, config.canvas.width * displayDensity(), config.canvas.height * displayDensity(), 0, 0, config.canvas.width, config.canvas.height);
+            image(buffers.grey, 0, 0, config.canvas.width, config.canvas.height);
 
             for (var name in brushed.status) {
               if (!brushed.status[name]) {
-                image(buffers.classes[name], 0, 0, config.canvas.width * displayDensity(), config.canvas.height * displayDensity(), 0, 0, config.canvas.width, config.canvas.height);
+                image(buffers.classes[name], 0, 0, config.canvas.width, config.canvas.height);
               }
             }
           }
