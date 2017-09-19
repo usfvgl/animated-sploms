@@ -1,6 +1,6 @@
 var datasets = {
   'iris': {
-    'path': '../data/iris.csv',
+    'path': 'data/iris.csv',
     'details': {
       'link': 'https://archive.ics.uci.edu/ml/datasets/iris',
       'note': 'The points in this dataset have been jittered slightly.'
@@ -21,7 +21,7 @@ var datasets = {
     }
   },
   'synthetic': {
-    'path': '../data/synthetic.csv',
+    'path': 'data/synthetic.csv',
     'details': {
       'link': 'http://scikit-learn.org/stable/datasets/index.html#sample-generators',
       'note': 'This is a synthetic dataset generated using scikit-learn in Python.'
@@ -41,7 +41,7 @@ var datasets = {
     }
   },
   'wine': {
-    'path': '../data/wine.csv',
+    'path': 'data/wine.csv',
     'details': {
       'link': 'https://archive.ics.uci.edu/ml/datasets/Wine',
       'note': 'The points in this dataset have been jittered slightly.'
@@ -77,7 +77,7 @@ var datasets = {
     }
   },
   'abalone': {
-    'path': '../data/abalone.csv',
+    'path': 'data/abalone.csv',
     'details': {
       'link': 'https://archive.ics.uci.edu/ml/datasets/Abalone',
       'note': 'The rows in this dataset have been randomly shuffled.'
@@ -108,7 +108,7 @@ var datasets = {
     }
   },
   'diamonds': {
-    'path': '../data/diamonds.csv',
+    'path': 'data/diamonds.csv',
     'details': {
       'link': 'http://ggplot2.tidyverse.org/reference/diamonds.html',
       'note': 'This dataset has been reordered to place outliers first.'
