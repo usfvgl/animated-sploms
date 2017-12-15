@@ -1,0 +1,14 @@
+# This file is used to build the navigation bar on each page.
+# The name provided here must match the title attribute of the associated file.
+
+- name: "Demo"
+  icon: "fa-home"
+  file: "index.html"
+
+- name: "Usage"
+  icon: "fa-info-circle"
+  file: "usage.html"
+
+- name: "Paper"
+  icon: "fa-file"
+  file: "paper.html"

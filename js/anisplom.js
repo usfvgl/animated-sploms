@@ -126,13 +126,13 @@ function anisplom(_div, _source, _params) {
       buffer.stroke(255);
       buffer.strokeWeight(config.point.stroke.thin);
       buffer.fill(c);
-      buffer.ellipse(x, y, config.point.size);
+      shapes[params.shape](buffer, x, y, config.point.size);
     }
     else {
       stroke(255);
       strokeWeight(config.point.stroke.thin);
       fill(c);
-      ellipse(x, y, config.point.size);
+      shapes[params.shape](parent, x, y, config.point.size);
     }
   };
 
@@ -143,13 +143,13 @@ function anisplom(_div, _source, _params) {
       buffer.stroke(c);
       buffer.strokeWeight(size);
       buffer.noFill();
-      buffer.ellipse(x, y, config.point.size);
+      shapes[params.shape](buffer, x, y, config.point.size);
     }
     else {
       stroke(c);
       strokeWeight(size);
       noFill();
-      ellipse(x, y, config.point.size);
+      shapes[params.shape](parent, x, y, config.point.size);
     }
   };
 
@@ -174,6 +174,15 @@ function anisplom(_div, _source, _params) {
     }
   };
 
+  var shapes = {
+    'circle': function(parent, x, y, size) {
+      parent.ellipse(x, y, size);
+    },
+    'square': function(parent, x, y, size) {
+      parent.rect(x - size / 2, y - size / 2, size, size);
+    }
+  };
+
   /**** parameter handling ****/
 
   // holds configurable parameters
@@ -189,7 +198,8 @@ function anisplom(_div, _source, _params) {
     params.rows = setNumber(_params, 'rows', 0, data.table.getRowCount(), 1);
     params.scale = setNumber(_params, 'scale', 0, Number.MAX_SAFE_INTEGER, 1);
 
-    params.encoding = setEncoding(_params, 'encoding', 'normal');
+    params.encoding = setProperty(_params, encodings, 'encoding', 'normal');
+    params.shape = setProperty(_params, shapes, 'shape', 'circle');
 
     // process url parameters and overwrite if valid
 
@@ -203,7 +213,8 @@ function anisplom(_div, _source, _params) {
     params.rows = setNumber(urlParams, 'rows', 0, data.table.getRowCount(), params.rows);
     params.scale = setNumber(urlParams, 'scale', 0, Number.MAX_SAFE_INTEGER, params.scale);
 
-    params.encoding = setEncoding(urlParams, 'encoding', params.encoding);
+    params.encoding = setProperty(urlParams, encodings, 'encoding', params.encoding);
+    params.shape = setProperty(urlParams, shapes, 'shape', 'circle');
 
     // make sure rows is an integer number
     params.rows = Math.round(params.rows);
@@ -247,15 +258,15 @@ function anisplom(_div, _source, _params) {
     return fallback;
   }
 
-  function setEncoding(object, property, fallback) {
+  function setProperty(object, options, property, fallback) {
     if (object != null && object.hasOwnProperty(property)) {
       var value = decodeURIComponent(object[property]).toLowerCase().trim();
-      if (encodings.hasOwnProperty(value)) {
+      if (options.hasOwnProperty(value)) {
         return value;
       }
     }
 
-    console.assert(encodings.hasOwnProperty(fallback));
+    console.assert(options.hasOwnProperty(fallback));
     return fallback;
   }
 
@@ -799,9 +810,11 @@ function anisplom(_div, _source, _params) {
 
     drawBase();
 
-    if (!params.animate) {
-      params.prerender = true;
-    }
+    // will not draw anything if combined
+    // but that is okay (useful for recording demos)
+    // if (!params.animate) {
+    //   params.prerender = true;
+    // }
 
     console.log('Setup complete!', config, params, data);
   };
@@ -816,7 +829,7 @@ function anisplom(_div, _source, _params) {
       // otherwise the grid will not render while waiting
       if (frameCount == 1) {
         // insert alert in a frame BEFORE the prerender
-        // otherwise it does not appear until AFTEr the prerender
+        // otherwise it does not appear until AFTER the prerender
         insertAlert('Prerendering ' + data.rows + ' rows and ' + data.keep + ' columns...');
       }
       else if (frameCount > 1) {
@@ -832,7 +845,7 @@ function anisplom(_div, _source, _params) {
     }
     else {
       // do nothing if canvas is not yet loaded
-      if (config.canvas == null || params.animate == null) {
+      if (config.canvas == null || params.animate == null || params.animate == false) {
         return;
       }
 

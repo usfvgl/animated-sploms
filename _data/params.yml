@@ -1,0 +1,61 @@
+# This file is used to build the list of parameters implemented.
+# Each parameter should have one value with the "default" set to "true".
+# If a value has a "nolink" value set to "true", it will not be linked.
+
+- name: "animate"
+  values:
+    - value: "true"
+      default: true
+    - value: "false"
+  about: "If <code>true</code>, enables the animation loop."
+
+- name: "prerender"
+  values:
+    - value: "true"
+      default: true
+    - value: "false"
+  about: "If <code>true</code>, prerenders the entire dataset before the first animation frame. Disabled for very large datasets."
+
+- name: "shuffle"
+  values:
+    - value: "true"
+    - value: "false"
+      default: true
+  about: "If <code>true</code>, shuffles the row order every loop through the dataset."
+
+- name: "shape"
+  values:
+    - value: "circle"
+      default: true
+    - value: "square"
+  about: "Changes the shape drawn for each point. See also the <code>encoding</code> parameter."
+
+- name: "encoding"
+  values:
+    - value: "normal"
+      default: true
+    - value: "open"
+    - value: "alpha"
+    - value: "blend"
+  about: "Changes the point encoding. If <code>normal</code>, uses a shape filled by class with a white outline. If <code>open</code>, uses a shape with a outline colored by class and no fill. If <code>alpha</code>, uses the normal encoding plus alpha blending (turning on transparency). If <code>blend</code>, uses the normal encoding plus color blending."
+
+- name: "rows"
+  values:
+    - value: 1
+      default: true
+    - value: 2
+    - value: "..."
+      nolink: true
+    - value: "<em>n</em>"
+      nolink: true
+  about: "A positive integer value that controls the number of rows redrawn every animation frame. Must be less than <em>n</em>, the total number of rows in the dataset."
+
+- name: "scale"
+  values:
+    - value: 0.75
+    - value: 1.0
+      default: true
+    - value: 1.5
+    - value: "..."
+      nolink: true
+  about: "A positive floating point value that controls the scale of the SPLOM. Sizes between 0 and 1 will result in a smaller SPLOM, and sizes greater than 1 will increase the SPLOM size."

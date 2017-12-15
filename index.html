@@ -1,158 +1,45 @@
-<!DOCTYPE html>
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+---
+layout: default
+title: Demo
+---
 
-  <title>Animated SPLOMs</title>
+<div class="level">
+  <div class="level-item has-text-centered">
+    <label class="has-text-weight-bold">Select Dataset:</label>
+    &nbsp;
+    <span class="control has-icons-left">
+      <span class="select">
+        <select id="data-select">
+          <option value="abalone">abalone</option>
+          <option value="diamonds">diamonds</option>
+          <option value="iris">iris</option>
+          <option value="synthetic" selected>synthetic</option>
+          <option value="wine">wine</option>
+        </select>
+      </span>
 
-  <link rel="stylesheet" href="css/font-awesome.min.css">
-  <link rel="stylesheet" href="css/bulma.min.css">
-  <link rel="stylesheet" href="css/animate.min.css">
-
-  <link rel="stylesheet" href="css/anisplom.css">
-</head>
-
-<body>
-
-<section class="hero is-light">
-  <div class="hero-body">
-    <div class="container has-text-centered">
-      <h1 class="title">
-        Animated SPLOMs
-      </h1>
-
-      <!-- super fancy subtitle -->
-      <p class="subtitle">
-        Using
-        <!-- animated text -->
-        <span class="has-text-weight-bold" id="animation"><span>a</span><span>n</span><span>i</span><span>m</span><span>a</span><span>t</span><span>i</span><span>o</span><span>n</span></span>
-        to alleviate overdraw in a
-        <!-- multicolored text -->
-        <span class="has-text-weight-bold" id="multiclass"><span>m</span><span>u</span><span>l</span><span>t</span><span>i</span><span>c</span><span>l</span><span>a</span><span>s</span><span>s</span></span>
-        <!-- underlined text //-->
-        <u class="has-text-weight-bold">s</u>catter<u class="has-text-weight-bold">plo</u>t <u class="has-text-weight-bold">m</u>atrix (<span class="has-text-weight-bold">SPLOM</span>).
-      </p>
-
-      <!-- github links -->
-      <p class="has-text-centered">
-        <a class="button is-small is-outlined"><span class="icon"><i class="fa fa-github fa-lg"></i></span>&nbsp; Website Repository</a>
-
-        <a class="button is-small is-outlined"><span class="icon"><i class="fa fa-github fa-lg"></i></span>&nbsp; User Study Repository</a>
-      </p>
-
-    </div>
+      <span class="icon is-small is-right">
+        <i class="fa fa-table"></i>
+      </span>
+    </span> <!-- /control -->
   </div>
-</section>
+</div>
 
-<section class="section">
-  <div class="content">
-    <!-- dropdown for dataset selection -->
-    <div class="level">
-      <div class="level-item has-text-centered">
-        <label class="has-text-weight-bold">Select Dataset:</label>
-        &nbsp;
-        <span class="control has-icons-left">
-          <span class="select">
-            <select id="data-select">
-              <option value="abalone">abalone</option>
-              <option value="diamonds">diamonds</option>
-              <option value="iris">iris</option>
-              <option value="synthetic" selected>synthetic</option>
-              <option value="wine">wine</option>
-            </select>
-          </span>
+<div class="anisplom">
+  <div id="chart"></div>
+</div>
 
-          <span class="icon is-small is-right">
-            <i class="fa fa-table"></i>
-          </span>
-        </span> <!-- /control -->
-      </div>
-    </div>
-
-    <div class="anisplom">
-      <div id="chart"></div>
-    </div>
-
-  </div>
-</section>
-
-<!-- information -->
-<section class="section">
-  <div class="container has-text-centered">
-    <div class="content">
-      <h2>Parameters</h2>
-
-      <p>Our tool supports the following URL query parameters. Default values are in bold.</p>
-
-      <table class="table">
-        <thead>
-          <tr>
-            <th>Parameter</th>
-            <th nowrap>Values</th>
-            <th>Description</th>
-          </tr>
-        </thead>
-
-        <tbody>
-          <tr>
-            <td><code>animate</code></td>
-            <td nowrap><strong><a href="?animate=true">true</a></strong>, <a href="?animate=false">false</a></td>
-            <td>If <code>true</code>, enables the animation loop.</td>
-          </tr>
-
-          <tr>
-            <td><code>prerender</code></td>
-            <td nowrap><strong><a href="?prerender=true">true</a></strong>, <a href="?prerender=false">false</a></td>
-            <td>If <code>true</code>, prerenders the entire dataset before the first animation frame.</td>
-          </tr>
-
-          <tr>
-            <td><code>shuffle</code></td>
-            <td nowrap><strong><a href="?shuffle=true">true</a></strong>, <a href="?shuffle=false">false</a></td>
-            <td>If <code>true</code>, shuffles the row order every loop through the dataset.</td>
-          </tr>
-
-          <tr>
-            <td><code>encoding</code></td>
-            <td nowrap><strong><a href="?encoding=normal">normal</a></strong>, <a href="?encoding=open">open</a>,<br/> <a href="?encoding=alpha">alpha</a>, <a href="?encoding=blend">blend</a></td>
-            <td>Changes the point encoding. If <code>normal</code>, uses a circle filled by class with a white outline. If <code>open</code>, uses a circle with a outline colored by class and no fill. If <code>alpha</code>, uses the normal encoding plus alpha blending (turning on transparency). If <code>blend</code>, uses the normal encoding plus color blending.</td>
-          </tr>
-
-          <tr>
-            <td><code>rows</code></td>
-            <td nowrap><strong><a href="?rows=1">1</a></strong>, <a href="?rows=2">2</a>, ..., <var>n</var></td>
-            <td>A positive integer value that controls the number of rows redrawn every animation frame. Must be less than <var>n</var>, the total number of rows in the dataset.</td>
-          </tr>
-
-          <tr>
-            <td><code>scale</code></td>
-            <td nowrap><a href="?scale=0.75">0.75</a>, <strong><a href="?scale=1">1.0</a></strong>, <a href="?scale=1.5">1.5</a>, ...</td>
-            <td>A positive floating point value that controls the scale of the SPLOM. Sizes between 0 and 1 will result in a smaller SPLOM, and sizes greater than 1 will increase the SPLOM size.</td>
-          </tr>
-        </tbody>
-      </table>
-
-    </div>
-  </div>
-</section>
-
-<footer>
-  <div class="columns is-centered">
-    <div class="column is-three-quarters">
-      <div class="content is-small">
-        <p class="has-text-centered has-text-grey">Website built using <a href="https://daneden.github.io/animate.css/">Animate.css</a>, <a href="http://fontawesome.io/">FontAwesome</a>, and the <a href="http://bulma.io/">Bulma</a> CSS framework. This tool is free and unencumbered public domain software. For more information, see <a href="http://unlicense.org/">unlicense.org</a> or the accompanying LICENSE file.</p>
-      </div>
-    </div>
-  </div>
-</footer>
+<div class="content has-text-centered is-small has-text-grey" id="data-note"></div>
 
 <script src="js/p5.min.js"></script>
 <script src="js/p5.dom.min.js"></script>
 
 <script src="js/datasets.js"></script>
-<script src="js/anisplom.min.js"></script>
+<script src="js/anisplom.js"></script>
 
 <script>
+  p5.disableFriendlyErrors = true;
+
   var splom;
 
   var url = new URL(window.location.href);
@@ -175,6 +62,10 @@
 
     splom = anisplom('chart', datasets[name], datasets[name].default);
     new p5();
+
+    console.log(datasets[name].details.note);
+
+    document.getElementById('data-note').innerHTML = "<strong>Note:</strong> " + datasets[name].details.note + "<br/><strong>Source:</strong> <a href=\"" + datasets[name].details.link + "<\">" + datasets[name].details.link + "</a>";
   }
 
   function preload() {
@@ -202,4 +93,3 @@
   }
 
 </script>
-</body>

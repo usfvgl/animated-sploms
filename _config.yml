@@ -1,0 +1,7 @@
+title: "Animated SPLOMs"
+baseurl: "/animated-sploms"
+url: "http://vgl.cs.usfca.edu/"
+
+repositories:
+  website: "https://github.com/usfvgl/animated-sploms"
+  userstudy: "https://github.com/usfvgl/splom-studies"
