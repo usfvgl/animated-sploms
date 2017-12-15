@@ -20,26 +20,6 @@ var datasets = {
       'rows': 1
     }
   },
-  'synthetic': {
-    'path': 'data/synthetic.csv',
-    'details': {
-      'link': 'http://scikit-learn.org/stable/datasets/index.html#sample-generators',
-      'note': 'This is a synthetic dataset generated using scikit-learn in Python.'
-    },
-    'columns': {
-      'names': ['v', 'w', 'x', 'y', 'z', 'class'],
-      'shown': [0, 1, 2, 3, 4]
-    },
-    'classes': {
-      'names': ['A', 'B', 'C', 'D'],
-      'index': 5
-    },
-    'default': {
-      'animate': true,
-      'prerender': true,
-      'rows': 1
-    }
-  },
   'wine': {
     'path': 'data/wine.csv',
     'details': {
@@ -125,6 +105,66 @@ var datasets = {
       'animate': true,
       'prerender': false,
       'rows': 10
+    }
+  },
+  'generated': {
+    'path': 'data/generated.csv',
+    'details': {
+      'link': 'http://scikit-learn.org/stable/datasets/index.html#sample-generators',
+      'note': 'This is a dataset generated using scikit-learn in Python.'
+    },
+    'columns': {
+      'names': ['v', 'w', 'x', 'y', 'z', 'class'],
+      'shown': [0, 1, 2, 3, 4]
+    },
+    'classes': {
+      'names': ['A', 'B', 'C', 'D'],
+      'index': 5
+    },
+    'default': {
+      'animate': true,
+      'prerender': true,
+      'rows': 1
+    }
+  },
+  'userstudy-task1': {
+    'path': 'data/userstudy-task1.csv',
+    'details': {
+      'link': 'https://github.com/usfvgl/splom-studies/blob/master/public/data/data_1_0_x_z.csv',
+      'note': 'This is an example dataset from the user study (task 1) generated using scikit-learn in Python.'
+    },
+    'columns': {
+      'names': ['v', 'w', 'x', 'y', 'z', 'class'],
+      'shown': [0, 1, 2, 3, 4]
+    },
+    'classes': {
+      'names': ['A', 'B', 'C', 'D', 'E'],
+      'index': 5
+    },
+    'default': {
+      'animate': true,
+      'prerender': true,
+      'rows': 1
+    }
+  },
+  'userstudy-task2': {
+    'path': 'data/userstudy-task2.csv',
+    'details': {
+      'link': 'https://github.com/usfvgl/splom-studies/blob/master/public/data/data_2_0.csv',
+      'note': 'This is an example dataset from the user study (task 2) generated using scikit-learn in Python.'
+    },
+    'columns': {
+      'names': ['v', 'w', 'x', 'y', 'z', 'class'],
+      'shown': [0, 1, 2, 3, 4]
+    },
+    'classes': {
+      'names': ['A', 'B', 'C', 'D', 'E'],
+      'index': 5
+    },
+    'default': {
+      'animate': true,
+      'prerender': true,
+      'rows': 1
     }
   }
 };

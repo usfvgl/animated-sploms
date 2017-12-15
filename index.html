@@ -10,11 +10,13 @@ title: Demo
     <span class="control has-icons-left">
       <span class="select">
         <select id="data-select">
-          <option value="abalone">abalone</option>
-          <option value="diamonds">diamonds</option>
-          <option value="iris">iris</option>
-          <option value="synthetic" selected>synthetic</option>
-          <option value="wine">wine</option>
+          <option value="abalone">abalone (4177x10)</option>
+          <option value="diamonds">diamonds (53940x11)</option>
+          <option value="generated" selected>generated (800x6)</option>
+          <option value="iris">iris (150x5)</option>
+          <option value="wine">wine (178x15)</option>
+          <option value="userstudy-task1">user study task 1 (300x6)</option>
+          <option value="userstudy-task2">user study task 2 (300x6)</option>
         </select>
       </span>
 
@@ -65,7 +67,7 @@ title: Demo
 
     console.log(datasets[name].details.note);
 
-    document.getElementById('data-note').innerHTML = "<strong>Note:</strong> " + datasets[name].details.note + "<br/><strong>Source:</strong> <a href=\"" + datasets[name].details.link + "<\">" + datasets[name].details.link + "</a>";
+    document.getElementById('data-note').innerHTML = "<strong>Note:</strong> " + datasets[name].details.note + "<br/><strong>Source:</strong> <a href=\"" + datasets[name].details.link + "\">" + datasets[name].details.link + "</a>";
   }
 
   function preload() {
