@@ -1,12 +1,10 @@
 <div class="tabs is-centered is-boxed">
-  <ul>
-    {% for nav in site.data.navbar %}
+  <ul>{% for nav in site.data.navbar %}
     <li{% if page.title == nav.name %} class="is-active"{% endif %}>
       <a href="{{ nav.file | absolute_url }}">
         {% if nav.icon %}<i class="fa {{ nav.icon }}"></i>&nbsp;{% endif %}
         {{ nav.name }}
       </a>
     </li>
-    {% endfor %}
-  </ul>
+  {% endfor %}</ul>
 </div>
