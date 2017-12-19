@@ -1,6 +1,6 @@
 title: "Animated SPLOMs"
 baseurl: "/animated-sploms"
-url: "http://vgl.cs.usfca.edu/"
+url: "http://vgl.cs.usfca.edu"
 
 repositories:
   website: "https://github.com/usfvgl/animated-sploms"
