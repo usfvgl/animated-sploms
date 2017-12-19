@@ -5,6 +5,93 @@ title: Paper
 
 <div class="content">
 
-Pending.
+<h2>Using {% include tagline.html %} (<span class="has-text-weight-bold">SPLOM</span>s)</h2>
+
+<h3>Authors</h3>
+
+<div class="columns is-multiline is-mobile">
+{% for author in site.data.paper.authors %}
+  <div class="column is-one-third-tablet is-half-mobile">
+    <div class="box">
+      <div class="content">
+        <p class="has-text-weight-bold is-marginless">
+          {{ author.first }}{% if author.middle %} {{ author.middle}}{% endif %} {{ author.last }}
+        </p>
+        <p class="is-size-7 has-text-weight-light is-marginless">
+        {% for item in author.affiliation
+          %}<a href="{{ item.link }}" class=" has-text-grey">{{ item.name }}</a><br/>
+        {% endfor %}
+        </p>
+        <p class="is-marginless">
+          <a href="mailto:{{ author.email }}"><span class="icon is-small"><i class="fa fa-envelope"></i></span></a>
+          {% for item in author.links
+            %}<a href="{{ item.link }}" title="{{ item.type }}"><span class="icon is-small"><i class="fa {{ item.icon }}"></i></span></a>
+          {% endfor %}
+        </p>
+      </div>
+    </div>
+  </div>
+{% endfor %}
+</div>
+
+<h3>Citation</h3>
+
+<p>
+  {% for author in site.data.paper.authors %}{%
+    if forloop.last == true
+      %}and {%
+    endif %}{%
+    if forloop.first == true
+      %}{{ author.last }}, {{ author.first}}{% if author.middle %} {{ author.middle }}{%
+    endif %}, {%
+    else
+      %}{{ author.first }}{% if author.middle %} {{ author.middle }}{% endif %} {{ author.last }}, {%
+    endif %}{%
+  endfor %}
+  &ldquo;<strong>{{ site.data.paper.title }}</strong>&rdquo;,
+  <em>TBA</em>,
+  {{ site.data.paper.year }}.
+</p>
+
+<pre>
+@inproceedings{AnimatedSPLOMs,
+  title     = &#123;{{ site.data.paper.title }}&#125;,
+  author    = &#123;{% for author in site.data.paper.authors %}{{ author.last }}, {{ author.first}}{% if author.middle %} {{ author.middle }}{% endif %}{% unless forloop.last %} and {% endunless %}{% endfor %}&#125;,
+  booktitle = &#123;<em>TBA</em>&#125;,
+  location  = &#123;<em>TBA</em>&#125;,
+  publisher = &#123;<em>TBA</em>&#125;,
+  doi       = &#123;<em>TBA</em>&#125;,
+  month     = &#123;<em>TBA</em>&#125;,
+  year      = &#123;<em>TBA</em>&#125;,
+  pages     = &#123;<em>TBA</em>&#125;
+}
+</pre>
+
+<h3>Materials</h3>
+
+<p>In addition to this website, we provide the following supplementary materials:</p>
+
+<ul>
+
+  {% for item in site.data.materials %}
+  <li style="margin-bottom: 1em;">
+    <p class="is-marginless has-text-weight-semibold">
+      {{ item.name }}
+    </p>
+
+    <p class="is-size-7" style="margin-bottom: 0.5em;">
+      <a href="{{ item.link }}"><i class="fa {{ item.icon }}"></i> {{ item.link }}</a>
+    </p>
+
+    <p class="has-text-weight-light has-text-grey">
+      {{ item.info }}
+    </p>
+
+  </li>
+  {% endfor %}
+
+</ul>
+
+<p>See also our <a href="{{ "usage.html" | absolute_url }}">Usage</a> page for illustrations of how to use our tool.</p>
 
 </div>

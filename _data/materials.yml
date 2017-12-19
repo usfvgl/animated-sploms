@@ -1,0 +1,35 @@
+- name: "User Study Repository"
+  link: "https://github.com/usfvgl/splom-studies"
+  icon: "fa-github-alt"
+  info: |
+    This GitHub repository includes all of the files necessary to launch our user study using the <a href="https://github.com/codementum/experimentr">Experimentr</a> framework locally. Note: The Experimentr framework must already be installed. See the <a href="https://github.com/codementum/experimentr">project website</a> for instructions.
+
+- name: "User Study Results (Raw)"
+  link: "#"
+  icon: "fa-file-excel-o"
+  info: |
+    This CSV file contains the results from the user study in the format returned by the Experimentr framework.
+
+- name: "User Study Results (Processed)"
+  link: "#"
+  icon: "fa-file-excel-o"
+  info: |
+    This CSV file contains the results processed into an easier-to-analyze format in Python. This is what the analysis reported in our paper used.
+
+- name: "User Study Demo Video"
+  link: "#"
+  icon: "fa-file-movie-o"
+  info: |
+    This screen recording demonstrates what a user would see while participating in the user study. This is useful if you want to see the study without running the Experimentr framework locally.
+
+- name: "Website Repository"
+  link: "https://github.com/usfvgl/animated-sploms"
+  icon: "fa-github-alt"
+  info: |
+    This GitHub repository hosts this website using <a href="https://github.com/usfvgl/animated-sploms">GitHub Pages</a> and <a href="https://help.github.com/articles/using-jekyll-as-a-static-site-generator-with-github-pages/">Jekyll</a>. You can clone or download this repository to run this website locally, but you must <a href="https://help.github.com/articles/setting-up-your-github-pages-site-locally-with-jekyll/">follow these instructions</a> to install the Github Pages gem and run Jekyll to generate and serve the website. This repository includes our JavaScript implementation of this approach.
+
+- name: "Website Snapshot"
+  link: "#"
+  icon: "fa-file-zip-o"
+  info: |
+    This is a snapshot of our website demonstrating this approach at the time of the final paper submission. This is useful if you want to run a local version of this website without installing Gitub Pages and Jekyll. However, you still need to <a href="https://developer.mozilla.org/en-US/docs/Learn/Common_questions/set_up_a_local_testing_server">run a local web server</a> to run the website.

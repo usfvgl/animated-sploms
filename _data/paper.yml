@@ -1,0 +1,118 @@
+title: "Using Animation to Alleviate Overdraw in Multiclass Scatterplot Matrices"
+year: 2018
+authors:
+  - first:  "Helen"
+    middle: false
+    last:   "Chen"
+    email:  "hhchen@dons.usfca.edu"
+    links: false
+    affiliation:
+      - name: "Visualization and Graphics Lab"
+        link: "http://vgl.cs.usfca.edu"
+      - name: "Department of Computer Science"
+        link: "http://cs.usfca.edu"
+      - name: "University of San Francisco"
+        link: "https://www.usfca.edu"
+
+  - first:  "Sophie"
+    middle: false
+    last:   "Engle"
+    email:  "sjengle@usfca.edu"
+    links:
+      - type: "Website"
+        icon: "fa-globe"
+        link: "http://sjengle.cs.usfca.edu"
+      - type: "Twitter"
+        icon: "fa-twitter"
+        link: "https://twitter.com/sjengle"
+      - type: "Github"
+        icon: "fa-github-alt"
+        link: "https://github.com/sjengle"
+      - type: "Linkedin"
+        icon: "fa-linkedin"
+        link: "https://www.linkedin.com/in/sjengle"
+    affiliation:
+      - name: "Visualization and Graphics Lab"
+        link: "http://vgl.cs.usfca.edu"
+      - name: "Department of Computer Science"
+        link: "http://cs.usfca.edu"
+      - name: "University of San Francisco"
+        link: "https://www.usfca.edu"
+
+  - first:  "Alark"
+    middle: false
+    last:   "Joshi"
+    email:  "apjoshi@usfca.edu"
+    links:
+      - type: "Website"
+        icon: "fa-globe"
+        link: "http://cs.usfca.edu/~apjoshi/"
+      - type: "Twitter"
+        icon: "fa-twitter"
+        link: "http://twitter.com/alark"
+    affiliation:
+      - name: "Visualization and Graphics Lab"
+        link: "http://vgl.cs.usfca.edu"
+      - name: "Department of Computer Science"
+        link: "http://cs.usfca.edu"
+      - name: "University of San Francisco"
+        link: "https://www.usfca.edu"
+
+  - first:  "Eric"
+    middle: "D."
+    last:   "Ragan"
+    email:  "eragan@tamu.edu"
+    links:
+      - type: "Website"
+        icon: "fa-globe"
+        link: "http://people.tamu.edu/~eragan/"
+    affiliation:
+      - name: "Interactive Data and Immersive Environments (Indie) Lab"
+        link: "http://indie.arch.tamu.edu/"
+      - name: "Department of Visualization"
+        link: "https://viz.arch.tamu.edu/"
+      - name: "Texas A&amp;M University"
+        link: "http://www.tamu.edu/"
+
+  - first:  "Beste"
+    middle: "Filiz"
+    last:   "Yuksel"
+    email:  "byuksel@usfca.edu"
+    links:
+      - type: "Website"
+        icon: "fa-globe"
+        link: "http://www.cs.usfca.edu/~byuksel/"
+      - type: "Google Scholar"
+        icon: "fa-google"
+        link: "https://scholar.google.com/citations?user=MjoZWO8AAAAJ&hl=en"
+      - type: "Linkedin"
+        icon: "fa-linkedin-square"
+        link: "https://www.linkedin.com/in/bestefilizyuksel"
+      - type: "Twitter"
+        icon: "fa-twitter"
+        link: "https://twitter.com/BesteFYuksel"
+    affiliation:
+      - name: "Department of Computer Science"
+        link: "http://cs.usfca.edu"
+      - name: "University of San Francisco"
+        link: "https://www.usfca.edu"
+
+  - first:  "Lane"
+    middle: false
+    last:   "Harrison"
+    email:  "lane@cs.wpi.edu"
+    links:
+      - type: "Website"
+        icon: "fa-globe"
+        link: "http://web.cs.wpi.edu/~ltharrison/"
+      - type: "Github"
+        icon: "fa-github-alt"
+        link: "https://github.com/codementum"
+      - type: "Twitter"
+        icon: "fa-twitter"
+        link: "https://twitter.com/laneharrison"
+    affiliation:
+      - name: "Department of Computer Science"
+        link: "https://www.wpi.edu/academics/departments/computer-science"
+      - name: "Worcester Polytechnic Institute"
+        link: "https://www.wpi.edu/"
