@@ -4,17 +4,11 @@
   info: |
     This GitHub repository includes all of the files necessary to launch our user study using the <a href="https://github.com/codementum/experimentr">Experimentr</a> framework locally. Note: The Experimentr framework must already be installed. See the <a href="https://github.com/codementum/experimentr">project website</a> for instructions.
 
-- name: "User Study Results (Raw)"
-  link: "#"
-  icon: "fa-file-excel-o"
+- name: "User Study Results"
+  link: "https://gist.github.com/sjengle/07ed869874c75b14638c499158b3ba8a"
+  icon: "fa-github-alt"
   info: |
-    This CSV file contains the results from the user study in the format returned by the Experimentr framework.
-
-- name: "User Study Results (Processed)"
-  link: "#"
-  icon: "fa-file-excel-o"
-  info: |
-    This CSV file contains the results processed into an easier-to-analyze format in Python. This is what the analysis reported in our paper used.
+    This Gist repository includes CSV files with the user study results in two formats: (a) as exported by the Experimentr framework, and (b) processed into an easier-to-analyze format using Python.
 
 - name: "User Study Demo Video"
   link: "#"
