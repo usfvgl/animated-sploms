@@ -11,8 +11,8 @@
     This Gist repository includes CSV files with the user study results in two formats: (a) as exported by the Experimentr framework, and (b) processed into an easier-to-analyze format using Python.
 
 - name: "User Study Demo Video"
-  link: "#"
-  icon: "fa-file-movie-o"
+  link: "https://youtu.be/2I5feEUpndY"
+  icon: "fa-youtube-play"
   info: |
     This screen recording demonstrates what a user would see while participating in the user study. This is useful if you want to see the study without running the Experimentr framework locally.
 
