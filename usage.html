@@ -74,4 +74,44 @@ title: Usage
 
 <p>This set of parameters will disable prerendering, use square shapes with no fill and an outline colored by class, animate 4 rows per frame, and use a 25% larger size for the SPLOM.</p>
 
+<h2>Point Encodings</h2>
+
+<p>Using the URL parameters above, it is possible to use the following point encodings in our tool:</p>
+
+{% for param in site.data.params %}{%
+  case param.name %}{%
+    when 'encoding' %}{%
+      assign encodings = param.values %}{%
+    when 'shape' %}{%
+      assign shapes = param.values %}{%
+    endcase %}{%
+endfor %}
+
+<table class="table" style="width: auto;">
+  <thead>
+    <tr>
+      <th>&nbsp;</th>
+      <th><code>circle</code></th>
+      <th><code>square</code></th>
+    </tr>
+  </thead>
+
+  <tbody>
+    {% for encoding in encodings %}
+    <tr>
+      <th><code>{{ encoding.value }}</code></th>
+      {% for shape in shapes %}
+      <td>
+        <a href="{{ site.url }}{{ site.baseurl }}/?encoding={{ encoding.value }}&shape={{ shape.value }}">
+          <img src="{{ site.url }}{{ site.baseurl }}/images/encoding-{{ shape.value }}-{{ encoding.value }}.png" width="124">
+        </a>
+      </td>
+      {% endfor %}
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+<p>Click on any image above to use the shape and encoding values depicted. Some combinations (such as circles combined with color blending) are slower to load.</p>
+
 </div>
