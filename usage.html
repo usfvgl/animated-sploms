@@ -5,41 +5,31 @@ title: Usage
 
 <div class="content">
 
-<h2>Interpretation</h2>
-
-<p>We start with a traditional <a href="http://www.itl.nist.gov/div898/handbook/eda/section3/scatplma.htm">scatterplot matrix</a> (SPOM). Since the cells along the diagonal and lower triangle are redundant, we only draw cells in the upper triangle and rotate the triangle so that it lies in the upper-left quadrant. We use color to encode the class of each point using a qualitative color scheme adapted from <a href="http://colorbrewer2.org/#type=qualitative&scheme=Set3&n=10">ColorBrewer</a>.</p>
-
-<p>We continuously loop through the dataset to animate the SPLOM, redrawing one or more rows of points at a time. For example, drawing one row for a dataset with five variables (not including class) results in drawing ten points: one for each pair of variables, or each cell in our matrix. Using our approach, the amount of visible redraw or movement indicates the amount of overdraw in a region. Points that are overdrawn will reappear during later draw loops.</p>
-
-<p><strong>Outliers</strong> are perceived to be static, even when redrawn. Similarly, regions with <strong>low density</strong> (i.e., few points) and <strong>low diversity</strong> (i.e., few classes) will have little to no movement and be perceived to be static. Regions with <strong>high density and low diversity</strong> will have movement, but will not change in color. Regions with both <strong>high density and high diversity</strong> will change color frequently. This is the case in which animation successfully draws attention through flickering to these diverse and dense regions that could potentially be misinterpreted due to overdraw in static SPLOMs.</p>
-
 <h2>Interactivity</h2>
 
-<p>There are several ways to interact with our demo using the mouse. Use the "Select Dataset" dropdown to reload the visualization with a different dataset.</p>
+<p>There are several ways to interact with our demo using the mouse, as demonstrated below. Touch interactivity is not currently supported.</p>
 
-<figure>
-<img class="box" src="{{ "images/select-optimized.gif" | absolute_url }}" width="480">
-</figure>
+{% for control in site.data.controls %}
+<h4>{{ control.title }}</h4>
+<div class="columns">
+  <div class="column is-narrow">
+    <figure class="box is-marginless" style="max-width: {{ control.width }}px;">
+      <img src="{{ site.url }}{{ site.baseurl }}/images/{{ control.image }}" width="{{ control.width }}"><br/>
+      <figcaption class="is-size-7 has-text-grey">
+        {{ control.caption }}
+      </figcaption>
+    </figure>
+  </div>
 
-<p>Hover over a subplot in the SPLOM to highlight the associated row and column labels on the left and top of the matrix in black.</p>
+  <div class="column">
+    <p>{{ control.details }}</p>
+  </div>
+</div>
+{% endfor %}
 
-<figure>
-<img class="box" src="{{ "images/hover-optimized.gif" | absolute_url }}" width="420">
-</figure>
+<h2>Interpretation</h2>
 
-<p>Click the grey "Play" <i class="fa fa-play has-text-grey"></i> and "Pause" <i class="fa fa-pause  has-text-grey"></i> buttons to start and stop the animation. Use the spinner to control how many rows are animated per frame. The progress bar shows the percent of rows that have been displayed thus far. Once all of the rows have been drawn (including when the dataset is prerendered), the progress bar shows the percent of rows that have been re-animated since the last loop.</p>
-
-<figure>
-<img class="box" src="{{ "images/rate-optimized.gif" | absolute_url }}" width="420">
-</figure>
-
-<p>Clicking the key boxes in the class legend toggles color for points belonging to that class. This can be used to turn off color for one class, only color a single class, or disable color entirely.</p>
-
-<figure>
-<img class="box" src="{{ "images/highlight-optimized.gif" | absolute_url }}" width="420">
-</figure>
-
-<p>The demo does not currently support touch interactivity.</p>
+<p><strong>Outliers</strong> are perceived to be static, even when redrawn. Similarly, regions with <strong>low density</strong> (i.e., few points) and <strong>low diversity</strong> (i.e., few classes) will have little to no movement and be perceived to be static. Regions with <strong>high density and low diversity</strong> will have movement, but will not change in color. Regions with both <strong>high density and high diversity</strong> will change color frequently. This is the case in which animation successfully draws attention through flickering to these diverse and dense regions that could potentially be misinterpreted due to overdraw in static SPLOMs.</p>
 
 <h2>Advanced Usage</h2>
 

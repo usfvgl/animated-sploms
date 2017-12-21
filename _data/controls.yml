@@ -1,0 +1,45 @@
+- title: "Select Dataset"
+  image: "select-data.gif"
+  width: 400
+  caption: |
+    Use the dropdown to change datasets.
+  details: |
+    <p>Use the "Select Dataset" dropdown to load a different dataset.</p>
+
+    <p>The dataset size is given in parentheses. For example, the name "generated (800x6)" indicates the dataset named "generated" has 800 rows and 6 columns.</p>
+
+- title: "Highlight Grid Labels"
+  image: "hover-subplot.gif"
+  width: 400
+  caption: |
+    Hover over a subplot to highlight the associated row and column labels.
+  details: |
+    <p>We start with a traditional <a href="http://www.itl.nist.gov/div898/handbook/eda/section3/scatplma.htm"><u class="has-text-weight-bold">s</u>catter<u class="has-text-weight-bold">plo</u>t <u class="has-text-weight-bold">m</u>atrix</a> (SPLOM). Since the cells along the diagonal and lower triangle are redundant, we only draw cells in the upper triangle and rotate the triangle so that it lies in the upper-left quadrant. This leaves room for other controls in the lower-right corner.</p>
+
+    <p>Hover over a subplot in the SPLOM to highlight the associated row and column labels on the left and top of the matrix in black. For example, the top-left subplot in the pictured SPLOM shows the variable <var>z</var> in the horizontal direction and <var>v</var> in the vertical direction.</p>
+
+- title: "Animation Controls"
+  image: "animation-controls.gif"
+  width: 400
+  caption: |
+    Use the spinner, play button, and pause button to control the animation rate.
+  details: |
+    <p>We continuously loop through the data to animate the SPLOM, redrawing one or more rows of points at a time. The amount of flickering movement indicates the amount of overdraw in a region.</p>
+
+    <p>Click the grey play <i class="fa fa-play has-text-grey"></i> and pause <i class="fa fa-pause  has-text-grey"></i> buttons to start and stop the animation at any time.</p>
+
+    <p>Use the <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/number">number input</a> <input id="number" type="number" value="1" step="1" min="1" max="10" disabled class="has-text-right"> to control how many rows are animated per frame.</p>
+
+    <p>The progress bar shows the percent of rows that have been drawn. Once all of the rows have been drawn, the progress bar shows the percent of rows that have been redrawn since the last loop.</p>
+
+- title: "Class Legend"
+  image: "class-legend.gif"
+  width: 400
+  caption: |
+    Use the class legend to toggle on/off color for points belonging to different classes.
+  details: |
+    <p>We use color to encode the class of each point using a qualitative color scheme adapted from <a href="http://colorbrewer2.org/#type=qualitative&scheme=Set3&n=10">ColorBrewer</a>. The legend can be found in the lower right of the SPLOM.</p>
+
+    <p>Click the colored key boxes <i class="fa fa-stop" style="color: #8dd3c7;"></i> in the class legend to toggle on/off color for points of that class. This allows you to focus only on classes of interest or disable color entirely.</p>
+
+    <p>When toggling on a class color, all points belonging to that class will also be brought infront of other points. If animation is enabled, those points will eventually be redrawn in subsequent animation frames.</p>
