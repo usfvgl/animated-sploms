@@ -1,0 +1,39 @@
+- title: "Outliers"
+  image: "example-outlier.gif"
+  width: 124
+  caption: |
+    <var>table</var> vs <var>carat</var>
+  details: |
+    <p>An <strong>outlier</strong> is a single point that is distant from other points. In an animated SPLOM, outliers will appear static (i.e. no movement).</p>
+
+- title: "Low Density and Low Diversity"
+  image: "example-low-low.gif"
+  width: 124
+  caption: |
+    <var>x</var> vs <var>depth</var>
+  details: |
+    <p>A region with <strong>low density</strong> has few points and little overdraw. A region with <strong>low diversity</strong> has few classes. Regions with low density and diversity will have little to no movement or color flickering.</p>
+
+- title: "Low Density and High Diversity"
+  image: "example-low-high.gif"
+  width: 124
+  caption: |
+    <var>depth</var> vs <var>carat</var>
+  details: |
+    <p>A region with <strong>low density</strong> has few points and little overdraw. A region with <strong>high diversity</strong> has many classes (i.e. many colors). Regions with low density and high diversity have little to no movement but many different colors.</p>
+
+# - title: "High Density and Low Diversity"
+#   image: "example-high-low.gif"
+#   width: 124
+#   caption: |
+#     Example of a region with high density and low diversity.
+#   details: |
+#     <p>A region with <strong>high density</strong> has many points and significant overdraw. A region with <strong>low diversity</strong> has few classes. Regions with high density and low diversity will have significant movement but little color flickering.</p>
+
+- title: "High Density and High Diversity"
+  image: "example-high-high.gif"
+  width: 124
+  caption: |
+    <var>table</var> vs <var>depth</var>
+  details: |
+    <p>A region with <strong>high density</strong> has many points and significant overdraw. A region with <strong>high diversity</strong> has many classes (i.e. many colors). Regions with high density and diversity will have significant movement and significant color flickering.</p>

@@ -29,7 +29,33 @@ title: Usage
 
 <h2>Interpretation</h2>
 
-<p><strong>Outliers</strong> are perceived to be static, even when redrawn. Similarly, regions with <strong>low density</strong> (i.e., few points) and <strong>low diversity</strong> (i.e., few classes) will have little to no movement and be perceived to be static. Regions with <strong>high density and low diversity</strong> will have movement, but will not change in color. Regions with both <strong>high density and high diversity</strong> will change color frequently. This is the case in which animation successfully draws attention through flickering to these diverse and dense regions that could potentially be misinterpreted due to overdraw in static SPLOMs.</p>
+<p>To illustrate how to interpret an animated SPLOM, individual subplots from the <a href="{{ "index.html?source=diamonds" | absolute_url }}">diamonds</a> dataset will be shown below with a red arrow <i class="fa fa-arrow-left" style="color: red;"></i>
+ to highlight the example region.</p>
+
+<table class="table">
+  <thead>
+    <tr>
+      <th nowrap>Example</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    {% for item in site.data.interpretation %}
+    <tr>
+      <td class="is-size-7 has-text-grey has-text-centered" style="line-height: 1;">
+        <img src="{{ site.url }}{{ site.baseurl }}/images/{{ item.image }}" width="{{ item.width }}"><br/>
+        {{ item.caption }}
+      </td>
+
+      <td>{{ item.details }}</td>
+
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+<p>Regions with both <strong>high density and high diversity</strong> will result in the most movement and color flickering, bringing attention to regions that could potentially be misinterpreted due to overdraw in static SPLOMs.</p>
 
 <h2>Advanced Usage</h2>
 
