@@ -1,5 +1,15 @@
 title: "Using Animation to Alleviate Overdraw in Multiclass Scatterplot Matrices"
-year: 2018
+about:
+  booktitle: "Proceedings of the 2018 CHI Conference on Human Factors in Computing Systems"
+  series: "CHI 2018"
+  location: "Montreal, Canada"
+  publisher: "ACM"
+  address: "New York, NY, USA"
+  month: "April"
+  year: 2018
+  isbn: "978-1-4503-5620-6/18/04"
+  doi:  "10.1145/3173574.3173991"
+  url:  "https://doi.org/10.1145/3173574.3173991"
 authors:
   - first:  "Helen"
     middle: false

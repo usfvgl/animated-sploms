@@ -36,6 +36,10 @@ title: Paper
 
 <h3>Citation</h3>
 
+<div class="notification is-primary">
+  <i class="fa fa-info-circle"></i> This paper has been <em>conditionally accepted</em> to CHI 2018. The citation information below will be updated when this status changes.
+</div>
+
 <p>
   {% for author in site.data.paper.authors %}{%
     if forloop.last == true
@@ -49,27 +53,39 @@ title: Paper
     endif %}{%
   endfor %}
   &ldquo;<strong>{{ site.data.paper.title }}</strong>&rdquo;,
-  <em>TBA</em>,
-  {{ site.data.paper.year }}.
+  <em>to appear in</em>
+  {{ site.data.paper.about.booktitle }} ({{ site.data.paper.about.series }}),
+  {{ site.data.paper.about.publisher }},
+  {{ site.data.paper.about.address }},
+  {{ site.data.paper.about.month }}
+  {{ site.data.paper.about.year }}.
+  DOI: <a href="https://doi.org/{{ site.data.paper.about.doi }}">{{ site.data.paper.about.doi }}</a>
 </p>
 
 <pre>
 @inproceedings{AnimatedSPLOMs,
   title     = &#123;{{ site.data.paper.title }}&#125;,
   author    = &#123;{% for author in site.data.paper.authors %}{{ author.last }}, {{ author.first}}{% if author.middle %} {{ author.middle }}{% endif %}{% unless forloop.last %} and {% endunless %}{% endfor %}&#125;,
-  booktitle = &#123;<em>TBA</em>&#125;,
-  location  = &#123;<em>TBA</em>&#125;,
-  publisher = &#123;<em>TBA</em>&#125;,
-  doi       = &#123;<em>TBA</em>&#125;,
-  month     = &#123;<em>TBA</em>&#125;,
-  year      = &#123;<em>TBA</em>&#125;,
-  pages     = &#123;<em>TBA</em>&#125;
+  booktitle = &#123;{{ site.data.paper.about.booktitle }}&#125;,
+  location  = &#123;{{ site.data.paper.about.location }}&#125;,
+  publisher = &#123;{{ site.data.paper.about.publisher }}&#125;,
+  address   = &#123;{{ site.data.paper.about.address }}&#125;,
+  doi       = &#123;{{ site.data.paper.about.doi }}&#125;,
+  url       = &#123;{{ site.data.paper.about.url }}&#125;,
+  month     = &#123;{{ site.data.paper.about.month }}&#125;,
+  year      = &#123;{{ site.data.paper.about.year }}&#125;<!--,
+  pages     = &#123;<em>TBA</em>&#125;-->
 }
 </pre>
 
+
+<h3>Media</h3>
+
+<p>Pending.</p>
+
 <h3>Materials</h3>
 
-<p>In addition to this website, we provide the following supplementary materials:</p>
+<p>We also provide the following supplementary materials:</p>
 
 <ul>
 
