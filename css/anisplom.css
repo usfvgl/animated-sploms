@@ -10,6 +10,10 @@
   position: relative;
 }
 
+.has-text-spaced {
+  letter-spacing: 1.5px;
+}
+
 /* animation delays */
 
 span#animation span:nth-of-type(1),
