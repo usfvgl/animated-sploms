@@ -1,0 +1,31 @@
+- name: "Animated SPLOM Demo Video"
+  link: "https://goo.gl/RddgwR"
+  icon: "fa-youtube-play"
+  info: |
+    This screen recording (no audio) demonstrates how to use our tool, including switching datasets, changing the animation rate, highlighting points of different classes, and using URL parameters to change the point encoding. The video can be streamed in 1080p resolution, or downloaded in 4k resolution.
+  html: |
+    <iframe src="https://drive.google.com/file/d/1qHcgCWy9J1-btOLdjKjqLkxCrEnYWIma/preview" width="320" height="180"></iframe>
+
+- name: "User Study Demo Video"
+  link: "https://goo.gl/794kaK"
+  icon: "fa-youtube-play"
+  info: |
+    This screen recording (no audio) demonstrates what a user would see while participating in the user study. This is useful if you want to see the study without running the Experimentr framework locally. The video can be streamed in 1080p resolution, or downloaded in 4k resolution.
+  html: |
+    <iframe src="https://drive.google.com/file/d/1aukoi-Ypi9oMh4nRmc-Ox5gPV1SXyuhV/preview" width="320" height="180"></iframe>
+
+- name: "Abbreviated Demo GIF (16x9)"
+  link: "images/demo-16x9.gif"
+  icon: "fa-image"
+  info: |
+    This sharable GIF gives an abbreviated demonstration on how to use our tool. This version has a 16:9 aspect ratio and is provided in 4k resolution.
+  html: |
+    <a href="images/demo-16x9.gif"><img src="images/demo-16x9.gif" style="width: 320px;"></a>
+
+- name: "Abbreviated Demo GIF (Cropped)"
+  link: "images/demo-cropped.gif"
+  icon: "fa-image"
+  info: |
+    This sharable GIF gives an abbreviated demonstration on how to use our tool. This version is provided in 4k resolution.
+  html: |
+    <a href="images/demo-cropped.gif"><img src="images/demo-cropped.gif" style="width: 160px;"></a>
