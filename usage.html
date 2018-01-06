@@ -14,7 +14,7 @@ title: Usage
 <div class="columns">
   <div class="column is-narrow">
     <figure class="box is-marginless" style="max-width: {{ control.width }}px;">
-      <img src="{{ site.url }}{{ site.baseurl }}/images/{{ control.image }}" width="{{ control.width }}"><br/>
+      <img src="images/{{ control.image }}" width="{{ control.width }}"><br/>
       <figcaption class="is-size-7 has-text-grey">
         {{ control.caption }}
       </figcaption>
@@ -29,7 +29,7 @@ title: Usage
 
 <h2>Interpretation</h2>
 
-<p>To illustrate how to interpret an animated SPLOM, individual subplots from the <a href="{{ "index.html?source=diamonds" | absolute_url }}">diamonds</a> dataset will be shown below with a red arrow <i class="fa fa-arrow-left" style="color: red;"></i>
+<p>To illustrate how to interpret an animated SPLOM, individual subplots from the <a href="index.html?source=diamonds">diamonds</a> dataset will be shown below with a red arrow <i class="fa fa-arrow-left" style="color: red;"></i>
  to highlight the example region.</p>
 
 <table class="table">
@@ -44,7 +44,7 @@ title: Usage
     {% for item in site.data.interpretation %}
     <tr>
       <td class="is-size-7 has-text-grey has-text-centered" style="line-height: 1;">
-        <img src="{{ site.url }}{{ site.baseurl }}/images/{{ item.image }}" width="{{ item.width }}"><br/>
+        <img src="images/{{ item.image }}" width="{{ item.width }}"><br/>
         {{ item.caption }}
       </td>
 
@@ -75,7 +75,7 @@ title: Usage
     <tr>
       <td><code>{{ param.name }}</code></td>
       <td>{% for item in param.values %}
-        {% unless item.nolink %}<a href="{{ "index.html" | absolute_url }}?{{ param.name }}={{ item.value }}">{% endunless %}{% if item.default %}<strong>{% endif %}{{ item.value }}{% if item.default %}</strong>{% endif %}{% unless forloop.last %}{% unless item.nolink %}</a>{% endunless %},{% endunless %}
+        {% unless item.nolink %}<a href="index.html?{{ param.name }}={{ item.value }}">{% endunless %}{% if item.default %}<strong>{% endif %}{{ item.value }}{% if item.default %}</strong>{% endif %}{% unless forloop.last %}{% unless item.nolink %}</a>{% endunless %},{% endunless %}
       {% endfor %}</td>
       <td>{{ param.about }}</td>
     </tr>
@@ -83,9 +83,9 @@ title: Usage
   </tbody>
 </table>
 
-<p>Multiple parameters may be combined together using the ampersand <code>&amp;</code> symbol. For example, consider the following URL:</p>
+<p>Multiple parameters may be combined together using the ampersand <code>&amp;</code> symbol. For example, consider the following:</p>
 
-<pre><a href="{{ "index.html" | absolute_url }}?prerender=false&shape=square&encoding=open&rows=4&scale=1.25" class="has-text-grey">{{ "index.html" | absolute_url }}?<span class="has-text-danger">prerender</span>=<span class="has-text-primary">false</span>&amp;<span class="has-text-danger">shape</span>=<span class="has-text-primary">square</span>&amp;<span class="has-text-danger">encoding</span>=<span class="has-text-primary">open</span>&amp;<span class="has-text-danger">rows</span>=<span class="has-text-primary">4</span>&amp;<span class="has-text-danger">scale</span>=<span class="has-text-primary">1.25</span></a>
+<pre><a href="index.html?prerender=false&shape=square&encoding=open&rows=4&scale=1.25" class="has-text-grey">index.html?<span class="has-text-danger">prerender</span>=<span class="has-text-primary">false</span>&amp;<span class="has-text-danger">shape</span>=<span class="has-text-primary">square</span>&amp;<span class="has-text-danger">encoding</span>=<span class="has-text-primary">open</span>&amp;<span class="has-text-danger">rows</span>=<span class="has-text-primary">4</span>&amp;<span class="has-text-danger">scale</span>=<span class="has-text-primary">1.25</span></a>
 </pre>
 
 <p>This set of parameters will disable prerendering, use square shapes with no fill and an outline colored by class, animate 4 rows per frame, and use a 25% larger size for the SPLOM.</p>
@@ -118,8 +118,8 @@ endfor %}
       <th><code>{{ encoding.value }}</code></th>
       {% for shape in shapes %}
       <td>
-        <a href="{{ site.url }}{{ site.baseurl }}/?encoding={{ encoding.value }}&shape={{ shape.value }}">
-          <img src="{{ site.url }}{{ site.baseurl }}/images/encoding-{{ shape.value }}-{{ encoding.value }}.png" width="124">
+        <a href="index.html?encoding={{ encoding.value }}&shape={{ shape.value }}">
+          <img src="images/encoding-{{ shape.value }}-{{ encoding.value }}.png" width="124">
         </a>
       </td>
       {% endfor %}
