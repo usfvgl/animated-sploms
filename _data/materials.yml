@@ -23,7 +23,7 @@
     This GitHub repository hosts this website using <a href="https://github.com/usfvgl/animated-sploms">GitHub Pages</a> and <a href="https://help.github.com/articles/using-jekyll-as-a-static-site-generator-with-github-pages/">Jekyll</a>. You can clone or download this repository to run this website locally, but you must <a href="https://help.github.com/articles/setting-up-your-github-pages-site-locally-with-jekyll/">follow these instructions</a> to install the Github Pages gem and run Jekyll to generate and serve the website. This repository includes our JavaScript implementation of this approach.
 
 - name: "Website Snapshot"
-  link: "#"
+  link: "website.zip"
   icon: "fa-file-zip-o"
   info: |
     This is a snapshot of our website demonstrating this approach at the time of the final paper submission. This is useful if you want to run a local version of this website without installing Gitub Pages and Jekyll. However, you still need to <a href="https://developer.mozilla.org/en-US/docs/Learn/Common_questions/set_up_a_local_testing_server">run a local web server</a> to run the website.
