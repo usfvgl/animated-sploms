@@ -22,6 +22,14 @@
   html: |
     <iframe src="https://drive.google.com/file/d/1qHcgCWy9J1-btOLdjKjqLkxCrEnYWIma/preview" width="320" height="180"></iframe>
 
+- name: "Animated SPLOM Figure 3 Video"
+  link: "https://goo.gl/Wd6McV"
+  icon: "fa-youtube-play"
+  info: |
+    This narrated screen recording illustrates the regions of the diamonds dataset discused in figure 3 of the paper. The video can be streamed in 1080p resolution, or downloaded in 4k resolution.
+  html: |
+    <iframe src="https://drive.google.com/file/d/1srf-8TvcI_rpqGjJ7Iy7TbCvYEM1iHMZ/preview" width="320" height="180"></iframe>
+
 - name: "User Study Demo Video"
   link: "https://goo.gl/794kaK"
   icon: "fa-youtube-play"
